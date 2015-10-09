@@ -14,7 +14,7 @@ public class login : MonoBehaviour {
 		if (result.Count > 0) {
 			GMS.userData.populateUser(  ((string[])result [0]) );
 
-			Application.LoadLevel ("home");
+			Application.LoadLevel ("perfil");
 		}
 		GMS.db.CloseDB();
 

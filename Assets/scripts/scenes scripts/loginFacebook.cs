@@ -60,7 +60,11 @@ public class loginFacebook : MonoBehaviour {
 		GMS.userData.fbid = (string)search ["id"];
 		GMS.userData.nombre = (string)search ["first_name"] + ' '+ (string)search ["last_name"];
 		GMS.userData.email = (string)search ["email"];
-		GMS.userData.sexo = (string)search ["gender"];
+		if ((string)search ["gender"] == "female") {
+			GMS.userData.sexo = "MUJER";
+		} else {
+			GMS.userData.sexo = "HOMBRE";
+		}
 		GMS.userData.fecha_nacimiento = (string)search ["birthday"];
 
 		GMS.SendMessage ("loginFacebook");

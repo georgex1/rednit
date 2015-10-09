@@ -222,7 +222,7 @@ public class MainController : MonoBehaviour {
 					userData.id = int.Parse( (string)Wresponse3["id"] );
 
 					saveUserData(true);
-					Application.LoadLevel ("home");
+					Application.LoadLevel ("perfil");
 
 					download_personas();
 				}
@@ -327,6 +327,13 @@ public class MainController : MonoBehaviour {
 		saveUserData (false);
 	}
 
+	public void changeProfile(){
+		string[] colsUsuarios = new string[]{ "fbid", "fecha_nacimiento", "ciudad", "sexo", "nombre", "email" };
+		string[] colsUsuariosValues = new string[]{ userData.fbid, userData.fecha_nacimiento, userData.ciudad, userData.sexo, userData.nombre, userData.email };
+		
+		sendData (colsUsuarios, colsUsuariosValues, "changeProfile");
+	}
+
 	private void saveUserData(bool isfb){
 		sendDataDebug = "entro a saveUserData";
 		db.OpenDB(dbName);
@@ -389,8 +396,8 @@ public class MainController : MonoBehaviour {
 		byte[] fileData = File.ReadAllBytes (Application.persistentDataPath + "/" + userData.foto);
 		
 		Debug.Log ("try upload: imagen usuario");
-		string[] cols2 = new string[]{"usuarios_id", "fileUpload", "usuario_foto"};
-		string[] data2 = new string[]{userData.id.ToString (), "imagen_usuario", userData.foto };
+		string[] cols2 = new string[]{"usuarios_id", "fbid", "fileUpload", "usuario_foto"};
+		string[] data2 = new string[]{userData.id.ToString (), userData.fbid, "imagen_usuario", userData.foto };
 		try {
 			sendData (cols2, data2, "upload_perfil", fileData);
 		} catch (IOException e) {
