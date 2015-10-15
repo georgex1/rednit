@@ -65,7 +65,16 @@ public class loginFacebook : MonoBehaviour {
 		} else {
 			GMS.userData.sexo = "HOMBRE";
 		}
-		GMS.userData.fecha_nacimiento = (string)search ["birthday"];
+		if ((string)search ["birthday"] != "") {
+			string fechaNac = (string)search ["birthday"];
+			string[] splitFechaNac = fechaNac.Split('/');
+
+			GMS.userData.date_year = splitFechaNac[2];
+			GMS.userData.date_month = splitFechaNac[0];
+			GMS.userData.date_day = splitFechaNac[1];
+
+			GMS.userData.fecha_nacimiento = GMS.userData.date_day + "/" + GMS.userData.date_month + "/" + GMS.userData.date_year;
+		}
 
 		GMS.SendMessage ("loginFacebook");
 	}

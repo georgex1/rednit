@@ -3,6 +3,7 @@ using System.Collections;
 
 public class Menu : MonoBehaviour {
 
+	private int menuShow = 0;
 	private string AnimName = "menu";
 	private float resetTime = 0.00F;
 
@@ -20,10 +21,20 @@ public class Menu : MonoBehaviour {
 	}
 
 	public void showMenu(){
-		/*Animation panelPrincipal = transform.GetComponent<Animation> ();
+		Animation panelPrincipal = transform.GetComponent<Animation> ();
 
-		panelPrincipal[AnimName].speed = 1; 
-		panelPrincipal[AnimName].time = resetTime;
-		panelPrincipal.Play(AnimName);*/
+		if(menuShow == 0){
+			panelPrincipal[AnimName].speed = 1; 
+			panelPrincipal[AnimName].time = resetTime;
+			panelPrincipal.Play(AnimName);
+			menuShow = 1;
+		}else if(menuShow == 1){
+			panelPrincipal[AnimName].speed = -1; 
+			resetTime =panelPrincipal[AnimName].time;
+			panelPrincipal[AnimName].time = panelPrincipal[AnimName].length;
+			panelPrincipal.Play(AnimName);
+			menuShow = 0;
+		}
+
 	}
 }

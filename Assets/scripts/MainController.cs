@@ -267,11 +267,11 @@ public class MainController : MonoBehaviour {
 							//intentar bajar imagen de la persona
 							try_download_persona_imagen((string)reponseContent["foto"]);
 
-							actualizando = false;
-
 							db.CloseDB();
 						}
 					}
+
+					actualizando = false;
 				}
 
 				if(response == "get_amigos"){
@@ -417,7 +417,7 @@ public class MainController : MonoBehaviour {
 	}*/
 
 	private void saveUserData(bool isfb){
-		sendDataDebug = "entro a saveUserData";
+
 		db.OpenDB(dbName);
 		
 		string[] colsUsuarios = new string[]{ "id", "email", "nombre", "fbid", "fecha_nacimiento", "sexo", "busco_sexo", "busco_ciudad", "busco_edad_min", "busco_edad_max"};

@@ -2,8 +2,6 @@
 <!--AUTO GENERATED MANIFEST FILE FROM AndroidManifestGenerator. DONT MODIFY HERE.-->
 <manifest xmlns:android="http://schemas.android.com/apk/res/android" package="com.voxelbusters.androidnativeplugin" android:versionCode="1" android:versionName="1.0">
   <application>
-    <!--Billing : Activity used for purchase view-->
-    <activity android:name="com.voxelbusters.nativeplugins.features.billing.serviceprovider.google.GoogleBillingActivity" android:theme="@style/FloatingActivityTheme" />
     <!--MediaLibrary : Generic helper activity-->
     <activity android:name="com.voxelbusters.nativeplugins.features.medialibrary.MediaLibraryActivity" android:theme="@style/FloatingActivityTheme" android:screenOrientation="sensor" android:configChanges="keyboardHidden|orientation|screenSize" />
     <!--MediaLibrary : Used for Launching video from gallery-->
@@ -38,8 +36,6 @@
   <uses-permission android:name="android.permission.READ_CONTACTS" />
   <!--Network Connectivity-->
   <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
-  <!--Billing-->
-  <uses-permission android:name="com.android.vending.BILLING" />
   <!--Media Library-->
   <uses-permission android:name="android.permission.CAMERA" />
   <uses-feature android:name="android.hardware.camera" android:required="false" />

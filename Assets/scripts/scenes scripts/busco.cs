@@ -14,6 +14,8 @@ public class busco : MonoBehaviour {
 	public GameObject busco_ciudad;
 	public string busco_sexo;
 
+	public GameObject menuObj;
+
 	// Use this for initialization
 	void Start () {
 		GameObject GM = GameObject.Find ("MainController");
@@ -31,6 +33,10 @@ public class busco : MonoBehaviour {
 		busco_ciudad.transform.parent.GetComponent<InputField>().text = GMS.userData.ciudad;
 
 		generarDesdeHasta ();
+
+		if (PlayerPrefs.GetString ("busco_completo") != "1") {
+			menuObj.SetActive(false);
+		}
 	}
 	
 	// Update is called once per frame

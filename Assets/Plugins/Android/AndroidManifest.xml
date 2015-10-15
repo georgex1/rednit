@@ -21,4 +21,7 @@
     </activity>
     <meta-data android:name="com.facebook.sdk.ApplicationId" android:value="\ 105523969805922" />
   </application>
+  
+  <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
+  <uses-permission android:name="android.permission.CAMERA" />
 </manifest>

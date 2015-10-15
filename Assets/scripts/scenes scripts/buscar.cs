@@ -45,6 +45,7 @@ public class buscar : MonoBehaviour {
 		} else {
 			PanelAvisoBtn.SetActive (true);
 			PanelAviso.SetActive(true);
+			GMS.actualizando = true;
 		}
 	}
 
@@ -77,8 +78,8 @@ public class buscar : MonoBehaviour {
 	}
 
 	IEnumerator closeActualizarPanel(){
-		yield return new WaitForSeconds (3);
-		PanelAviso.SetActive(false);
+		yield return new WaitForSeconds (2);
+		//PanelAviso.SetActive(false);
 		Application.LoadLevel (Application.loadedLevelName);
 	}
 

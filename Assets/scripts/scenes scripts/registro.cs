@@ -13,6 +13,8 @@ public class registro : MonoBehaviour {
 	private MainController GMS;
 	public GameObject buttonSubmit;
 
+	public GameObject menuObj;
+
 	void Start () {
 		//al final a subir-foto
 		buttonSubmit.SetActive (false);
@@ -24,8 +26,8 @@ public class registro : MonoBehaviour {
 		if (GMS.userData.fecha_nacimiento != "") {
 			string[] splitFechaNac = GMS.userData.fecha_nacimiento.Split('/');
 
-			fechaNacScript.btnDay.GetComponentInChildren<Text> ().text = splitFechaNac[1];
-			fechaNacScript.btnMonth.GetComponentInChildren<Text> ().text = GMS.userData.format_month_int( splitFechaNac[0] );
+			fechaNacScript.btnDay.GetComponentInChildren<Text> ().text = splitFechaNac[0];
+			fechaNacScript.btnMonth.GetComponentInChildren<Text> ().text = GMS.userData.format_month_int( splitFechaNac[1] );
 			fechaNacScript.btnYear.GetComponentInChildren<Text> ().text = splitFechaNac[2];
 
 			GMS.userData.date_year = splitFechaNac[2];
@@ -53,6 +55,10 @@ public class registro : MonoBehaviour {
 		ciudad.transform.parent.GetComponent<InputField>().text = GMS.userData.ciudad;
 		sexo = GMS.userData.sexo;
 
+		if (PlayerPrefs.GetString ("busco_completo") != "1") {
+			menuObj.SetActive(false);
+		}
+
 		Debug.Log ("datos user: " + nombre.GetComponent<Text>().text + email.GetComponent<Text>().text + ciudad.GetComponent<Text>().text);
 	}
 	
@@ -74,7 +80,8 @@ public class registro : MonoBehaviour {
 	
 	public void submit(){
 		
-		string format_birthDate = GMS.userData.date_year + '-' + GMS.userData.date_month + '-' + GMS.userData.date_day;
+		//string format_birthDate = GMS.userData.date_year + '-' + GMS.userData.date_month + '-' + GMS.userData.date_day;
+		string format_birthDate = GMS.userData.date_day + "/" + GMS.userData.date_month + '/' + GMS.userData.date_year;
 		
 		if(!GMS.haveInet){
 			GMS.errorPopup("Verifica tu conexion a internet");
