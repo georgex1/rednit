@@ -4,6 +4,7 @@ using System.IO;
 using UnityEngine.UI;
 using VoxelBusters.NativePlugins;
 using VoxelBusters.AssetStoreProductUtility.Demo;
+using System.IO;
 
 public class ImagePickerPerfil : MonoBehaviour {
 	public Texture2D image;

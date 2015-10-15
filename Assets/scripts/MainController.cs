@@ -12,9 +12,12 @@ public class MainController : MonoBehaviour {
 
 	public string dbName = "rednit.db";
 	private string appHash = "R3dN1t!";
+
 	private string responseURL = "http://thepastoapps.com/proyectos/rednit/response/response.php";
 	private string responseAssets = "http://thepastoapps.com/proyectos/rednit/response/assets/images/";
+
 	//private string responseURL = "http://localhost/betterpixel/rednit/response/response.php";
+	//private string responseAssets = "http://localhost/betterpixel/rednit/response/assets/images/";
 	private string Uid;
 
 	private float loadTime;
@@ -24,6 +27,7 @@ public class MainController : MonoBehaviour {
 	public dbAccess db ;
 
 	public UserData userData;
+	public AmigoData amigoData;
 
 	public bool haveInet;
 	public bool checkingCon = false;
@@ -43,6 +47,8 @@ public class MainController : MonoBehaviour {
 	//loading
 	public GameObject loading;
 
+	public bool actualizando;
+
 	void OnGUI(){
 		if (isDebug) {
 			GUI.skin.label.fontSize = 20;
@@ -53,13 +59,21 @@ public class MainController : MonoBehaviour {
 	void createDb(){
 		db.OpenDB(dbName);
 
-		string[] cols = new string[]{"id", "email", "nombre", "fbid", "fecha_nacimiento", "sexo", "foto"};
-		string[] colTypes = new string[]{"INT", "TEXT", "TEXT", "TEXT", "TEXT", "TEXT", "TEXT"};
+		string[] cols = new string[]{"id", "email", "nombre", "fbid", "fecha_nacimiento", "sexo", "foto", "ciudad", "busco_ciudad", "busco_sexo", "busco_edad_min", "busco_edad_max"};
+		string[] colTypes = new string[]{"INT", "TEXT", "TEXT", "TEXT", "TEXT", "TEXT", "TEXT", "TEXT", "TEXT", "TEXT", "TEXT", "TEXT"};
 		db.CreateTable ("usuarios", cols, colTypes);
 
-		cols = new string[]{"id", "nombre", "edad", "sexo", "ciudad", "foto"};
-		colTypes = new string[]{"INT", "TEXT", "TEXT", "TEXT", "TEXT", "TEXT"};
+		cols = new string[]{"id", "nombre", "edad", "sexo", "ciudad", "foto", "visto"};
+		colTypes = new string[]{"INT", "TEXT", "TEXT", "TEXT", "TEXT", "TEXT", "TEXT"};
 		db.CreateTable ("personas", cols, colTypes);
+
+		cols = new string[]{"id", "usuarios_id", "personas_id", "aceptado", "nombre", "email", "edad", "sexo", "ciudad", "foto"};
+		colTypes = new string[]{"INT", "TEXT", "TEXT", "TEXT", "TEXT", "TEXT", "TEXT", "TEXT", "TEXT", "TEXT"};
+		db.CreateTable ("amigos_usuarios", cols, colTypes);
+
+		cols = new string[]{"id", "usuarios_id", "amigos_id", "aceptado", "nombre", "email", "edad", "sexo", "ciudad", "foto"};
+		colTypes = new string[]{"INT", "TEXT", "TEXT", "TEXT", "TEXT", "TEXT", "TEXT", "TEXT", "TEXT", "TEXT"};
+		db.CreateTable ("amigos", cols, colTypes);
 
 		cols = new string[]{"id", "func", "sfields", "svalues"};
 		colTypes = new string[]{"INT", "TEXT", "TEXT", "TEXT"};
@@ -77,6 +91,10 @@ public class MainController : MonoBehaviour {
 		loadTime = 0;
 		db = GetComponent<dbAccess>();
 		createDb ();
+
+		if (!PlayerPrefs.HasKey ("busco_completo")) {
+			PlayerPrefs.SetString("busco_completo", "0");
+		}
 
 		haveInet = false;
 		checkConnection ();
@@ -241,14 +259,70 @@ public class MainController : MonoBehaviour {
 							db.OpenDB(dbName);
 
 							//cargar personas
-							string[] cols = new string[]{"id", "nombre", "edad", "sexo", "ciudad", "foto"};
-							string[] colsVals = new string[]{ (string)reponseContent["id"], (string)reponseContent["nombre"], (string)reponseContent["edad"], (string)reponseContent["sexo"], (string)reponseContent["ciudad"], (string)reponseContent["foto"] };
+							string[] cols = new string[]{"id", "nombre", "edad", "sexo", "ciudad", "foto", "visto"};
+							string[] colsVals = new string[]{ (string)reponseContent["id"], (string)reponseContent["nombre"], (string)reponseContent["edad"], (string)reponseContent["sexo"], (string)reponseContent["ciudad"], (string)reponseContent["foto"], "0" };
 							
 							db.InsertIgnoreInto("personas", cols, colsVals, (string)reponseContent["id"]);
 
 							//intentar bajar imagen de la persona
 							try_download_persona_imagen((string)reponseContent["foto"]);
 
+							actualizando = false;
+
+							db.CloseDB();
+						}
+					}
+				}
+
+				if(response == "get_amigos"){
+					string WarrayContent_ = MiniJSON.Json.Serialize(Wresponse["arrayContent"]);
+					IDictionary WresponseContent = (IDictionary) MiniJSON.Json.Deserialize ( WarrayContent_ );
+					
+					Debug.Log((string)Wresponse2["hasArray"]);
+					if( (string)Wresponse2["hasArray"] != "0" ){
+						for(int i = 1; i <= int.Parse( (string)Wresponse2["hasArray"] ); i++ ){
+							Debug.Log("posicion: " + i);
+							
+							IDictionary reponseContent = (IDictionary) MiniJSON.Json.Deserialize ( (string)WresponseContent[i.ToString()]  );
+							
+							db.OpenDB(dbName);
+							
+							//cargar personas
+							string[] cols = new string[]{ "usuarios_id", "personas_id", "aceptado", "nombre", "email", "edad", "sexo", "ciudad", "foto" };
+							string[] colsVals = new string[]{ userData.id.ToString(), (string)reponseContent["id"], "0", (string)reponseContent["nombre"], (string)reponseContent["email"], (string)reponseContent["edad"], (string)reponseContent["sexo"], (string)reponseContent["ciudad"], (string)reponseContent["foto"] };
+							
+							db.InsertIgnoreInto("amigos_usuarios", cols, colsVals, (string)reponseContent["id"]);
+							
+							//intentar bajar imagen de la persona
+							try_download_persona_imagen((string)reponseContent["foto"]);
+							
+							db.CloseDB();
+						}
+					}
+				}
+
+				if(response == "get_amigos_aceptados"){
+					string WarrayContent_ = MiniJSON.Json.Serialize(Wresponse["arrayContent"]);
+					IDictionary WresponseContent = (IDictionary) MiniJSON.Json.Deserialize ( WarrayContent_ );
+					
+					Debug.Log((string)Wresponse2["hasArray"]);
+					if( (string)Wresponse2["hasArray"] != "0" ){
+						for(int i = 1; i <= int.Parse( (string)Wresponse2["hasArray"] ); i++ ){
+							Debug.Log("posicion: " + i);
+							
+							IDictionary reponseContent = (IDictionary) MiniJSON.Json.Deserialize ( (string)WresponseContent[i.ToString()]  );
+							
+							db.OpenDB(dbName);
+							
+							//cargar personas
+							string[] cols = new string[]{ "usuarios_id", "amigos_id", "aceptado", "nombre", "email", "edad", "sexo", "ciudad", "foto"};
+							string[] colsVals = new string[]{ userData.id.ToString(), (string)reponseContent["id"], "1", (string)reponseContent["nombre"], (string)reponseContent["email"], (string)reponseContent["edad"], (string)reponseContent["sexo"], (string)reponseContent["ciudad"], (string)reponseContent["foto"] };
+							
+							db.InsertIgnoreInto("amigos", cols, colsVals, (string)reponseContent["id"]);
+							
+							//intentar bajar imagen de la persona
+							try_download_persona_imagen((string)reponseContent["foto"]);
+							
 							db.CloseDB();
 						}
 					}
@@ -264,7 +338,14 @@ public class MainController : MonoBehaviour {
 
 					db.UpdateSingle("usuarios", "foto", userData.foto, "id" , userData.id.ToString());
 
+
+					colsUsuarios = new string[]{ "ciudad", "sexo", "fecha_nacimiento", "nombre", "email", "foto" };
+					colsUsuariosValues = new string[]{ userData.ciudad, userData.sexo, userData.fecha_nacimiento, userData.nombre, userData.email, userData.foto };
+					db.InsertIgnoreInto("usuarios", colsUsuarios, colsUsuariosValues, userData.id.ToString());
+
 					db.CloseDB();
+					showLoading(false);
+					Application.LoadLevel ("busco");
 				}
 
 				if(response == "get_updates"){
@@ -295,7 +376,7 @@ public class MainController : MonoBehaviour {
 							}*/
 
 							db.CloseDB();
-							Debug.Log(reponseContent["puntos"]);
+							//Debug.Log(reponseContent["puntos"]);
 						}
 
 						Debug.Log("updated: " + (string)Wresponse2["mgs"]);
@@ -327,18 +408,19 @@ public class MainController : MonoBehaviour {
 		saveUserData (false);
 	}
 
-	public void changeProfile(){
-		string[] colsUsuarios = new string[]{ "fbid", "fecha_nacimiento", "ciudad", "sexo", "nombre", "email" };
-		string[] colsUsuariosValues = new string[]{ userData.fbid, userData.fecha_nacimiento, userData.ciudad, userData.sexo, userData.nombre, userData.email };
+	/*public void changeProfile(){
+		//string[] colsUsuarios = new string[]{ "fbid", "fecha_nacimiento", "ciudad", "sexo", "nombre", "email" };
+		//string[] colsUsuariosValues = new string[]{ userData.fbid, userData.fecha_nacimiento, userData.ciudad, userData.sexo, userData.nombre, userData.email };
 		
-		sendData (colsUsuarios, colsUsuariosValues, "changeProfile");
-	}
+		//sendData (colsUsuarios, colsUsuariosValues, "changeProfile");
+		upload_user_foto ();
+	}*/
 
 	private void saveUserData(bool isfb){
 		sendDataDebug = "entro a saveUserData";
 		db.OpenDB(dbName);
 		
-		string[] colsUsuarios = new string[]{ "id", "email", "nombre", "fbid", "fecha_nacimiento", "sexo"};
+		string[] colsUsuarios = new string[]{ "id", "email", "nombre", "fbid", "fecha_nacimiento", "sexo", "busco_sexo", "busco_ciudad", "busco_edad_min", "busco_edad_max"};
 
 		ArrayList result = new ArrayList();
 		if (isfb) {
@@ -351,7 +433,7 @@ public class MainController : MonoBehaviour {
 			result = db.BasicQueryArray ("select email from usuarios where email = '"+userData.email+"' ");
 		}
 
-		string[] colsUsuariosValues = new string[]{ userData.id.ToString(), userData.email, userData.nombre, userData.fbid, userData.fecha_nacimiento, userData.sexo };
+		string[] colsUsuariosValues = new string[]{ userData.id.ToString(), userData.email, userData.nombre, userData.fbid, userData.fecha_nacimiento, userData.sexo, userData.busco_sexo, userData.busco_ciudad, userData.busco_edad_min, userData.busco_edad_max };
 		
 		if (result.Count == 0) {
 			sendDataDebug = "count = 0 inserto usuario";
@@ -361,12 +443,58 @@ public class MainController : MonoBehaviour {
 		db.CloseDB();
 	}
 
-	private void download_personas(){
+	public void perfil_busco(){
+		db.OpenDB(dbName);
+
+		string[] colsUsuarios = new string[]{ "busco_ciudad", "busco_sexo", "busco_edad_min", "busco_edad_max" };
+		string[] colsUsuariosValues = new string[]{ userData.busco_ciudad, userData.busco_sexo, userData.busco_edad_min, userData.busco_edad_max };
+		db.InsertIgnoreInto("usuarios", colsUsuarios, colsUsuariosValues, userData.id.ToString());
+
+		db.CloseDB();
+
+		colsUsuarios = new string[]{ "busco_ciudad", "busco_sexo", "busco_edad_min", "busco_edad_max", "usuarios_id" };
+		colsUsuariosValues = new string[]{ userData.busco_ciudad, userData.busco_sexo, userData.busco_edad_min, userData.busco_edad_max, userData.id.ToString() };
+		
+		sendData (colsUsuarios, colsUsuariosValues, "update_perfil_busco");
+
+	}
+
+	public void download_personas(){
 		if (userData.id != 0) {
 			string[] colsUsuarios = new string[]{ "usuarios_id" };
 			string[] colsUsuariosValues = new string[]{ userData.id.ToString () };
 		
 			sendData (colsUsuarios, colsUsuariosValues, "get_personas");
+		}
+	}
+
+	public void download_amigos(){
+		if (userData.id != 0) {
+			string[] colsUsuarios = new string[]{ "usuarios_id" };
+			string[] colsUsuariosValues = new string[]{ userData.id.ToString () };
+			
+			sendData (colsUsuarios, colsUsuariosValues, "get_amigos");
+		}
+	}
+
+	public void download_amigos_aceptados(){
+		if (userData.id != 0) {
+			string amigos_list = "0";
+
+			db.OpenDB(dbName);
+			ArrayList result = db.BasicQueryArray ("select amigos_id from amigos where usuarios_id = '"+userData.id.ToString()+"' ");
+			db.CloseDB();
+
+			if (result.Count > 0) {
+				foreach (string[] row_ in result) {
+					amigos_list += "," + row_[0];
+				}
+			}
+
+			string[] colsUsuarios = new string[]{ "usuarios_id", "lista_descargada" };
+			string[] colsUsuariosValues = new string[]{ userData.id.ToString (), amigos_list };
+			
+			sendData (colsUsuarios, colsUsuariosValues, "get_amigos_aceptados");
 		}
 	}
 
@@ -394,10 +522,10 @@ public class MainController : MonoBehaviour {
 	public void upload_user_foto(){
 		//subir imagen
 		byte[] fileData = File.ReadAllBytes (Application.persistentDataPath + "/" + userData.foto);
-		
+
 		Debug.Log ("try upload: imagen usuario");
-		string[] cols2 = new string[]{"usuarios_id", "fbid", "fileUpload", "usuario_foto"};
-		string[] data2 = new string[]{userData.id.ToString (), userData.fbid, "imagen_usuario", userData.foto };
+		string[] cols2 = new string[]{"usuarios_id", "fbid", "fileUpload", "usuario_foto", "fecha_nacimiento", "ciudad", "sexo", "nombre", "email"};
+		string[] data2 = new string[]{userData.id.ToString (), userData.fbid, "imagen_usuario", userData.foto, userData.fecha_nacimiento, userData.ciudad, userData.sexo, userData.nombre, userData.email };
 		try {
 			sendData (cols2, data2, "upload_perfil", fileData);
 		} catch (IOException e) {
@@ -424,6 +552,9 @@ public class MainController : MonoBehaviour {
 		//ej de call updates
 		//call_updates ("puntos_especiales");
 		download_personas();
+		download_amigos ();
+		download_amigos_aceptados ();
+
 		StartCoroutine (get_updates ());
 	}
 

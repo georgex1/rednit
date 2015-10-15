@@ -1,6 +1,7 @@
 ﻿using UnityEngine;
 using System.Collections;
 using UnityEngine.UI;
+using System.IO;
 
 public class registro : MonoBehaviour {
 
@@ -23,8 +24,8 @@ public class registro : MonoBehaviour {
 		if (GMS.userData.fecha_nacimiento != "") {
 			string[] splitFechaNac = GMS.userData.fecha_nacimiento.Split('/');
 
-			fechaNacScript.btnDay.GetComponentInChildren<Text> ().text = splitFechaNac[0];
-			fechaNacScript.btnMonth.GetComponentInChildren<Text> ().text = splitFechaNac[1];
+			fechaNacScript.btnDay.GetComponentInChildren<Text> ().text = splitFechaNac[1];
+			fechaNacScript.btnMonth.GetComponentInChildren<Text> ().text = GMS.userData.format_month_int( splitFechaNac[0] );
 			fechaNacScript.btnYear.GetComponentInChildren<Text> ().text = splitFechaNac[2];
 
 			GMS.userData.date_year = splitFechaNac[2];
@@ -34,6 +35,17 @@ public class registro : MonoBehaviour {
 		}
 		if (GMS.userData.sexo != "") {
 			GameObject.Find (GMS.userData.sexo).GetComponent<Toggle>().isOn = true;
+		}
+
+		if (GMS.userData.ciudad != "") {
+			ciudad.transform.parent.GetComponent<InputField>().text = GMS.userData.ciudad;
+		}
+
+		if(GMS.userData.foto != ""){
+			string filepath = Application.persistentDataPath + "/" + GMS.userData.foto;
+			if (File.Exists (filepath)) {
+				GameObject.Find ("backImage").GetComponent<Image>().sprite = GMS.spriteFromFile(GMS.userData.foto);
+			}
 		}
 
 		email.transform.parent.GetComponent<InputField>().text = GMS.userData.email;
@@ -47,8 +59,9 @@ public class registro : MonoBehaviour {
 	void Update(){
 		if (nombre.GetComponent<Text>().text != "" && validEmail (email.GetComponent<Text>().text) && ciudad.GetComponent<Text>().text != ""
 		    && sexo != "" && GMS.userData.date_day != "" && GMS.userData.date_month != "" && GMS.userData.date_year != "") {
-			Debug.Log("active button");
+
 			if(!buttonSubmit.activeSelf){
+				Debug.Log("active button");
 				buttonSubmit.SetActive (true);
 			}
 		} else {
@@ -72,8 +85,12 @@ public class registro : MonoBehaviour {
 			GMS.userData.ciudad = ciudad.GetComponent<Text>().text;
 			GMS.userData.fecha_nacimiento = format_birthDate;
 			GMS.userData.sexo = sexo;
-			
-			GMS.changeProfile();
+
+			GMS.userData.foto = GMS.userData.temp_img;
+
+			GMS.showLoading(true);
+
+			GMS.upload_user_foto();
 		}
 		
 	}

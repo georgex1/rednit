@@ -17,6 +17,11 @@ public class UserData {
 	sexo,
 	foto;
 
+	public string busco_ciudad,
+		busco_sexo,
+		busco_edad_min,
+		busco_edad_max;
+
 	public string date_month;
 	public string date_day;
 	public string date_year;
@@ -36,6 +41,8 @@ public class UserData {
 		fbid = "";
 		sexo = "";
 		foto = temp_img = "";
+		busco_edad_min = "18";
+		busco_edad_max = "50";
 		//ExercisesMetricas = new Dictionary<string, int> ();
 	}
 
@@ -50,6 +57,13 @@ public class UserData {
 		fbid = row_ [3];
 		fecha_nacimiento = row_ [4];
 		sexo = row_ [5];
+		foto = row_ [6];
+		ciudad = row_ [7];
+
+		busco_ciudad = row_ [8];
+		busco_sexo = row_ [9];
+		busco_edad_min = row_ [10];
+		busco_edad_max = row_ [11];
 	}
 
 	public void format_month(string month_){
@@ -69,6 +83,25 @@ public class UserData {
 		case "DICIEMBRE": monthInt_ = 12; break;
 		}
 		date_month = monthInt_.ToString();
+	}
+
+	public string format_month_int(string month_int){
+		string month_ = "ENERO";
+		switch (month_int) {
+		case "01": month_ = "ENERO"; break;
+		case "02": month_ = "FEBRERO"; break;
+		case "03": month_ = "MARZO"; break;
+		case "04": month_ = "ABRIL"; break;
+		case "05": month_ = "MAYO"; break;
+		case "06": month_ = "JUNIO"; break;
+		case "07": month_ = "JULIO"; break;
+		case "08": month_ = "AGOSTO"; break;
+		case "09": month_ = "SEPTIEMBRE"; break;
+		case "10": month_ = "OCTUBRE"; break;
+		case "11": month_ = "NOVIEMBRE"; break;
+		case "12": month_ = "DICIEMBRE"; break;
+		}
+		return month_;
 	}
 
 }
