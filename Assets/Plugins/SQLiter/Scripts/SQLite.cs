@@ -92,7 +92,7 @@ namespace SQLiter
         void Start()
         {
             // just for testing, uncomment to play with it
-            //Invoke("Test", 1);
+            Invoke("Test", 1);
         }
 
         /// <summary>
