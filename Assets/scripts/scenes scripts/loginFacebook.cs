@@ -49,7 +49,7 @@ public class loginFacebook : MonoBehaviour {
 	void APICallback(FBResult result){
 		if (result.Error != null){
 			// Let's just try again
-			FB.API("/me?fields=id,name,first_name,last_name,email,birthday,gender,friends.limit(100).fields(first_name,id)", Facebook.HttpMethod.GET, APICallback);
+			FB.API("/me?fields=id,name,first_name,last_name,email,birthday,gender", Facebook.HttpMethod.GET, APICallback);
 			return;
 		}
 		GameObject GM = GameObject.Find ("MainController");
@@ -65,16 +65,20 @@ public class loginFacebook : MonoBehaviour {
 		} else {
 			GMS.userData.sexo = "HOMBRE";
 		}
-		if ((string)search ["birthday"] != "") {
+
+		if ((string)search ["birthday"] != null) {
 			string fechaNac = (string)search ["birthday"];
 			string[] splitFechaNac = fechaNac.Split('/');
 
-			GMS.userData.date_year = splitFechaNac[2];
-			GMS.userData.date_month = splitFechaNac[0];
-			GMS.userData.date_day = splitFechaNac[1];
+			if(splitFechaNac.Length > 2){
+				GMS.userData.date_year = splitFechaNac[2];
+				GMS.userData.date_month = splitFechaNac[0];
+				GMS.userData.date_day = splitFechaNac[1];
 
-			GMS.userData.fecha_nacimiento = GMS.userData.date_day + "/" + GMS.userData.date_month + "/" + GMS.userData.date_year;
+				GMS.userData.fecha_nacimiento = GMS.userData.date_day + "/" + GMS.userData.date_month + "/" + GMS.userData.date_year;
+			}
 		}
+		
 
 		GMS.SendMessage ("loginFacebook");
 	}
