@@ -12,11 +12,11 @@ public class MainController : MonoBehaviour {
 	public string dbName = "rednit.db";
 	private string appHash = "R3dN1t!";
 
-	//private string responseURL = "http://thepastoapps.com/proyectos/rednit/response/response.php";
-	//private string responseAssets = "http://thepastoapps.com/proyectos/rednit/response/assets/images/";
+	private string responseURL = "http://thepastoapps.com/proyectos/rednit/response/response.php";
+	private string responseAssets = "http://thepastoapps.com/proyectos/rednit/response/assets/images/";
 
-	private string responseURL = "http://localhost/betterpixel/rednit/response/response.php";
-	private string responseAssets = "http://localhost/betterpixel/rednit/response/assets/images/";
+	//private string responseURL = "http://localhost/betterpixel/rednit/response/response.php";
+	//private string responseAssets = "http://localhost/betterpixel/rednit/response/assets/images/";
 	private string Uid;
 
 	private float loadTime;
