@@ -2,7 +2,6 @@ using UnityEngine;
 using System;
 using System.IO;
 using System.Collections;
-using System.Data;
 using System.Text;
 
 public class dbAccess : MonoBehaviour {
