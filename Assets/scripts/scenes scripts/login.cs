@@ -14,6 +14,9 @@ public class login : MonoBehaviour {
 
 		ArrayList result = GMS.db.BasicQueryArray ("select id, email, nombre, fbid, fecha_nacimiento, sexo, foto, ciudad, busco_ciudad, busco_sexo, busco_edad_min, busco_edad_max from usuarios limit 1");
 		if (result.Count > 0) {
+
+			Debug.Log("user DB: " + ((string[])result [0])[1]);
+
 			GMS.userData.populateUser(  ((string[])result [0]) );
 
 			string filepath = Application.persistentDataPath + "/" + GMS.userData.foto;

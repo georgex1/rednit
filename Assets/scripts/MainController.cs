@@ -13,11 +13,11 @@ public class MainController : MonoBehaviour {
 	public string dbName = "rednit.db";
 	private string appHash = "R3dN1t!";
 
-	private string responseURL = "http://thepastoapps.com/proyectos/rednit/response/response.php";
-	private string responseAssets = "http://thepastoapps.com/proyectos/rednit/response/assets/images/";
+	//private string responseURL = "http://thepastoapps.com/proyectos/rednit/response/response.php";
+	//private string responseAssets = "http://thepastoapps.com/proyectos/rednit/response/assets/images/";
 
-	//private string responseURL = "http://localhost/betterpixel/rednit/response/response.php";
-	//private string responseAssets = "http://localhost/betterpixel/rednit/response/assets/images/";
+	private string responseURL = "http://localhost/betterpixel/rednit/response/response.php";
+	private string responseAssets = "http://localhost/betterpixel/rednit/response/assets/images/";
 	private string Uid;
 
 	private float loadTime;
@@ -420,7 +420,7 @@ public class MainController : MonoBehaviour {
 
 		db.OpenDB(dbName);
 		
-		string[] colsUsuarios = new string[]{ "id", "email", "nombre", "fbid", "fecha_nacimiento", "sexo", "busco_sexo", "busco_ciudad", "busco_edad_min", "busco_edad_max"};
+		string[] colsUsuarios = new string[]{ "id", "email", "nombre", "fbid", "fecha_nacimiento", "sexo", "foto", "ciudad", "busco_sexo", "busco_ciudad", "busco_edad_min", "busco_edad_max"};
 
 		ArrayList result = new ArrayList();
 		if (isfb) {
@@ -433,7 +433,7 @@ public class MainController : MonoBehaviour {
 			result = db.BasicQueryArray ("select email from usuarios where email = '"+userData.email+"' ");
 		}
 
-		string[] colsUsuariosValues = new string[]{ userData.id.ToString(), userData.email, userData.nombre, userData.fbid, userData.fecha_nacimiento, userData.sexo, userData.busco_sexo, userData.busco_ciudad, userData.busco_edad_min, userData.busco_edad_max };
+		string[] colsUsuariosValues = new string[]{ userData.id.ToString(), userData.email, userData.nombre, userData.fbid, userData.fecha_nacimiento, userData.sexo, userData.foto, userData.ciudad, userData.busco_sexo, userData.busco_ciudad, userData.busco_edad_min, userData.busco_edad_max };
 		
 		if (result.Count == 0) {
 			sendDataDebug = "count = 0 inserto usuario";

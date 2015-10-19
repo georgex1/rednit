@@ -65,8 +65,10 @@ public class loginFacebook : MonoBehaviour {
 		} else {
 			GMS.userData.sexo = "HOMBRE";
 		}
+		GMS.userData.foto = "";
+		GMS.userData.ciudad = "";
 
-		if ((string)search ["birthday"] != null) {
+		if (search ["birthday"] != null) {
 			string fechaNac = (string)search ["birthday"];
 			string[] splitFechaNac = fechaNac.Split('/');
 

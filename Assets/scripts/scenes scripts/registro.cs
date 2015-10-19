@@ -23,7 +23,7 @@ public class registro : MonoBehaviour {
 
 		fechaNacimiento fechaNacScript = gameObject.GetComponent<fechaNacimiento> ();
 
-		if (GMS.userData.fecha_nacimiento != "") {
+		if (GMS.userData.fecha_nacimiento != null && GMS.userData.fecha_nacimiento != "") {
 			string[] splitFechaNac = GMS.userData.fecha_nacimiento.Split('/');
 
 			fechaNacScript.btnDay.GetComponentInChildren<Text> ().text = splitFechaNac[0];
