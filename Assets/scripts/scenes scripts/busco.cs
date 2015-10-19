@@ -21,10 +21,15 @@ public class busco : MonoBehaviour {
 		GameObject GM = GameObject.Find ("MainController");
 		GMS = GM.GetComponent<MainController>();
 
-		if(GMS.userData.sexo == "HOMBRE"){
-			GameObject.Find ("MUJER").GetComponent<Toggle>().isOn = true;
-		}else{
-			GameObject.Find ("HOMBRE").GetComponent<Toggle>().isOn = true;
+		if (GMS.userData.busco_sexo != "") {
+			GameObject.Find (GMS.userData.busco_sexo).GetComponent<Toggle> ().isOn = true;
+		} else {
+
+			if (GMS.userData.sexo == "HOMBRE") {
+				GameObject.Find ("MUJER").GetComponent<Toggle> ().isOn = true;
+			} else {
+				GameObject.Find ("HOMBRE").GetComponent<Toggle> ().isOn = true;
+			}
 		}
 
 		btnDesde.GetComponentInChildren<Text> ().text = GMS.userData.busco_edad_min;

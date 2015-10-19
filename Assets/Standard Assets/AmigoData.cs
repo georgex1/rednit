@@ -31,14 +31,14 @@ public class AmigoData {
 	}
 	
 	public void populateUser(string[] row_){
-		id = row_ [2];
-		aceptado = row_ [3];
-		nombre = row_ [4];
-		email = row_ [5];
-		edad = row_ [6];
-		sexo = row_ [7];
-		ciudad = row_ [8];
-		foto = row_ [9];
+		id = row_ [1];
+		aceptado = row_ [2];
+		nombre = row_ [3];
+		email = row_ [4];
+		edad = row_ [5];
+		sexo = row_ [6];
+		ciudad = row_ [7];
+		foto = row_ [8];
 	}
 	
 }

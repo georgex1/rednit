@@ -7,7 +7,7 @@ public class SQLiteQuery {
 	private Sqlite3.sqlite3  db;
 	private Sqlite3.Vdbe     vm;
 	public string[]         columnNames;
-	private int[]            columnTypes;
+	public int[]            columnTypes;
 	private int              bindIndex;
 	
 	public SQLiteQuery( SQLiteDB sqliteDb, string query )

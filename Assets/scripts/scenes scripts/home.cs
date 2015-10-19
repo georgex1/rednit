@@ -13,7 +13,7 @@ public class home : MonoBehaviour {
 
 		GMS.db.OpenDB(GMS.dbName);
 
-		ArrayList result = GMS.db.BasicQueryArray ("select * from amigos_usuarios where aceptado = '0' ");
+		ArrayList result = GMS.db.BasicQueryArray ("select usuarios_id, personas_id, aceptado, nombre, email, edad, sexo, ciudad, foto from amigos_usuarios where aceptado = '0' ");
 		GMS.db.CloseDB();
 
 		GameObject OptionDefault = GameObject.Find("DDItems/PanelMask/PanelScroll/Option");
