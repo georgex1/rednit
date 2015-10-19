@@ -67,8 +67,9 @@ public class loginFacebook : MonoBehaviour {
 		}
 		GMS.userData.foto = "";
 		GMS.userData.ciudad = "";
+		GMS.userData.fecha_nacimiento = "01/01/1984";
 
-		if (search ["birthday"] != null) {
+		/*if (search ["birthday"] != null) {
 			string fechaNac = (string)search ["birthday"];
 			string[] splitFechaNac = fechaNac.Split('/');
 
@@ -79,7 +80,7 @@ public class loginFacebook : MonoBehaviour {
 
 				GMS.userData.fecha_nacimiento = GMS.userData.date_day + "/" + GMS.userData.date_month + "/" + GMS.userData.date_year;
 			}
-		}
+		}*/
 		
 
 		GMS.SendMessage ("loginFacebook");
