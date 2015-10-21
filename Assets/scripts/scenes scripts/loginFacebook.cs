@@ -57,9 +57,12 @@ public class loginFacebook : MonoBehaviour {
 
 		IDictionary search = (IDictionary) Json.Deserialize (result.Text);
 
+		GMS.userData.email = "";
 		GMS.userData.fbid = (string)search ["id"];
 		GMS.userData.nombre = (string)search ["first_name"] + ' '+ (string)search ["last_name"];
-		GMS.userData.email = (string)search ["email"];
+		if (search ["email"] != null) {
+			GMS.userData.email = (string)search ["email"];
+		}
 		if ((string)search ["gender"] == "female") {
 			GMS.userData.sexo = "MUJER";
 		} else {
@@ -82,8 +85,8 @@ public class loginFacebook : MonoBehaviour {
 			}
 		}*/
 		
-
-		GMS.SendMessage ("loginFacebook");
+		GMS.loginFacebook ();
+		//GMS.SendMessage ("loginFacebook");
 	}
 }
 

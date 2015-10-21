@@ -46,9 +46,10 @@ public class amigos : MonoBehaviour {
 		Debug.Log ("id opcion: " + idOpcion[1]);
 
 		GMS.db.OpenDB(GMS.dbName);
-		ArrayList result = GMS.db.BasicQueryArray ("select usuarios_id, amigos_id, aceptado, nombre, email, edad, sexo, ciudad, foto from amigos where amigos_id = '" +idOpcion[1]+ "' ");
+		ArrayList result = GMS.db.BasicQueryArray ("select usuarios_id, amigos_id, aceptado, nombre, email, edad, sexo, ciudad, foto, chat_group from amigos where amigos_id = '" +idOpcion[1]+ "' ");
 
 		GMS.amigoData.populateUser (((string[])result [0]));
+		GMS.amigoData.chat_group = ((string[])result [0]) [9];
 
 		GMS.db.CloseDB();
 

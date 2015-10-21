@@ -50,7 +50,9 @@ public class registro : MonoBehaviour {
 			}
 		}
 
-		email.transform.parent.GetComponent<InputField>().text = GMS.userData.email;
+		if (GMS.userData.email != "" && GMS.userData.email != null) {
+			email.transform.parent.GetComponent<InputField> ().text = GMS.userData.email;
+		}
 		nombre.transform.parent.GetComponent<InputField>().text = GMS.userData.nombre;
 		ciudad.transform.parent.GetComponent<InputField>().text = GMS.userData.ciudad;
 		sexo = GMS.userData.sexo;
@@ -58,6 +60,8 @@ public class registro : MonoBehaviour {
 		if (PlayerPrefs.GetString ("busco_completo") != "1") {
 			menuObj.SetActive(false);
 		}
+
+		GMS.userData.temp_img = GMS.userData.foto;
 
 		Debug.Log ("datos user: " + nombre.GetComponent<Text>().text + email.GetComponent<Text>().text + ciudad.GetComponent<Text>().text);
 	}
@@ -92,8 +96,6 @@ public class registro : MonoBehaviour {
 			GMS.userData.ciudad = ciudad.GetComponent<Text>().text;
 			GMS.userData.fecha_nacimiento = format_birthDate;
 			GMS.userData.sexo = sexo;
-
-			GMS.userData.foto = GMS.userData.temp_img;
 
 			GMS.showLoading(true);
 

@@ -38,7 +38,7 @@ public class dbAccess : MonoBehaviour {
 			
 			//Debug.Log( "tipo: " + qr.GetType() );
 			foreach(string colName in qr.columnNames){
-				Debug.Log("col type: " + qr.columnTypes[j]);
+
 				if(qr.columnTypes[j] == 1){
 					row [j] = qr.GetInteger(colName).ToString();
 				}else{

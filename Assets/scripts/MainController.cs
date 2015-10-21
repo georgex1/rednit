@@ -70,8 +70,8 @@ public class MainController : MonoBehaviour {
 		colTypes = new string[]{"INT", "TEXT", "TEXT", "TEXT", "TEXT", "TEXT", "TEXT", "TEXT", "TEXT", "TEXT"};
 		db.CreateTable ("amigos_usuarios", cols, colTypes);
 
-		cols = new string[]{"id", "usuarios_id", "amigos_id", "aceptado", "nombre", "email", "edad", "sexo", "ciudad", "foto"};
-		colTypes = new string[]{"INT", "TEXT", "TEXT", "TEXT", "TEXT", "TEXT", "TEXT", "TEXT", "TEXT", "TEXT"};
+		cols = new string[]{"id", "usuarios_id", "amigos_id", "aceptado", "nombre", "email", "edad", "sexo", "ciudad", "foto", "chat_group"};
+		colTypes = new string[]{"INT", "TEXT", "TEXT", "TEXT", "TEXT", "TEXT", "TEXT", "TEXT", "TEXT", "TEXT", "TEXT"};
 		db.CreateTable ("amigos", cols, colTypes);
 
 		cols = new string[]{"id", "func", "sfields", "svalues"};
@@ -121,6 +121,7 @@ public class MainController : MonoBehaviour {
 
 		StartCoroutine (call_sync());
 		StartCoroutine (get_updates ());
+		StartCoroutine (checkDownloadImages());
 
 		//ej sync:
 		/*string[] fields = {"puntos", "kilometros", "perros_id", "usuarios_id"};
@@ -189,6 +190,7 @@ public class MainController : MonoBehaviour {
 				try{
 					form.AddField(vars_, values[index]);
 				}catch(Exception e){
+					Debug.Log("error en variable: "+index + " | " + e);
 					sendDataDebug = "error en variable: "+index;
 				}
 			}else{
@@ -314,8 +316,8 @@ public class MainController : MonoBehaviour {
 							db.OpenDB(dbName);
 							
 							//cargar personas
-							string[] cols = new string[]{ "usuarios_id", "amigos_id", "aceptado", "nombre", "email", "edad", "sexo", "ciudad", "foto"};
-							string[] colsVals = new string[]{ userData.id.ToString(), (string)reponseContent["id"], "1", (string)reponseContent["nombre"], (string)reponseContent["email"], (string)reponseContent["edad"], (string)reponseContent["sexo"], (string)reponseContent["ciudad"], (string)reponseContent["foto"] };
+							string[] cols = new string[]{ "usuarios_id", "amigos_id", "aceptado", "nombre", "email", "edad", "sexo", "ciudad", "foto", "chat_group"};
+							string[] colsVals = new string[]{ userData.id.ToString(), (string)reponseContent["id"], "1", (string)reponseContent["nombre"], (string)reponseContent["email"], (string)reponseContent["edad"], (string)reponseContent["sexo"], (string)reponseContent["ciudad"], (string)reponseContent["foto"], (string)reponseContent["chat_group"] };
 							
 							db.InsertIgnoreInto("amigos", cols, colsVals, (string)reponseContent["id"]);
 							
@@ -504,6 +506,35 @@ public class MainController : MonoBehaviour {
 		}
 	}
 
+	private IEnumerator checkDownloadImages(){
+		yield return new WaitForSeconds (3);
+		db.OpenDB (dbName);
+		
+		ArrayList result = db.BasicQueryArray ("select foto from personas ");
+		if (result.Count > 0) {
+			foreach (string[] row_ in result) {
+				try_download_persona_imagen(row_[0]);
+			}
+		}
+
+		result = db.BasicQueryArray ("select foto from amigos_usuarios ");
+		if (result.Count > 0) {
+			foreach (string[] row_ in result) {
+				try_download_persona_imagen(row_[0]);
+			}
+		}
+
+		result = db.BasicQueryArray ("select foto from amigos ");
+		if (result.Count > 0) {
+			foreach (string[] row_ in result) {
+				try_download_persona_imagen(row_[0]);
+			}
+		}
+		db.CloseDB ();
+
+		StartCoroutine (checkDownloadImages());
+	}
+	
 	IEnumerator downloadImg (string image_name){
 		if (image_name != "") {
 			Texture2D texture = new Texture2D (1, 1);
@@ -519,17 +550,70 @@ public class MainController : MonoBehaviour {
 	}
 
 	public void upload_user_foto(){
-		//subir imagen
-		byte[] fileData = File.ReadAllBytes (Application.persistentDataPath + "/" + userData.foto);
 
-		Debug.Log ("try upload: imagen usuario");
-		string[] cols2 = new string[]{"usuarios_id", "fbid", "fileUpload", "usuario_foto", "fecha_nacimiento", "ciudad", "sexo", "nombre", "email"};
-		string[] data2 = new string[]{userData.id.ToString (), userData.fbid, "imagen_usuario", userData.foto, userData.fecha_nacimiento, userData.ciudad, userData.sexo, userData.nombre, userData.email };
-		try {
-			sendData (cols2, data2, "upload_perfil", fileData);
-		} catch (IOException e) {
-			Debug.Log (e);
+		if (userData.foto != userData.temp_img) {
+			userData.foto = userData.temp_img;
+			byte[] fileData = File.ReadAllBytes (Application.persistentDataPath + "/" + userData.foto);
+
+			string[] cols2 = new string[] {
+				"usuarios_id",
+				"fbid",
+				"fileUpload",
+				"usuario_foto",
+				"fecha_nacimiento",
+				"ciudad",
+				"sexo",
+				"nombre",
+				"email"
+			};
+			string[] data2 = new string[] {
+				userData.id.ToString (),
+				userData.fbid,
+				"imagen_usuario",
+				userData.foto,
+				userData.fecha_nacimiento,
+				userData.ciudad,
+				userData.sexo,
+				userData.nombre,
+				userData.email
+			};
+
+			try {
+				sendData (cols2, data2, "upload_perfil", fileData);
+			} catch (IOException e) {
+				Debug.Log (e);
+			}
+		} else {
+			
+			string[] cols2 = new string[] {
+				"usuarios_id",
+				"fbid",
+				"usuario_foto",
+				"fecha_nacimiento",
+				"ciudad",
+				"sexo",
+				"nombre",
+				"email"
+			};
+			string[] data2 = new string[] {
+				userData.id.ToString (),
+				userData.fbid,
+				userData.foto,
+				userData.fecha_nacimiento,
+				userData.ciudad,
+				userData.sexo,
+				userData.nombre,
+				userData.email
+			};
+			
+			try {
+				sendData (cols2, data2, "upload_perfil");
+			} catch (IOException e) {
+				Debug.Log (e);
+			}
 		}
+
+
 	}
 
 	public int generateId(){
@@ -637,19 +721,32 @@ public class MainController : MonoBehaviour {
 		popup.SetActive (false);
 	}
 
+	public bool checkImageExists(string image_){
+		string filepath = Application.persistentDataPath + "/" + image_;
+		if (File.Exists (filepath)) {
+			return true;
+		} else {
+			return false;
+		}
+	}
 
 	public Sprite spriteFromFile(string image_){
 		Debug.Log ("spriteFromFile: " + image_);
 		Sprite sprite = new Sprite ();
 		if (image_ != "") {
+			string filepath = Application.persistentDataPath + "/" + image_;
+			if (File.Exists (filepath)) {
 
-			byte[] fileData = File.ReadAllBytes (Application.persistentDataPath + "/" + image_);
-			Texture2D tex = new Texture2D (2, 2);
-			tex.LoadImage (fileData); //..this will auto-resize the texture dimensions.
+				byte[] fileData = File.ReadAllBytes (filepath);
+				Texture2D tex = new Texture2D (2, 2);
+				tex.LoadImage (fileData); //..this will auto-resize the texture dimensions.
 
-			Debug.Log (tex.width + "x" + tex.height);
-			sprite = Sprite.Create (tex, new Rect (0, 0, tex.width, tex.height), new Vector2 (0f, 0f));
-
+				Debug.Log (tex.width + "x" + tex.height);
+				sprite = Sprite.Create (tex, new Rect (0, 0, tex.width, tex.height), new Vector2 (0f, 0f));
+			}else{
+				Texture2D tex = Resources.Load("default") as Texture2D;
+				sprite = Sprite.Create (tex, new Rect (0, 0, tex.width, tex.height), new Vector2 (0f, 0f));
+			}
 		} else {
 			Texture2D tex = Resources.Load("default") as Texture2D;
 			sprite = Sprite.Create (tex, new Rect (0, 0, tex.width, tex.height), new Vector2 (0f, 0f));

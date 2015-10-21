@@ -10,7 +10,7 @@ public class AmigoData {
 	edad,
 	sexo,
 	ciudad,
-	foto;
+	foto, chat_group;
 	
 	//public Dictionary<string, int> ExercisesMetricas;
 	
@@ -24,6 +24,7 @@ public class AmigoData {
 		ciudad = "";
 		sexo = "";
 		foto = "";
+		chat_group = "";
 	}
 	
 	public void save(){

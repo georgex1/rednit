@@ -103,12 +103,20 @@ public class busco : MonoBehaviour {
 			
 			GMS.userData.busco_sexo = busco_sexo;
 			GMS.userData.busco_ciudad = busco_ciudad.GetComponent<Text>().text;
-			
+
+			GMS.showLoading(true);
+
 			GMS.perfil_busco();
 
 			PlayerPrefs.SetString("busco_completo", "1");
-			Application.LoadLevel ("buscar");
+			StartCoroutine(gotoNext());
 		}
 		
+	}
+
+	private IEnumerator gotoNext(){
+		yield return new WaitForSeconds (2);
+		GMS.showLoading(false);
+		Application.LoadLevel ("buscar");
 	}
 }

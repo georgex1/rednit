@@ -15,26 +15,36 @@ public class buscar : MonoBehaviour {
 	public GameObject PanelAvisoBtn;
 
 	private string actualPersona;
+	private bool hasOne;
 
 	// Use this for initialization
 	void Start () {
+		hasOne = false;
 	
 		GameObject GM = GameObject.Find ("MainController");
 		GMS = GM.GetComponent<MainController>();
 
 		GMS.db.OpenDB(GMS.dbName);
-		ArrayList result = GMS.db.BasicQueryArray ("select id, nombre, edad, sexo, ciudad, foto from personas where visto = '0' ");
+		ArrayList result = GMS.db.BasicQueryArray ("select id, nombre, edad, sexo, ciudad, foto from personas where visto = '0' AND id NOT IN " +
+		                                           "( select personas_id from amigos_usuarios where usuarios_id = '"+GMS.userData.id+"' ) ");
+
+		/*ArrayList result = GMS.db.BasicQueryArray ("select id, nombre, edad, sexo, ciudad, foto from personas where visto = '0' ");*/
 		GMS.db.CloseDB();
 
 		if (result.Count > 0) {
 
 			foreach (string[] row_ in result) {
-				actualPersona = row_[0].ToString();
-				PersonaNombre.text = row_[1];
-				PersonaEdad.text = row_[2];
-				PersonaCiudad.text = row_[4];
 
-				PersonaFoto.sprite = GMS.spriteFromFile(row_[5]);
+				if (GMS.checkImageExists(row_[5])) {
+					hasOne = true;
+
+					actualPersona = row_[0].ToString();
+					PersonaNombre.text = row_[1];
+					PersonaEdad.text = row_[2];
+					PersonaCiudad.text = row_[4];
+
+					PersonaFoto.sprite = GMS.spriteFromFile(row_[5]);
+				}
 			}
 
 			if(result.Count < 3){
@@ -42,11 +52,19 @@ public class buscar : MonoBehaviour {
 			}
 
 			GMS.actualizando = false;
+
+			if(!hasOne){
+				NoPersonas();
+			}
 		} else {
-			PanelAvisoBtn.SetActive (true);
-			PanelAviso.SetActive(true);
-			GMS.actualizando = true;
+			NoPersonas();
 		}
+	}
+
+	private void NoPersonas(){
+		PanelAvisoBtn.SetActive (true);
+		PanelAviso.SetActive(true);
+		GMS.actualizando = true;
 	}
 
 	public void actualizar(){
