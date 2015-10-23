@@ -1,5 +1,6 @@
 ﻿using UnityEngine;
 using System.Collections;
+using UnityEngine.UI;
 
 public class Menu : MonoBehaviour {
 
@@ -7,9 +8,17 @@ public class Menu : MonoBehaviour {
 	private string AnimName = "menu";
 	private float resetTime = 0.00F;
 
+	private MainController GMS;
+	public GameObject MenuUNombre;
+	public GameObject MenuUImagen;
+
 	// Use this for initialization
 	void Start () {
-	
+		GameObject GM = GameObject.Find ("MainController");
+		GMS = GM.GetComponent<MainController>();
+
+		MenuUImagen.GetComponent<Image>().sprite = GMS.spriteFromFile( GMS.userData.foto );
+		MenuUNombre.GetComponent<Text>().text = GMS.userData.nombre;
 	}
 	
 	public void cargarEscena(string escena){

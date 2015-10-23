@@ -15,11 +15,14 @@ public class busco : MonoBehaviour {
 	public string busco_sexo;
 
 	public GameObject menuObj;
+	public GameObject headerUImagen;
 
 	// Use this for initialization
 	void Start () {
 		GameObject GM = GameObject.Find ("MainController");
 		GMS = GM.GetComponent<MainController>();
+
+		headerUImagen.GetComponent<Image>().sprite = GMS.spriteFromFile( GMS.userData.foto );
 
 		if (GMS.userData.busco_sexo != "") {
 			GameObject.Find (GMS.userData.busco_sexo).GetComponent<Toggle> ().isOn = true;
