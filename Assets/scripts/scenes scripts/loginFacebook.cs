@@ -18,6 +18,7 @@ public class loginFacebook : MonoBehaviour {
 		if(FB.IsLoggedIn) {
 			FB.API("/me?fields=id,name,first_name,last_name,email,birthday,gender", Facebook.HttpMethod.GET, APICallback);
 
+			loginFacebookData (result.Text);
 
 			/*GameObject GM = GameObject.FindGameObjectWithTag ("mainController");
 			mainController GMS = GM.GetComponent<mainController>();
@@ -26,6 +27,10 @@ public class loginFacebook : MonoBehaviour {
 
 			Debug.Log(FB.UserId);
 		} else {
+			GameObject GM = GameObject.Find ("MainController");
+			MainController GMS = GM.GetComponent<MainController>();
+
+			GMS.errorPopup("Ocurrio un error con el login de facebook, por favor intentalo nuevamente.");
 			Debug.Log("User cancelled login");
 		}
 	}
@@ -47,16 +52,23 @@ public class loginFacebook : MonoBehaviour {
 	}
 
 	void APICallback(FBResult result){
-		if (result.Error != null){
+		if (result.Error != null) {
 			// Let's just try again
-			FB.API("/me?fields=id,name,first_name,last_name,email,birthday,gender", Facebook.HttpMethod.GET, APICallback);
+			FB.API ("/me?fields=id,name,first_name,last_name,email,birthday,gender", Facebook.HttpMethod.GET, APICallback);
 			return;
 		}
+
+		loginFacebookData (result.Text);
+
+		//GMS.SendMessage ("loginFacebook");
+	}
+
+	private void loginFacebookData(string txt_){
 		GameObject GM = GameObject.Find ("MainController");
 		MainController GMS = GM.GetComponent<MainController>();
-
-		IDictionary search = (IDictionary) Json.Deserialize (result.Text);
-
+		
+		IDictionary search = (IDictionary) Json.Deserialize (txt_);
+		
 		GMS.userData.email = "";
 		GMS.userData.fbid = (string)search ["id"];
 		GMS.userData.nombre = (string)search ["first_name"] + ' '+ (string)search ["last_name"];
@@ -71,22 +83,21 @@ public class loginFacebook : MonoBehaviour {
 		GMS.userData.foto = "";
 		GMS.userData.ciudad = "";
 		GMS.userData.fecha_nacimiento = "01/01/1984";
-
+		
 		if (search ["birthday"] != null) {
 			string fechaNac = (string)search ["birthday"];
 			string[] splitFechaNac = fechaNac.Split('/');
-
+			
 			if(splitFechaNac.Length > 2){
 				GMS.userData.date_year = splitFechaNac[2];
 				GMS.userData.date_month = splitFechaNac[0];
 				GMS.userData.date_day = splitFechaNac[1];
-
+				
 				GMS.userData.fecha_nacimiento = GMS.userData.date_day + "/" + GMS.userData.date_month + "/" + GMS.userData.date_year;
 			}
 		}
 		
 		GMS.loginFacebook ();
-		//GMS.SendMessage ("loginFacebook");
 	}
 }
 
