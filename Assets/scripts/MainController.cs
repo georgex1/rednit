@@ -37,6 +37,7 @@ public class MainController : MonoBehaviour {
 
 	//notificaciones
 	public notifications notificationsScript;
+	public string appName;
 
 	//popup
 	public GameObject popup;
@@ -90,6 +91,7 @@ public class MainController : MonoBehaviour {
 		loadTime = 0;
 		db = GetComponent<dbAccess>();
 		createDb ();
+		appName = "Rednit";
 
 		if (!PlayerPrefs.HasKey ("busco_completo")) {
 			PlayerPrefs.SetString("busco_completo", "0");
