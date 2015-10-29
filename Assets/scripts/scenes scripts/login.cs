@@ -19,15 +19,25 @@ public class login : MonoBehaviour {
 
 			GMS.userData.populateUser(  ((string[])result [0]) );
 
-			string filepath = Application.persistentDataPath + "/" + GMS.userData.foto;
-			Debug.Log("usuario foto: " + Application.persistentDataPath + "/" + GMS.userData.foto);
-			if (!File.Exists (filepath)) {
+
+			if(GMS.userData.foto == ""){
+				Debug.Log("no photo");
 				Application.LoadLevel ("perfil");
-			}else {
-				if(PlayerPrefs.GetString("busco_completo") == "1"){
-					Application.LoadLevel ("buscar");
-				}else{
-					Application.LoadLevel ("busco");
+				return;
+			}else{
+				string filepath = Application.persistentDataPath + "/" + GMS.userData.foto;
+				Debug.Log("usuario foto: " + Application.persistentDataPath + "/" + GMS.userData.foto);
+				if (!File.Exists (filepath)) {
+					Application.LoadLevel ("perfil");
+					return;
+				}else {
+					if(PlayerPrefs.GetString("busco_completo") == "1"){
+						Application.LoadLevel ("buscar");
+						return;
+					}else{
+						Application.LoadLevel ("busco");
+						return;
+					}
 				}
 			}
 		}

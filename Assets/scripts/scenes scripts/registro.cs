@@ -40,7 +40,7 @@ public class registro : MonoBehaviour {
 		}
 
 		if (GMS.userData.ciudad != "") {
-			ciudad.transform.parent.GetComponent<InputField>().text = GMS.userData.ciudad;
+			ciudad.GetComponent<Text>().text = GMS.userData.ciudad;
 		}
 
 		if(GMS.userData.foto != ""){
@@ -53,8 +53,9 @@ public class registro : MonoBehaviour {
 		if (GMS.userData.email != "" && GMS.userData.email != null) {
 			email.transform.parent.GetComponent<InputField> ().text = GMS.userData.email;
 		}
+
 		nombre.transform.parent.GetComponent<InputField>().text = GMS.userData.nombre;
-		ciudad.transform.parent.GetComponent<InputField>().text = GMS.userData.ciudad;
+		//ciudad.GetComponent<Text>().text = GMS.userData.ciudad;
 		sexo = GMS.userData.sexo;
 
 		if (PlayerPrefs.GetString ("busco_completo") != "1") {
