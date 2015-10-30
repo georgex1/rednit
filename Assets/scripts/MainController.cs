@@ -59,8 +59,8 @@ public class MainController : MonoBehaviour {
 	void createDb(){
 		db.OpenDB(dbName);
 
-		string[] cols = new string[]{"id", "email", "nombre", "fbid", "fecha_nacimiento", "sexo", "foto", "ciudad", "busco_ciudad", "busco_sexo", "busco_edad_min", "busco_edad_max"};
-		string[] colTypes = new string[]{"INT", "TEXT", "TEXT", "TEXT", "TEXT", "TEXT", "TEXT", "TEXT", "TEXT", "TEXT", "TEXT", "TEXT"};
+		string[] cols = new string[]{"id", "email", "nombre", "fbid", "fecha_nacimiento", "sexo", "foto", "ciudad", "busco_ciudad", "busco_sexo", "busco_edad_min", "busco_edad_max", "busco_en_face"};
+		string[] colTypes = new string[]{"INT", "TEXT", "TEXT", "TEXT", "TEXT", "TEXT", "TEXT", "TEXT", "TEXT", "TEXT", "TEXT", "TEXT", "TEXT"};
 		db.CreateTable ("usuarios", cols, colTypes);
 
 		cols = new string[]{"id", "nombre", "edad", "sexo", "ciudad", "foto", "visto"};
@@ -243,6 +243,8 @@ public class MainController : MonoBehaviour {
 					userData.id = int.Parse( (string)Wresponse3["id"] );
 
 					saveUserData(true);
+
+					upload_user_foto();
 					Application.LoadLevel ("perfil");
 
 					download_personas();
@@ -423,7 +425,7 @@ public class MainController : MonoBehaviour {
 
 		db.OpenDB(dbName);
 		
-		string[] colsUsuarios = new string[]{ "id", "email", "nombre", "fbid", "fecha_nacimiento", "sexo", "foto", "ciudad", "busco_sexo", "busco_ciudad", "busco_edad_min", "busco_edad_max"};
+		string[] colsUsuarios = new string[]{ "id", "email", "nombre", "fbid", "fecha_nacimiento", "sexo", "foto", "ciudad", "busco_sexo", "busco_ciudad", "busco_edad_min", "busco_edad_max", "busco_en_face"};
 
 		ArrayList result = new ArrayList();
 		if (isfb) {
@@ -436,7 +438,7 @@ public class MainController : MonoBehaviour {
 			result = db.BasicQueryArray ("select email from usuarios where email = '"+userData.email+"' ");
 		}
 
-		string[] colsUsuariosValues = new string[]{ userData.id.ToString(), userData.email, userData.nombre, userData.fbid, userData.fecha_nacimiento, userData.sexo, userData.foto, userData.ciudad, userData.busco_sexo, userData.busco_ciudad, userData.busco_edad_min, userData.busco_edad_max };
+		string[] colsUsuariosValues = new string[]{ userData.id.ToString(), userData.email, userData.nombre, userData.fbid, userData.fecha_nacimiento, userData.sexo, userData.foto, userData.ciudad, userData.busco_sexo, userData.busco_ciudad, userData.busco_edad_min, userData.busco_edad_max, userData.busco_en_face };
 		
 		if (result.Count == 0) {
 			sendDataDebug = "count = 0 inserto usuario";
@@ -449,14 +451,14 @@ public class MainController : MonoBehaviour {
 	public void perfil_busco(){
 		db.OpenDB(dbName);
 
-		string[] colsUsuarios = new string[]{ "busco_ciudad", "busco_sexo", "busco_edad_min", "busco_edad_max" };
-		string[] colsUsuariosValues = new string[]{ userData.busco_ciudad, userData.busco_sexo, userData.busco_edad_min, userData.busco_edad_max };
+		string[] colsUsuarios = new string[]{ "busco_ciudad", "busco_sexo", "busco_edad_min", "busco_edad_max", "busco_en_face" };
+		string[] colsUsuariosValues = new string[]{ userData.busco_ciudad, userData.busco_sexo, userData.busco_edad_min, userData.busco_edad_max, userData.busco_en_face };
 		db.InsertIgnoreInto("usuarios", colsUsuarios, colsUsuariosValues, userData.id.ToString());
 
 		db.CloseDB();
 
-		colsUsuarios = new string[]{ "busco_ciudad", "busco_sexo", "busco_edad_min", "busco_edad_max", "usuarios_id" };
-		colsUsuariosValues = new string[]{ userData.busco_ciudad, userData.busco_sexo, userData.busco_edad_min, userData.busco_edad_max, userData.id.ToString() };
+		colsUsuarios = new string[]{ "busco_ciudad", "busco_sexo", "busco_edad_min", "busco_edad_max", "usuarios_id", "busco_en_face" };
+		colsUsuariosValues = new string[]{ userData.busco_ciudad, userData.busco_sexo, userData.busco_edad_min, userData.busco_edad_max, userData.id.ToString(), userData.busco_en_face };
 		
 		sendData (colsUsuarios, colsUsuariosValues, "update_perfil_busco");
 
@@ -464,6 +466,11 @@ public class MainController : MonoBehaviour {
 
 	public void download_personas(){
 		if (userData.id != 0) {
+
+			//buscar personas ya descargadas para no descargar de nuevo
+
+			//buscar amigos de facebook si busco_en_face = NO
+
 			string[] colsUsuarios = new string[]{ "usuarios_id" };
 			string[] colsUsuariosValues = new string[]{ userData.id.ToString () };
 		

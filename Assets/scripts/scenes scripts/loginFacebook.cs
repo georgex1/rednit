@@ -4,8 +4,12 @@ using Facebook.MiniJSON;
 
 public class loginFacebook : MonoBehaviour {
 	private bool enabled = false;
+	private MainController GMS;
 
 	void Start () {
+		GameObject GM = GameObject.Find ("MainController");
+		GMS = GM.GetComponent<MainController>();
+
 		FB.Init(SetInit, OnHideUnity);
 	}
 
@@ -20,15 +24,12 @@ public class loginFacebook : MonoBehaviour {
 
 			//loginFacebookData (result.Text);
 
-			/*GameObject GM = GameObject.FindGameObjectWithTag ("mainController");
-			mainController GMS = GM.GetComponent<mainController>();
+			/*
 			GMS.FbUserId = FB.UserId;
 			print (GMS.FbUserId);*/
 
 			Debug.Log(FB.UserId);
 		} else {
-			GameObject GM = GameObject.Find ("MainController");
-			MainController GMS = GM.GetComponent<MainController>();
 
 			GMS.errorPopup("Ocurrio un error con el login de facebook, por favor intentalo nuevamente.");
 			Debug.Log("User cancelled login");
@@ -64,9 +65,7 @@ public class loginFacebook : MonoBehaviour {
 	}
 
 	private void loginFacebookData(string txt_){
-		GameObject GM = GameObject.Find ("MainController");
-		MainController GMS = GM.GetComponent<MainController>();
-		
+
 		IDictionary search = (IDictionary) Json.Deserialize (txt_);
 		
 		GMS.userData.email = "";
@@ -93,15 +92,40 @@ public class loginFacebook : MonoBehaviour {
 					GMS.userData.date_year = splitFechaNac[2];
 					GMS.userData.date_month = splitFechaNac[0];
 					GMS.userData.date_day = splitFechaNac[1];
-					
+					GMS.userData.busco_en_face = "SI";
+
 					GMS.userData.fecha_nacimiento = GMS.userData.date_day + "/" + GMS.userData.date_month + "/" + GMS.userData.date_year;
 				}
 			}
 		}catch(UnityException e){
 			Debug.Log("error! " + e);
 		}
+		GMS.showLoading(true);
+		FB.API("me/picture?type=large", Facebook.HttpMethod.GET, GetPicture);
 
+	}
+
+	private void GetPicture(FBResult result)
+	{
+		if (result.Error == null) {
+
+			GMS.userData.temp_img = GMS.generateId ().ToString () + ".png";
+			StartCoroutine (GMS.saveTextureToFile (result.Texture, GMS.userData.temp_img, 'u'));
+
+			StartCoroutine (loginFacebook_ ());
+
+			/*Image img = UIFBProfilePic.GetComponent<Image>();
+			img.sprite = Sprite.Create(result.Texture, new Rect(0,0, 128, 128), new Vector2());*/
+		} else {
+			GMS.showLoading(false);
+			GMS.errorPopup("Ocurrio un error con el login de facebook, por favor intentalo nuevamente.");
+		}
 		
+	}
+
+	private IEnumerator loginFacebook_(){
+		yield return new WaitForSeconds (2);
+		GMS.showLoading(false);
 		GMS.loginFacebook ();
 	}
 }

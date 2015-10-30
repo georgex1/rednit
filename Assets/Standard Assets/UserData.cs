@@ -20,7 +20,8 @@ public class UserData {
 	public string busco_ciudad,
 		busco_sexo,
 		busco_edad_min,
-		busco_edad_max;
+		busco_edad_max,
+		busco_en_face;
 
 	public string date_month;
 	public string date_day;
@@ -43,6 +44,7 @@ public class UserData {
 		foto = temp_img = "";
 		busco_edad_min = "18";
 		busco_edad_max = "50";
+		busco_en_face = "SI";
 		//ExercisesMetricas = new Dictionary<string, int> ();
 	}
 

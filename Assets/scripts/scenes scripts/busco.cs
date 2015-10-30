@@ -98,6 +98,14 @@ public class busco : MonoBehaviour {
 		busco_sexo = sexo_;
 	}
 
+	public void changeBuscarFb(GameObject option){
+		if (option.GetComponent<Toggle> ().isOn) {
+			GMS.userData.busco_en_face = "SI";
+		} else {
+			GMS.userData.busco_en_face = "NO";
+		}
+	}
+
 	public void submit(){
 
 		if(!GMS.haveInet){

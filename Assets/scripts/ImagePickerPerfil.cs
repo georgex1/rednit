@@ -38,24 +38,6 @@ public class ImagePickerPerfil : MonoBehaviour {
 		StartCoroutine (GMS.saveTextureToFile (imageTexture.renderer.material.mainTexture as Texture2D, GMS.userData.temp_img, 'u'));
 		StartCoroutine (loadImage ());
 		
-		/*
-		Texture2D savedTexture = imageTexture.renderer.material.mainTexture as Texture2D;
-		Texture2D newTexture = new Texture2D(savedTexture.width, savedTexture.height, TextureFormat.ARGB32, false);
-		
-		newTexture.SetPixels(0,0, savedTexture.width, savedTexture.height, savedTexture.GetPixels());
-		newTexture.Apply();
-		
-		byte[] fileDataTS = newTexture.EncodeToPNG ();
-		
-		File.WriteAllBytes(Application.persistentDataPath + "/SavedScreen2.png", fileDataTS);
-		Debug.Log (Application.persistentDataPath + "/SavedScreen2.png");
-		
-		Debug.Log (savedTexture.width + "x" + savedTexture.height);
-		Sprite sprite = Sprite.Create (tex, new Rect(0,0, savedTexture.width, savedTexture.height), new Vector2(0f,0f));
-		
-		
-		GameObject.Find ("backImage").GetComponent<Image>().sprite = sprite;*/
-		
 	}
 
 	private void PickImageFinished (ePickImageFinishReason _reason, Texture2D _image)

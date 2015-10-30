@@ -48,6 +48,11 @@ public class registro : MonoBehaviour {
 			if (File.Exists (filepath)) {
 				GameObject.Find ("backImage").GetComponent<Image>().sprite = GMS.spriteFromFile(GMS.userData.foto);
 			}
+		}else if(GMS.userData.temp_img != ""){
+			string filepath = Application.persistentDataPath + "/" + GMS.userData.temp_img;
+			if (File.Exists (filepath)) {
+				GameObject.Find ("backImage").GetComponent<Image>().sprite = GMS.spriteFromFile(GMS.userData.temp_img);
+			}
 		}
 
 		if (GMS.userData.email != "" && GMS.userData.email != null) {
