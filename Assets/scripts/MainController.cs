@@ -26,6 +26,7 @@ public class MainController : MonoBehaviour {
 	public dbAccess db ;
 
 	public UserData userData;
+	public UserData userChangeData;
 	public AmigoData amigoData;
 
 	public bool haveInet;
@@ -59,12 +60,12 @@ public class MainController : MonoBehaviour {
 	void createDb(){
 		db.OpenDB(dbName);
 
-		string[] cols = new string[]{"id", "email", "nombre", "fbid", "fecha_nacimiento", "sexo", "foto", "ciudad", "busco_ciudad", "busco_sexo", "busco_edad_min", "busco_edad_max", "busco_en_face"};
-		string[] colTypes = new string[]{"INT", "TEXT", "TEXT", "TEXT", "TEXT", "TEXT", "TEXT", "TEXT", "TEXT", "TEXT", "TEXT", "TEXT", "TEXT"};
+		string[] cols = new string[]{"id", "email", "nombre", "fbid", "fecha_nacimiento", "sexo", "foto", "ciudad", "lat", "lng", "busco_ciudad", "busco_sexo", "busco_edad_min", "busco_edad_max", "busco_en_face", "fb_friends"};
+		string[] colTypes = new string[]{"INT", "TEXT", "TEXT", "TEXT", "TEXT", "TEXT", "TEXT", "TEXT", "TEXT", "TEXT", "TEXT", "TEXT", "TEXT", "TEXT", "TEXT", "TEXT"};
 		db.CreateTable ("usuarios", cols, colTypes);
 
-		cols = new string[]{"id", "nombre", "edad", "sexo", "ciudad", "foto", "visto"};
-		colTypes = new string[]{"INT", "TEXT", "TEXT", "TEXT", "TEXT", "TEXT", "TEXT"};
+		cols = new string[]{"id", "nombre", "edad", "sexo", "ciudad", "foto", "visto", "fbid"};
+		colTypes = new string[]{"INT", "TEXT", "TEXT", "TEXT", "TEXT", "TEXT", "TEXT", "TEXT"};
 		db.CreateTable ("personas", cols, colTypes);
 
 		cols = new string[]{"id", "usuarios_id", "personas_id", "aceptado", "nombre", "email", "edad", "sexo", "ciudad", "foto"};
@@ -264,8 +265,8 @@ public class MainController : MonoBehaviour {
 							db.OpenDB(dbName);
 
 							//cargar personas
-							string[] cols = new string[]{"id", "nombre", "edad", "sexo", "ciudad", "foto", "visto"};
-							string[] colsVals = new string[]{ (string)reponseContent["id"], (string)reponseContent["nombre"], (string)reponseContent["edad"], (string)reponseContent["sexo"], (string)reponseContent["ciudad"], (string)reponseContent["foto"], "0" };
+							string[] cols = new string[]{"id", "nombre", "edad", "sexo", "ciudad", "foto", "visto", "fbid"};
+							string[] colsVals = new string[]{ (string)reponseContent["id"], (string)reponseContent["nombre"], (string)reponseContent["edad"], (string)reponseContent["sexo"], (string)reponseContent["ciudad"], (string)reponseContent["foto"], "0", (string)reponseContent["fbid"] };
 							
 							db.InsertIgnoreInto("personas", cols, colsVals, (string)reponseContent["id"]);
 
@@ -425,7 +426,7 @@ public class MainController : MonoBehaviour {
 
 		db.OpenDB(dbName);
 		
-		string[] colsUsuarios = new string[]{ "id", "email", "nombre", "fbid", "fecha_nacimiento", "sexo", "foto", "ciudad", "busco_sexo", "busco_ciudad", "busco_edad_min", "busco_edad_max", "busco_en_face"};
+		string[] colsUsuarios = new string[]{ "id", "email", "nombre", "fbid", "fecha_nacimiento", "sexo", "foto", "ciudad", "busco_sexo", "busco_ciudad", "busco_edad_min", "busco_edad_max", "busco_en_face", "fb_friends"};
 
 		ArrayList result = new ArrayList();
 		if (isfb) {
@@ -438,7 +439,7 @@ public class MainController : MonoBehaviour {
 			result = db.BasicQueryArray ("select email from usuarios where email = '"+userData.email+"' ");
 		}
 
-		string[] colsUsuariosValues = new string[]{ userData.id.ToString(), userData.email, userData.nombre, userData.fbid, userData.fecha_nacimiento, userData.sexo, userData.foto, userData.ciudad, userData.busco_sexo, userData.busco_ciudad, userData.busco_edad_min, userData.busco_edad_max, userData.busco_en_face };
+		string[] colsUsuariosValues = new string[]{ userData.id.ToString(), userData.email, userData.nombre, userData.fbid, userData.fecha_nacimiento, userData.sexo, userData.foto, userData.ciudad, userData.busco_sexo, userData.busco_ciudad, userData.busco_edad_min, userData.busco_edad_max, userData.busco_en_face, userData.serializeFbFriends() };
 		
 		if (result.Count == 0) {
 			sendDataDebug = "count = 0 inserto usuario";
@@ -449,18 +450,28 @@ public class MainController : MonoBehaviour {
 	}
 
 	public void perfil_busco(){
-		db.OpenDB(dbName);
 
-		string[] colsUsuarios = new string[]{ "busco_ciudad", "busco_sexo", "busco_edad_min", "busco_edad_max", "busco_en_face" };
-		string[] colsUsuariosValues = new string[]{ userData.busco_ciudad, userData.busco_sexo, userData.busco_edad_min, userData.busco_edad_max, userData.busco_en_face };
-		db.InsertIgnoreInto("usuarios", colsUsuarios, colsUsuariosValues, userData.id.ToString());
+		//verificar si hubo cambio
+		if (userData.busco_ciudad != userChangeData.busco_ciudad || userData.busco_edad_max != userChangeData.busco_edad_max || userData.busco_edad_min != userChangeData.busco_edad_min || 
+			userData.busco_en_face != userChangeData.busco_en_face || userData.busco_sexo != userChangeData.busco_sexo) {
 
-		db.CloseDB();
+			db.OpenDB(dbName);
 
-		colsUsuarios = new string[]{ "busco_ciudad", "busco_sexo", "busco_edad_min", "busco_edad_max", "usuarios_id", "busco_en_face" };
-		colsUsuariosValues = new string[]{ userData.busco_ciudad, userData.busco_sexo, userData.busco_edad_min, userData.busco_edad_max, userData.id.ToString(), userData.busco_en_face };
-		
-		sendData (colsUsuarios, colsUsuariosValues, "update_perfil_busco");
+			//borrar personas locales
+			db.BasicQueryInsert("delete from personas where visto = '0' ");
+
+			
+			string[] colsUsuarios = new string[]{ "busco_ciudad", "busco_sexo", "busco_edad_min", "busco_edad_max", "busco_en_face", "fb_friends" };
+			string[] colsUsuariosValues = new string[]{ userData.busco_ciudad, userData.busco_sexo, userData.busco_edad_min, userData.busco_edad_max, userData.busco_en_face, userData.serializeFbFriends() };
+			db.InsertIgnoreInto("usuarios", colsUsuarios, colsUsuariosValues, userData.id.ToString());
+			
+			db.CloseDB();
+			
+			colsUsuarios = new string[]{ "busco_ciudad", "busco_sexo", "busco_edad_min", "busco_edad_max", "usuarios_id", "busco_en_face" };
+			colsUsuariosValues = new string[]{ userData.busco_ciudad, userData.busco_sexo, userData.busco_edad_min, userData.busco_edad_max, userData.id.ToString(), userData.busco_en_face };
+
+			sendData (colsUsuarios, colsUsuariosValues, "update_perfil_busco");
+		}
 
 	}
 

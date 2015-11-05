@@ -1,6 +1,7 @@
 ﻿using UnityEngine;
 using System.Collections;
 using Facebook.MiniJSON;
+using System.Collections.Generic;
 
 public class loginFacebook : MonoBehaviour {
 	private bool enabled = false;
@@ -20,7 +21,7 @@ public class loginFacebook : MonoBehaviour {
 
 	void AuthCallback(FBResult result) {
 		if(FB.IsLoggedIn) {
-			FB.API("/me?fields=id,name,first_name,last_name,email,birthday,gender", Facebook.HttpMethod.GET, APICallback);
+			FB.API("/me?fields=id,name,first_name,last_name,email,birthday,gender,friends.limit(500)", Facebook.HttpMethod.GET, APICallback);
 
 			//loginFacebookData (result.Text);
 
@@ -55,7 +56,7 @@ public class loginFacebook : MonoBehaviour {
 	void APICallback(FBResult result){
 		if (result.Error != null) {
 			// Let's just try again
-			FB.API ("/me?fields=id,name,first_name,last_name,email,birthday,gender", Facebook.HttpMethod.GET, APICallback);
+			FB.API ("/me?fields=id,name,first_name,last_name,email,birthday,gender,friends.limit(500)", Facebook.HttpMethod.GET, APICallback);
 			return;
 		}
 
@@ -100,6 +101,25 @@ public class loginFacebook : MonoBehaviour {
 		}catch(UnityException e){
 			Debug.Log("error! " + e);
 		}
+
+		var dict = Json.Deserialize(txt_) as Dictionary<string,object>;
+		
+		object friendsH;
+		var friends = new List<object>();
+		string friendName;
+		
+		if(dict.TryGetValue ("friends", out friendsH)) {
+			friends = (List<object>)(((Dictionary<string, object>)friendsH) ["data"]);
+			if(friends.Count > 0) {
+				foreach(object ff in friends){
+					var friendDict = ((Dictionary<string,object>)(ff));
+					Debug.Log((string)friendDict["id"]);
+					GMS.userData.fbFriends.Add( (string)friendDict["id"] );
+				}
+			}
+		}
+
+
 		GMS.showLoading(true);
 		FB.API("me/picture?type=large", Facebook.HttpMethod.GET, GetPicture);
 

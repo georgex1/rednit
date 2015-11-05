@@ -1,5 +1,7 @@
 ﻿using System.Collections;
 using System;
+using System.Collections.Generic;
+using Facebook.MiniJSON;
 
 [Serializable]
 public class UserData {
@@ -29,6 +31,8 @@ public class UserData {
 
 	public byte[] ImgBytes;
 	public string temp_img;
+
+	public List<string> fbFriends;
 	
 	//public Dictionary<string, int> ExercisesMetricas;
 	
@@ -45,11 +49,20 @@ public class UserData {
 		busco_edad_min = "18";
 		busco_edad_max = "50";
 		busco_en_face = "SI";
+		fbFriends = null;
 		//ExercisesMetricas = new Dictionary<string, int> ();
 	}
 
 	public void save(){
 
+	}
+
+	public string serializeFbFriends(){
+		string fbFriendsString = "";
+		if (fbFriends != null) {
+			fbFriendsString =  String.Join(",", fbFriends.ToArray());
+		}
+		return fbFriendsString;
 	}
 
 	public void populateUser(string[] row_){
@@ -66,6 +79,11 @@ public class UserData {
 		busco_sexo = row_ [9];
 		busco_edad_min = row_ [10];
 		busco_edad_max = row_ [11];
+		busco_en_face = row_ [12];
+
+		if (row_ [12] != "") {
+			fbFriends = new List<string>(row_ [12].Split(','));
+		}
 	}
 
 	public void format_month(string month_){

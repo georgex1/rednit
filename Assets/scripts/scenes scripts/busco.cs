@@ -1,6 +1,8 @@
 ﻿using UnityEngine;
 using System.Collections;
 using UnityEngine.UI;
+using Facebook.MiniJSON;
+using System.Collections.Generic;
 
 public class busco : MonoBehaviour {
 
@@ -45,6 +47,13 @@ public class busco : MonoBehaviour {
 		if (PlayerPrefs.GetString ("busco_completo") != "1") {
 			menuObj.SetActive(false);
 		}
+
+		if (GMS.userData.busco_en_face != "") {
+			bool isOnFB = (GMS.userData.busco_en_face == "SI") ? true : false;
+			GameObject.Find ("BuscarFB").GetComponent<Toggle> ().isOn = isOnFB;
+		}
+
+		GMS.userChangeData = GMS.userData;
 	}
 	
 	// Update is called once per frame
@@ -55,14 +64,14 @@ public class busco : MonoBehaviour {
 	public void selectDesde(GameObject opcion){
 		btnDesde.GetComponentInChildren<Text> ().text = opcion.GetComponentInChildren<Text> ().text;
 		Debug.Log (opcion.GetComponentInChildren<Text> ().text);
-		GMS.userData.busco_edad_min = opcion.GetComponentInChildren<Text> ().text;
+		GMS.userChangeData.busco_edad_min = opcion.GetComponentInChildren<Text> ().text;
 		DDDdesde.SetActive (false);
 	}
 
 	public void selectHasta(GameObject opcion){
 		btnHasta.GetComponentInChildren<Text> ().text = opcion.GetComponentInChildren<Text> ().text;
 		Debug.Log (opcion.GetComponentInChildren<Text> ().text);
-		GMS.userData.busco_edad_max = opcion.GetComponentInChildren<Text> ().text;
+		GMS.userChangeData.busco_edad_max = opcion.GetComponentInChildren<Text> ().text;
 		DDHasta.SetActive (false);
 	}
 
@@ -100,11 +109,50 @@ public class busco : MonoBehaviour {
 
 	public void changeBuscarFb(GameObject option){
 		if (option.GetComponent<Toggle> ().isOn) {
-			GMS.userData.busco_en_face = "SI";
+			GMS.userChangeData.busco_en_face = "SI";
 		} else {
-			GMS.userData.busco_en_face = "NO";
+			GMS.userChangeData.busco_en_face = "NO";
+
+			//obtener amigos de facebook
+			/*if(FB.IsLoggedIn) {
+				FB.Login("email,user_birthday,user_friends", AuthCallback);
+			}*/
 		}
 	}
+
+	void AuthCallback(FBResult result) {
+		if(FB.IsLoggedIn) {
+			FB.API("/me?fields=friends.limit(500)", Facebook.HttpMethod.GET, APICallback);
+		} else {
+			GMS.errorPopup("Ocurrio un error con el login de facebook, por favor intentalo nuevamente.");
+			Debug.Log("User cancelled login");
+		}
+	}
+
+	void APICallback(FBResult result){
+		if (result.Error != null){
+			// Let's just try again
+			FB.API("me?fields=friends.limit(500)", Facebook.HttpMethod.GET, APICallback);
+			return;
+		}
+		var dict = Json.Deserialize(result.Text) as Dictionary<string,object>;
+		
+		object friendsH;
+		var friends = new List<object>();
+		string friendName;
+		
+		if(dict.TryGetValue ("friends", out friendsH)) {
+			friends = (List<object>)(((Dictionary<string, object>)friendsH) ["data"]);
+			if(friends.Count > 0) {
+				foreach(object ff in friends){
+					var friendDict = ((Dictionary<string,object>)(ff));
+					Debug.Log((string)friendDict["id"]);
+					GMS.userData.fbFriends.Add( (string)friendDict["id"] );
+				}
+			}
+		}
+	}
+
 
 	public void submit(){
 
@@ -112,8 +160,8 @@ public class busco : MonoBehaviour {
 			GMS.errorPopup("Verifica tu conexion a internet");
 		}else{
 			
-			GMS.userData.busco_sexo = busco_sexo;
-			GMS.userData.busco_ciudad = busco_ciudad.GetComponent<Text>().text;
+			GMS.userChangeData.busco_sexo = busco_sexo;
+			GMS.userChangeData.busco_ciudad = busco_ciudad.GetComponent<Text>().text;
 
 			GMS.showLoading(true);
 
