@@ -23,7 +23,9 @@ public class UserData {
 		busco_sexo,
 		busco_edad_min,
 		busco_edad_max,
-		busco_en_face;
+		busco_en_face,
+		busco_cerca,
+		busco_distancia;
 
 	public string date_month;
 	public string date_day;
@@ -49,6 +51,8 @@ public class UserData {
 		busco_edad_min = "18";
 		busco_edad_max = "50";
 		busco_en_face = "SI";
+		busco_cerca = "NO";
+		busco_distancia = "100";
 		fbFriends = null;
 		//ExercisesMetricas = new Dictionary<string, int> ();
 	}
@@ -81,8 +85,11 @@ public class UserData {
 		busco_edad_max = row_ [11];
 		busco_en_face = row_ [12];
 
-		if (row_ [12] != "") {
-			fbFriends = new List<string>(row_ [12].Split(','));
+		busco_cerca = row_ [14];
+		busco_distancia = row_ [15];
+
+		if (row_ [13] != "") {
+			fbFriends = new List<string>(row_ [13].Split(','));
 		}
 	}
 

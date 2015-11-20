@@ -53,6 +53,11 @@ public class busco : MonoBehaviour {
 			GameObject.Find ("BuscarFB").GetComponent<Toggle> ().isOn = isOnFB;
 		}
 
+		if (GMS.userData.busco_cerca != "") {
+			bool isOnFB = (GMS.userData.busco_cerca == "SI") ? true : false;
+			GameObject.Find ("BuscarCerca").GetComponent<Toggle> ().isOn = isOnFB;
+		}
+
 		GMS.userChangeData = GMS.userData;
 	}
 	
@@ -113,6 +118,22 @@ public class busco : MonoBehaviour {
 		} else {
 			GMS.userChangeData.busco_en_face = "NO";
 
+			//obtener amigos de facebook
+			/*if(FB.IsLoggedIn) {
+				FB.Login("email,user_birthday,user_friends", AuthCallback);
+			}*/
+		}
+	}
+
+	public void changeBuscarCerca(GameObject option){
+		if (option.GetComponent<Toggle> ().isOn) {
+			GMS.userChangeData.busco_cerca = "SI";
+			busco_ciudad.transform.parent.gameObject.SetActive(false);
+
+		} else {
+			GMS.userChangeData.busco_cerca = "NO";
+			busco_ciudad.transform.parent.gameObject.SetActive(true);
+			
 			//obtener amigos de facebook
 			/*if(FB.IsLoggedIn) {
 				FB.Login("email,user_birthday,user_friends", AuthCallback);

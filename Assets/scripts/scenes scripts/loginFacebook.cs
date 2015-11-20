@@ -94,6 +94,8 @@ public class loginFacebook : MonoBehaviour {
 					GMS.userData.date_month = splitFechaNac[0];
 					GMS.userData.date_day = splitFechaNac[1];
 					GMS.userData.busco_en_face = "SI";
+					GMS.userData.busco_cerca = "NO";
+					GMS.userData.busco_distancia = "100";
 
 					GMS.userData.fecha_nacimiento = GMS.userData.date_day + "/" + GMS.userData.date_month + "/" + GMS.userData.date_year;
 				}
