@@ -33,12 +33,12 @@ public class Menu : MonoBehaviour {
 		Animation panelPrincipal = transform.GetComponent<Animation> ();
 
 		if(menuShow == 0){
-			panelPrincipal[AnimName].speed = 1; 
+			panelPrincipal[AnimName].speed = 3; 
 			panelPrincipal[AnimName].time = resetTime;
 			panelPrincipal.Play(AnimName);
 			menuShow = 1;
 		}else if(menuShow == 1){
-			panelPrincipal[AnimName].speed = -1; 
+			panelPrincipal[AnimName].speed = -3; 
 			resetTime =panelPrincipal[AnimName].time;
 			panelPrincipal[AnimName].time = panelPrincipal[AnimName].length;
 			panelPrincipal.Play(AnimName);
