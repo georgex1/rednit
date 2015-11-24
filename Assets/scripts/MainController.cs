@@ -137,6 +137,9 @@ public class MainController : MonoBehaviour {
 	}
 	
 	void Awake () {
+		QualitySettings.vSyncCount = 0;
+		Application.targetFrameRate = 15;
+
 		DontDestroyOnLoad (transform.gameObject);
 	}
 	
@@ -245,7 +248,7 @@ public class MainController : MonoBehaviour {
 
 					saveUserData(true);
 
-					upload_user_foto();
+					//upload_user_foto();
 					Application.LoadLevel ("perfil");
 
 					download_personas();
@@ -255,10 +258,10 @@ public class MainController : MonoBehaviour {
 					string WarrayContent_ = MiniJSON.Json.Serialize(Wresponse["arrayContent"]);
 					IDictionary WresponseContent = (IDictionary) MiniJSON.Json.Deserialize ( WarrayContent_ );
 					
-					Debug.Log((string)Wresponse2["hasArray"]);
+					//Debug.Log((string)Wresponse2["hasArray"]);
 					if( (string)Wresponse2["hasArray"] != "0" ){
 						for(int i = 1; i <= int.Parse( (string)Wresponse2["hasArray"] ); i++ ){
-							Debug.Log("posicion: " + i);
+							//Debug.Log("posicion: " + i);
 
 							IDictionary reponseContent = (IDictionary) MiniJSON.Json.Deserialize ( (string)WresponseContent[i.ToString()]  );
 
@@ -284,10 +287,10 @@ public class MainController : MonoBehaviour {
 					string WarrayContent_ = MiniJSON.Json.Serialize(Wresponse["arrayContent"]);
 					IDictionary WresponseContent = (IDictionary) MiniJSON.Json.Deserialize ( WarrayContent_ );
 					
-					Debug.Log((string)Wresponse2["hasArray"]);
+					//Debug.Log((string)Wresponse2["hasArray"]);
 					if( (string)Wresponse2["hasArray"] != "0" ){
 						for(int i = 1; i <= int.Parse( (string)Wresponse2["hasArray"] ); i++ ){
-							Debug.Log("posicion: " + i);
+							//Debug.Log("posicion: " + i);
 							
 							IDictionary reponseContent = (IDictionary) MiniJSON.Json.Deserialize ( (string)WresponseContent[i.ToString()]  );
 							
@@ -311,10 +314,10 @@ public class MainController : MonoBehaviour {
 					string WarrayContent_ = MiniJSON.Json.Serialize(Wresponse["arrayContent"]);
 					IDictionary WresponseContent = (IDictionary) MiniJSON.Json.Deserialize ( WarrayContent_ );
 					
-					Debug.Log((string)Wresponse2["hasArray"]);
+					//Debug.Log((string)Wresponse2["hasArray"]);
 					if( (string)Wresponse2["hasArray"] != "0" ){
 						for(int i = 1; i <= int.Parse( (string)Wresponse2["hasArray"] ); i++ ){
-							Debug.Log("posicion: " + i);
+							//Debug.Log("posicion: " + i);
 							
 							IDictionary reponseContent = (IDictionary) MiniJSON.Json.Deserialize ( (string)WresponseContent[i.ToString()]  );
 							
@@ -361,10 +364,10 @@ public class MainController : MonoBehaviour {
 					string WarrayContent_ = MiniJSON.Json.Serialize(Wresponse["arrayContent"]);
 					IDictionary WresponseContent = (IDictionary) MiniJSON.Json.Deserialize ( WarrayContent_ );
 
-					Debug.Log((string)Wresponse2["hasArray"]);
+					//Debug.Log((string)Wresponse2["hasArray"]);
 					if( (string)Wresponse2["hasArray"] != "0" ){
 						for(int i = 1; i <= int.Parse( (string)Wresponse2["hasArray"] ); i++ ){
-							Debug.Log("posicion: " + i);
+							//Debug.Log("posicion: " + i);
 
 							//string dada = MiniJSON.Json.Serialize(WresponseContent["1"]);
 							IDictionary reponseContent = (IDictionary) MiniJSON.Json.Deserialize ( (string)WresponseContent[i.ToString()]  );
@@ -451,10 +454,23 @@ public class MainController : MonoBehaviour {
 
 	public void perfil_busco(){
 
+		Debug.Log ("cambiado busco edad max: " + userData.busco_edad_max + " a " + userChangeData.busco_edad_max);
+
 		//verificar si hubo cambio
 		if (userData.busco_ciudad != userChangeData.busco_ciudad || userData.busco_edad_max != userChangeData.busco_edad_max || userData.busco_edad_min != userChangeData.busco_edad_min || 
 		    userData.busco_en_face != userChangeData.busco_en_face || userData.busco_sexo != userChangeData.busco_sexo || userData.busco_cerca != userChangeData.busco_cerca || 
 		    userData.busco_distancia != userChangeData.busco_distancia) {
+
+
+			userData.busco_ciudad = userChangeData.busco_ciudad;
+			userData.busco_edad_max = userChangeData.busco_edad_max;
+			userData.busco_edad_min = userChangeData.busco_edad_min;
+			userData.busco_en_face = userChangeData.busco_en_face;
+			userData.busco_sexo = userChangeData.busco_sexo;
+			userData.busco_cerca = userChangeData.busco_cerca;
+			userData.busco_distancia = userChangeData.busco_distancia;
+					
+			Debug.Log("cambio busco");
 
 			db.OpenDB(dbName);
 
@@ -643,15 +659,18 @@ public class MainController : MonoBehaviour {
 	}
 
 	public void loginFacebook(){
+
+		userData.foto = userData.temp_img;
+		byte[] fileData = File.ReadAllBytes (Application.persistentDataPath + "/" + userData.foto);
 		
-		string[] colsUsuarios = new string[]{ "email", "nombre", "fbid", "fecha_nacimiento", "sexo", "plataforma", "regid"};
-		string[] colsUsuariosValues = new string[]{ userData.email, userData.nombre, userData.fbid, userData.fecha_nacimiento, userData.sexo, userData.plataforma, userData.reg_id };
+		string[] colsUsuarios = new string[]{ "email", "nombre", "fbid", "fecha_nacimiento", "sexo", "plataforma", "regid", "usuario_foto", "fileUpload"};
+		string[] colsUsuariosValues = new string[]{ userData.email, userData.nombre, userData.fbid, userData.fecha_nacimiento, userData.sexo, userData.plataforma, userData.reg_id, userData.foto, "imagen_usuario" };
 		
-		sendData (colsUsuarios, colsUsuariosValues, "login_facebook");
+		sendData (colsUsuarios, colsUsuariosValues, "login_facebook", fileData);
 	}
 
 	private IEnumerator get_updates(){
-		yield return new WaitForSeconds (6);
+		yield return new WaitForSeconds (10);
 
 		//ej de call updates
 		//call_updates ("puntos_especiales");
@@ -679,7 +698,7 @@ public class MainController : MonoBehaviour {
 	}
 
 	private IEnumerator call_sync(){
-		yield return new WaitForSeconds (4);
+		yield return new WaitForSeconds (10);
 		sync ();
 	}
 
@@ -778,7 +797,7 @@ public class MainController : MonoBehaviour {
 	public IEnumerator saveTextureToFile(Texture2D /*savedTexture */loadTexture, string fileName, char tosave){
 		yield return new WaitForSeconds(0.5f);
 
-		int newWidth = 800;
+		int newWidth = 300;
 		int newHeigth =  (newWidth * loadTexture.height / loadTexture.width) ;
 
 		Texture2D savedTexture = ScaleTexture (loadTexture, newWidth, newHeigth);

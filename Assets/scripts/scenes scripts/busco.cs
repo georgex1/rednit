@@ -58,13 +58,13 @@ public class busco : MonoBehaviour {
 			GameObject.Find ("BuscarCerca").GetComponent<Toggle> ().isOn = isOnFB;
 		}
 
-		GMS.userChangeData = GMS.userData;
+		GMS.userChangeData = (UserData)GMS.userData.Clone();
 	}
 	
 	// Update is called once per frame
-	void Update () {
+	/*void Update () {
 	
-	}
+	}*/
 
 	public void selectDesde(GameObject opcion){
 		btnDesde.GetComponentInChildren<Text> ().text = opcion.GetComponentInChildren<Text> ().text;
@@ -183,10 +183,6 @@ public class busco : MonoBehaviour {
 			
 			GMS.userChangeData.busco_sexo = busco_sexo;
 			GMS.userChangeData.busco_ciudad = busco_ciudad.GetComponent<Text>().text;
-
-			Debug.Log ("Busco Sexo: " + GMS.userChangeData.busco_sexo);
-			Debug.Log ("Busco Ciudad: " + GMS.userChangeData.busco_ciudad);
-
 
 			GMS.showLoading(true);
 

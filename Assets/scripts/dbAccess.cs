@@ -28,38 +28,48 @@ public class dbAccess : MonoBehaviour {
 	public ArrayList BasicQueryArray(string query){
 		
 		SQLiteQuery qr;
-		qr = new SQLiteQuery(db, query);
+
 		ArrayList readArray = new ArrayList();
-		
-		while (qr.Step()) {
 
-			string[] row = new string[qr.columnNames.Length];
-			int j = 0;
-			
-			//Debug.Log( "tipo: " + qr.GetType() );
-			foreach(string colName in qr.columnNames){
+		try{
 
-				if(qr.columnTypes[j] == 1){
-					row [j] = qr.GetInteger(colName).ToString();
-				}else{
-					row [j] = qr.GetString(colName);
+			qr = new SQLiteQuery(db, query);
+
+			while (qr.Step()) {
+
+				string[] row = new string[qr.columnNames.Length];
+				int j = 0;
+				
+				//Debug.Log( "tipo: " + qr.GetType() );
+				foreach(string colName in qr.columnNames){
+
+					if(qr.columnTypes[j] == 1){
+						row [j] = qr.GetInteger(colName).ToString();
+					}else{
+						row [j] = qr.GetString(colName);
+					}
+
+					/*if(colName == "id"){
+						row [j] = qr.GetInteger(colName).ToString();
+					}else{
+						row [j] = qr.GetString(colName);
+					}*/
+
+					j++;
 				}
-
-				/*if(colName == "id"){
-					row [j] = qr.GetInteger(colName).ToString();
-				}else{
-					row [j] = qr.GetString(colName);
-				}*/
-
-				j++;
+				
+				readArray.Add (row);
+				//qr.GetType();
+				
 			}
 			
-			readArray.Add (row);
-			//qr.GetType();
-			
+			qr.Release();
+
 		}
-		
-		qr.Release();
+		catch(Exception e){
+			Debug.Log(e);
+		}
+
 		return readArray; // return matches
 		
 		/*dbcmd = dbcon.CreateCommand();
@@ -195,7 +205,7 @@ public class dbAccess : MonoBehaviour {
 		}
 		
 		
-		Debug.Log(query);
+		//Debug.Log(query);
 		try
 		{
 			SQLiteQuery qr;
@@ -222,7 +232,7 @@ public class dbAccess : MonoBehaviour {
 			query += ", " + "'"+values[i] + "'";
 		}
 		query += ")";
-		Debug.Log(query);
+		//Debug.Log(query);
 		try
 		{
 			SQLiteQuery qr;

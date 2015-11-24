@@ -25,17 +25,22 @@ public class buscar : MonoBehaviour {
 		GameObject GM = GameObject.Find ("MainController");
 		GMS = GM.GetComponent<MainController>();
 
-		string fbFriendsString = "0";
+		string fbFriendsString = "'0'";
 		if (GMS.userData.fbFriends != null && GMS.userData.busco_en_face == "SI") {
 			fbFriendsString = String.Join(",", GMS.userData.fbFriends.ToArray());
 		}
 
 		GMS.db.OpenDB(GMS.dbName);
-		ArrayList result = GMS.db.BasicQueryArray ("select id, nombre, edad, sexo, ciudad, foto from personas where visto = '0' AND id NOT IN " +
-		                                           "( select personas_id from amigos_usuarios where usuarios_id = '"+GMS.userData.id+"' ) AND fbid NOT IN ( "+fbFriendsString+" ) ");
+		string buscarQuery = "select id, nombre, edad, sexo, ciudad, foto from personas where visto = '0' AND id NOT IN " +
+			"( select personas_id from amigos_usuarios where usuarios_id = '" + GMS.userData.id + "' ) AND fbid NOT IN ( " + fbFriendsString + " ) ";
+
+		ArrayList result = GMS.db.BasicQueryArray (buscarQuery);
 
 		/*ArrayList result = GMS.db.BasicQueryArray ("select id, nombre, edad, sexo, ciudad, foto from personas where visto = '0' ");*/
 		GMS.db.CloseDB();
+
+		Debug.Log (buscarQuery);
+		Debug.Log ("total personas: " + result.Count);
 
 		if (result.Count > 0) {
 

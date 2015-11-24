@@ -4,7 +4,7 @@ using System.Collections.Generic;
 using Facebook.MiniJSON;
 
 [Serializable]
-public class UserData {
+public class UserData : ICloneable{
 
 	public int id;
 	
@@ -129,6 +129,10 @@ public class UserData {
 		case "12": month_ = "DICIEMBRE"; break;
 		}
 		return month_;
+	}
+	public object Clone()
+	{
+		return this.MemberwiseClone();
 	}
 
 }

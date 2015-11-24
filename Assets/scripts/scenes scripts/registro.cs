@@ -40,7 +40,9 @@ public class registro : MonoBehaviour {
 		}
 
 		if (GMS.userData.ciudad != "") {
-			ciudad.GetComponent<Text>().text = GMS.userData.ciudad;
+			ciudad.GetComponent<Text> ().text = GMS.userData.ciudad;
+		} else {
+			GMS.userData.ciudad = "Buenos Aires";
 		}
 
 		if(GMS.userData.foto != ""){
