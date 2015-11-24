@@ -184,6 +184,10 @@ public class busco : MonoBehaviour {
 			GMS.userChangeData.busco_sexo = busco_sexo;
 			GMS.userChangeData.busco_ciudad = busco_ciudad.GetComponent<Text>().text;
 
+			Debug.Log ("Busco Sexo: " + GMS.userChangeData.busco_sexo);
+			Debug.Log ("Busco Ciudad: " + GMS.userChangeData.busco_ciudad);
+
+
 			GMS.showLoading(true);
 
 			GMS.perfil_busco();
