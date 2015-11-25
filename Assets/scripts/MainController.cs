@@ -138,7 +138,7 @@ public class MainController : MonoBehaviour {
 	
 	void Awake () {
 		QualitySettings.vSyncCount = 0;
-		Application.targetFrameRate = 15;
+		Application.targetFrameRate = 20;
 
 		DontDestroyOnLoad (transform.gameObject);
 	}
