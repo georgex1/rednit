@@ -17,7 +17,9 @@ public class UserData : ICloneable{
 	ciudad,
 	fbid,
 	sexo,
-	foto;
+	foto,
+	latitude,
+	longitude;
 
 	public string busco_ciudad,
 		busco_sexo,
@@ -54,6 +56,8 @@ public class UserData : ICloneable{
 		busco_cerca = "NO";
 		busco_distancia = "100";
 		fbFriends = null;
+		latitude = "";
+		longitude = "";
 		//ExercisesMetricas = new Dictionary<string, int> ();
 	}
 
@@ -87,6 +91,9 @@ public class UserData : ICloneable{
 
 		busco_cerca = row_ [14];
 		busco_distancia = row_ [15];
+		latitude = row_ [16];
+		longitude = row_ [17];
+
 
 		if (row_ [13] != "") {
 			fbFriends = new List<string>(row_ [13].Split(','));

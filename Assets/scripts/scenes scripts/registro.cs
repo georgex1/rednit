@@ -101,6 +101,7 @@ public class registro : MonoBehaviour {
 			
 			GMS.userData.email = email.GetComponent<Text>().text;
 			GMS.userData.nombre = nombre.GetComponent<Text>().text;
+			//aca deberia mandar la ubicacion actual del usuario en lugar de la ciudad.
 			GMS.userData.ciudad = ciudad.GetComponent<Text>().text;
 			GMS.userData.fecha_nacimiento = format_birthDate;
 			GMS.userData.sexo = sexo;
