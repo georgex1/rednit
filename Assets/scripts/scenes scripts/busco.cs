@@ -199,4 +199,10 @@ public class busco : MonoBehaviour {
 		GMS.showLoading(false);
 		Application.LoadLevel ("buscar");
 	}
+
+	public void loadMap() {
+		Application.LoadLevel("mapa");
+	}
+
+
 }
