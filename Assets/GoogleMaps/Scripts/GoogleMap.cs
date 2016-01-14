@@ -6,7 +6,6 @@ using UnityEngine.UI;
 
 
 
-
 public class GoogleMap : MonoBehaviour
 {
 	public enum MapType
@@ -150,6 +149,77 @@ public class GoogleMap : MonoBehaviour
 		Debug.Log("latlong1: " + latlong.text);
 
 
+
+
+		GoogleGeoCodeResponse test = Json.Deserialize(latlong.text) as GoogleGeoCodeResponse;
+		//GoogleGeoCodeResponse test = JsonConvert.DeserializeObject<GoogleGeoCodeResponse>(latlong.text);
+		Debug.Log (test);
+
+
+
+
+
+		IDictionary Wresponse = (IDictionary) MiniJSON.Json.Deserialize (latlong.text);
+		string WarrayData_ = MiniJSON.Json.Serialize(Wresponse["results"]);
+
+		Debug.Log("results: " + WarrayData_);
+
+
+
+
+
+		var dict = Json.Deserialize(latlong.text) as Dictionary<string,object>;
+		/*Debug.Log (dict ["results"]);
+		string GeometryData_ = MiniJSON.Json.Serialize(dict ["results"]);
+		Debug.Log ("geometrydata: " + GeometryData_);*/
+
+		object friendsH;
+		var friends = new List<object>();
+		var dic2 = new Dictionary<string,object>();
+
+		if (dict.TryGetValue ("results", out friendsH)) {
+
+			dic2 = ((Dictionary<string, object>)friendsH);
+			Debug.Log(dic2);
+
+			/*friends = (List<object>)(((Dictionary<string, object>)friendsH) ["address_components"]);
+			if(friends.Count > 0) {
+				foreach(object ff in friends){
+					var friendDict = ((Dictionary<string,object>)(ff));
+					Debug.Log((string)friendDict["long_name"]);
+				}
+			}*/
+		}
+
+
+		//IDictionary Wresponse2 = (IDictionary) MiniJSON.Json.Deserialize (GeometryData_);
+
+		//Debug.Log ("Wresponse2: " + Wresponse2["address_components"]);
+
+
+
+
+		/*IDictionary Wresponse3 = (IDictionary) MiniJSON.Json.Deserialize ( WarrayData_ );
+		string GeometryData_ = MiniJSON.Json.Serialize(Wresponse3["geometry"]);
+
+		Debug.Log("latlong1 Deserialize: " + GeometryData_);*/
+
+		/*object friendsH;
+		var friends = new List<object>();
+
+		var dict = Json.Deserialize(latlong.text) as Dictionary<string,object>;
+		if (dict.TryGetValue ("results", out friendsH)) {
+			Debug.Log("results2: " + friendsH);
+			friends = (List<object>)(((Dictionary<string, object>)friendsH) ["geometry"]);
+			if(friends.Count > 0) {
+				Debug.Log("friends.Count > 0");
+				foreach(object ff in friends){
+					Debug.Log("foreach(object ff in friends)");
+				}
+			}
+
+		}*/
+
 		//Dictionary<string,object> scoreData = scores[0] as Dictionary<string,object>;
 		
 	//	object score = scoreData["score"];
@@ -191,6 +261,42 @@ public class GoogleMap : MonoBehaviour
 
 
 
+}
+
+public class GoogleGeoCodeResponse
+{
+	
+	public string status { get; set; }
+	public results[] results { get; set; }
+	
+}
+
+public class results
+{
+	public string formatted_address { get; set; }
+	public geometry geometry { get; set; }
+	public string[] types { get; set; }
+	public address_component[] address_components { get; set; }
+	public string place_id { get; set; }
+}
+
+public class geometry
+{
+	public string location_type { get; set; }
+	public location location { get; set; }
+}
+
+public class location
+{
+	public string lat { get; set; }
+	public string lng { get; set; }
+}
+
+public class address_component
+{
+	public string long_name { get; set; }
+	public string short_name { get; set; }
+	public string[] types { get; set; }
 }
 
 public enum GoogleMapColor

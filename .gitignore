@@ -63,3 +63,4 @@ $RECYCLE.BIN/
 # Windows shortcuts
 *.lnk
 Assets/StreamingAssets/build_info.txt
+*.txt
