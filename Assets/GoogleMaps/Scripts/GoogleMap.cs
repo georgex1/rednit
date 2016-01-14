@@ -1,6 +1,11 @@
 using UnityEngine;
 using System.Collections;
+using System.Collections.Generic;
+using Facebook.MiniJSON;
 using UnityEngine.UI;
+
+
+
 
 public class GoogleMap : MonoBehaviour
 {
@@ -20,11 +25,14 @@ public class GoogleMap : MonoBehaviour
 	public bool doubleResolution = false;
 	public GoogleMapMarker[] markers;
 	public GoogleMapPath[] paths;
+	public Text km;
+	private MainController GMS;
+	public Text buscoDistancia;
+
 
 	void Start() {
 		if(loadOnStart) Refresh();	
-
-	}
+}
 	public void newAddress(InputField direccion) {
 		Debug.Log ("nueva direccion" + direccion.text);
 		//centerLocation.address = "ruiz de montoya 119 apostoles misiones";
@@ -114,8 +122,80 @@ public class GoogleMap : MonoBehaviour
 		//gameobject.GetComponent<RawImage> ().texture = texture;
 		gameObject.GetComponent<RawImage> ().texture = req.texture;
 	}
-	
-	
+
+
+	public void DistanceOnValueChanged(float newValue)
+	{
+		Debug.Log("Slider value: " + newValue);
+		km.text = newValue + " Km";
+		//buscoDistancia = newValue + " Km";
+		//agrego el valor de distancia a una variable y lo submiteo junto a la direccion.
+	}
+
+	public void loadPrevLevel() {
+		Application.LoadLevel("busco");
+	}
+
+	public void submitDistance() {
+		Debug.Log("submitDistance");
+		StartCoroutine (getLatLong());
+	}
+
+	IEnumerator getLatLong(){
+		
+		var distanceUrl = "https://maps.googleapis.com/maps/api/geocode/json?address=" + WWW.EscapeURL (centerLocation.address) + "&key=AIzaSyBTT0TA2zlOlIabKgs3ZE4njA23yaL7wwA";  
+		Debug.Log (distanceUrl);
+		var latlong = new WWW (distanceUrl);
+		yield return latlong;
+		Debug.Log("latlong1: " + latlong.text);
+
+
+	    var dict = Json.Deserialize(latlong.text) as Dictionary<string,object>;
+		
+		List<object> scores = dict["results"] as List<object>;
+		
+		Dictionary<string,object> scoreData = scores[1] as Dictionary<string,object>;
+		
+		object score = scoreData["lat"];
+
+
+
+		//IDictionary search = (IDictionary) Json.Deserialize (latlong.text);
+		//var search = Json.Deserialize(latlong.text) as Dictionary<string,object>;
+		//Debug.Log("search['string']: " + ((List<object>) search["results"])[0]);
+
+		//Debug.Log(List<object>)(((Dictionary<string, object>)latlong) ["data"]);
+		//Debug.Log("Lat: " + (double) search["location"]); // floats come out as doubles
+		//Debug.Log (latlong.ToString ());
+		//GMS.userData.busco_lat = (string)search ["location"];
+		//GMS.userData.busco_long = (string)search ["lng"];
+
+		//Debug.Log ("GMS.userData.busco_lat: " + GMS.userData.busco_lat);
+		//Debug.Log ("GMS.userData.busco_long: " + GMS.userData.busco_long);
+		//Debug.Log("latlong");
+		
+		
+		
+		/*	if(!GMS.haveInet){
+			GMS.errorPopup("Verifica tu conexion a internet");
+		}else{
+			
+			GMS.userChangeData.busco_lat = latlong;
+			GMS.userChangeData.busco_distancia = buscoDistancia;
+			
+			GMS.showLoading(true);
+			
+			GMS.perfil_busco();
+			
+			//PlayerPrefs.SetString("busco_completo", "1");
+			//StartCoroutine(gotoNext());
+		} */
+		
+	}
+
+
+
+
 }
 
 public enum GoogleMapColor
@@ -165,6 +245,9 @@ public class GoogleMapPath
 	public GoogleMapColor fillColor;
 	public GoogleMapLocation[] locations;	
 }
+
+
+
 
 
 

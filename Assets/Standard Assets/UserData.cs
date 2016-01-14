@@ -27,7 +27,9 @@ public class UserData : ICloneable{
 		busco_edad_max,
 		busco_en_face,
 		busco_cerca,
-		busco_distancia;
+		busco_distancia,
+		busco_lat,
+		busco_long;
 
 	public string date_month;
 	public string date_day;
@@ -54,10 +56,12 @@ public class UserData : ICloneable{
 		busco_edad_max = "50";
 		busco_en_face = "SI";
 		busco_cerca = "NO";
-		busco_distancia = "100";
+		busco_distancia = "50";
 		fbFriends = null;
 		latitude = "";
 		longitude = "";
+		busco_lat = "";
+		busco_long = "";
 		//ExercisesMetricas = new Dictionary<string, int> ();
 	}
 
@@ -93,6 +97,8 @@ public class UserData : ICloneable{
 		busco_distancia = row_ [15];
 		latitude = row_ [16];
 		longitude = row_ [17];
+		busco_lat = row_ [18];
+		busco_long = row_ [19];
 
 
 		if (row_ [13] != "") {
