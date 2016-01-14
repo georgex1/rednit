@@ -150,14 +150,9 @@ public class GoogleMap : MonoBehaviour
 		Debug.Log("latlong1: " + latlong.text);
 
 
-	    var dict = Json.Deserialize(latlong.text) as Dictionary<string,object>;
+		//Dictionary<string,object> scoreData = scores[0] as Dictionary<string,object>;
 		
-		List<object> scores = dict["results"] as List<object>;
-		
-		Dictionary<string,object> scoreData = scores[1] as Dictionary<string,object>;
-		
-		object score = scoreData["lat"];
-
+	//	object score = scoreData["score"];
 
 
 		//IDictionary search = (IDictionary) Json.Deserialize (latlong.text);
