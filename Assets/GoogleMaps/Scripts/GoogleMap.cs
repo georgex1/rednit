@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using Facebook.MiniJSON;
 using UnityEngine.UI;
+using System.Linq;
 
 public class GoogleMap : MonoBehaviour
 {
@@ -140,45 +141,20 @@ public class GoogleMap : MonoBehaviour
 
 	IEnumerator getLatLong(){
 		
-		var distanceUrl = "https://maps.googleapis.com/maps/api/geocode/json?address=" + WWW.EscapeURL (centerLocation.address) + "&key=AIzaSyBTT0TA2zlOlIabKgs3ZE4njA23yaL7wwA";  
+		//var distanceUrl = "https://maps.googleapis.com/maps/api/geocode/json?address=" + WWW.EscapeURL (centerLocation.address) + "&key=AIzaSyBTT0TA2zlOlIabKgs3ZE4njA23yaL7wwA";  
+		var distanceUrl = "http://thepastoapps.com/proyectos/rednit/response/geolocation.php?address=" + WWW.EscapeURL (centerLocation.address);  
 		Debug.Log (distanceUrl);
 		var latlong = new WWW (distanceUrl);
 		yield return latlong;
 		Debug.Log("latlong1: " + latlong.text);
 
-
-		GoogleGeoCodeResponse test = Json.Deserialize(latlong.text) as GoogleGeoCodeResponse;
-			//GoogleGeoCodeResponse test = JsonConvert.DeserializeObject<GoogleGeoCodeResponse>(latlong.text);
-		Debug.Log (test);
-
-
-		IDictionary Wresponse = (IDictionary) MiniJSON.Json.Deserialize (latlong.text);
-		string WarrayData_ = MiniJSON.Json.Serialize(Wresponse["results"]);
-
-		Debug.Log("results: " + WarrayData_);
-
-		var dict = Json.Deserialize(Wresponse) as Dictionary<string,object>;
+		string[] info13 = latlong.text.Split(';').Select(str => str.Trim()).ToArray();
+	
+		Debug.Log ("Lat: " + info13[0]);
+		Debug.Log ("Long: " + info13[1]);
 		/*Debug.Log (dict ["results"]);
 		string GeometryData_ = MiniJSON.Json.Serialize(dict ["results"]);
 		Debug.Log ("geometrydata: " + GeometryData_);*/
-
-		object friendsH;
-		var friends = new List<object>();
-		var dic2 = new Dictionary<string,object>();
-
-		if (dict.TryGetValue ("results", out friendsH)) {
-
-			dic2 = ((Dictionary<string, object>)friendsH);
-			Debug.Log(dic2);
-
-			/*friends = (List<object>)(((Dictionary<string, object>)friendsH) ["address_components"]);
-			if(friends.Count > 0) {
-				foreach(object ff in friends){
-					var friendDict = ((Dictionary<string,object>)(ff));
-					Debug.Log((string)friendDict["long_name"]);
-				}
-			}*/
-		}
 
 
 		//IDictionary Wresponse2 = (IDictionary) MiniJSON.Json.Deserialize (GeometryData_);
