@@ -4,8 +4,6 @@ using System.Collections.Generic;
 using Facebook.MiniJSON;
 using UnityEngine.UI;
 
-
-
 public class GoogleMap : MonoBehaviour
 {
 	public enum MapType
@@ -149,14 +147,9 @@ public class GoogleMap : MonoBehaviour
 		Debug.Log("latlong1: " + latlong.text);
 
 
-
-
 		GoogleGeoCodeResponse test = Json.Deserialize(latlong.text) as GoogleGeoCodeResponse;
-		//GoogleGeoCodeResponse test = JsonConvert.DeserializeObject<GoogleGeoCodeResponse>(latlong.text);
+			//GoogleGeoCodeResponse test = JsonConvert.DeserializeObject<GoogleGeoCodeResponse>(latlong.text);
 		Debug.Log (test);
-
-
-
 
 
 		IDictionary Wresponse = (IDictionary) MiniJSON.Json.Deserialize (latlong.text);
@@ -164,11 +157,7 @@ public class GoogleMap : MonoBehaviour
 
 		Debug.Log("results: " + WarrayData_);
 
-
-
-
-
-		var dict = Json.Deserialize(latlong.text) as Dictionary<string,object>;
+		var dict = Json.Deserialize(Wresponse) as Dictionary<string,object>;
 		/*Debug.Log (dict ["results"]);
 		string GeometryData_ = MiniJSON.Json.Serialize(dict ["results"]);
 		Debug.Log ("geometrydata: " + GeometryData_);*/
