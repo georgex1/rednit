@@ -463,7 +463,7 @@ public class MainController : MonoBehaviour {
 		//verificar si hubo cambio
 		if (userData.busco_ciudad != userChangeData.busco_ciudad || userData.busco_edad_max != userChangeData.busco_edad_max || userData.busco_edad_min != userChangeData.busco_edad_min || 
 		    userData.busco_en_face != userChangeData.busco_en_face || userData.busco_sexo != userChangeData.busco_sexo || userData.busco_cerca != userChangeData.busco_cerca || 
-		    userData.busco_distancia != userChangeData.busco_distancia) {
+		    userData.busco_distancia != userChangeData.busco_distancia || userData.busco_lat != userChangeData.busco_lat || userData.busco_long != userChangeData.busco_long) {
 
 
 			userData.busco_ciudad = userChangeData.busco_ciudad;
@@ -473,6 +473,8 @@ public class MainController : MonoBehaviour {
 			userData.busco_sexo = userChangeData.busco_sexo;
 			userData.busco_cerca = userChangeData.busco_cerca;
 			userData.busco_distancia = userChangeData.busco_distancia;
+			userData.busco_lat = userChangeData.busco_lat;
+			userData.busco_long = userChangeData.busco_long;
 					
 			Debug.Log("cambio busco");
 
@@ -482,14 +484,14 @@ public class MainController : MonoBehaviour {
 			db.BasicQueryInsert("delete from personas where visto = '0' ");
 
 			
-			string[] colsUsuarios = new string[]{ "busco_ciudad", "busco_sexo", "busco_edad_min", "busco_edad_max", "busco_en_face", "fb_friends" };
-			string[] colsUsuariosValues = new string[]{ userData.busco_ciudad, userData.busco_sexo, userData.busco_edad_min, userData.busco_edad_max, userData.busco_en_face, userData.serializeFbFriends() };
+			string[] colsUsuarios = new string[]{ "busco_ciudad", "busco_sexo", "busco_edad_min", "busco_edad_max", "busco_en_face", "fb_friends", "busco_distancia", "busco_lat", "busco_long" };
+			string[] colsUsuariosValues = new string[]{ userData.busco_ciudad, userData.busco_sexo, userData.busco_edad_min, userData.busco_edad_max, userData.busco_en_face, userData.serializeFbFriends(), userData.busco_distancia, userData.busco_lat, userData.busco_long };
 			db.InsertIgnoreInto("usuarios", colsUsuarios, colsUsuariosValues, userData.id.ToString());
 			
 			db.CloseDB();
 			
-			colsUsuarios = new string[]{ "busco_ciudad", "busco_sexo", "busco_edad_min", "busco_edad_max", "usuarios_id", "busco_en_face" };
-			colsUsuariosValues = new string[]{ userData.busco_ciudad, userData.busco_sexo, userData.busco_edad_min, userData.busco_edad_max, userData.id.ToString(), userData.busco_en_face };
+			colsUsuarios = new string[]{ "busco_ciudad", "busco_sexo", "busco_edad_min", "busco_edad_max", "usuarios_id", "busco_en_face", "busco_distancia", "busco_lat", "busco_long" };
+			colsUsuariosValues = new string[]{ userData.busco_ciudad, userData.busco_sexo, userData.busco_edad_min, userData.busco_edad_max, userData.id.ToString(), userData.busco_en_face, userData.busco_distancia, userData.busco_lat, userData.busco_long };
 
 			sendData (colsUsuarios, colsUsuariosValues, "update_perfil_busco");
 		}

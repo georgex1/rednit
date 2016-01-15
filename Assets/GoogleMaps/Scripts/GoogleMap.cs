@@ -29,6 +29,9 @@ public class GoogleMap : MonoBehaviour
 
 
 	void Start() {
+
+		GameObject GM = GameObject.Find ("MainController");
+		GMS = GM.GetComponent<MainController>();
 		if(loadOnStart) Refresh();	
 }
 	public void newAddress(InputField direccion) {
@@ -146,12 +149,37 @@ public class GoogleMap : MonoBehaviour
 		Debug.Log (distanceUrl);
 		var latlong = new WWW (distanceUrl);
 		yield return latlong;
+
 		Debug.Log("latlong1: " + latlong.text);
 
 		string[] info13 = latlong.text.Split(';').Select(str => str.Trim()).ToArray();
 	
 		Debug.Log ("Lat: " + info13[0]);
 		Debug.Log ("Long: " + info13[1]);
+
+		if(!GMS.haveInet){
+			GMS.errorPopup("Verifica tu conexion a internet");
+		}else{
+
+			GMS.userChangeData.busco_lat = info13[0];
+			GMS.userChangeData.busco_long = info13[1];
+			GMS.userChangeData.busco_distancia = km.text;
+			
+			//GMS.showLoading(true);
+			
+			GMS.perfil_busco();
+
+			loadPrevLevel();
+
+
+			//PlayerPrefs.SetString("busco_completo", "1");
+			//StartCoroutine(gotoNext());
+		} 
+
+
+
+
+
 		/*Debug.Log (dict ["results"]);
 		string GeometryData_ = MiniJSON.Json.Serialize(dict ["results"]);
 		Debug.Log ("geometrydata: " + GeometryData_);*/
