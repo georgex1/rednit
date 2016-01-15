@@ -60,20 +60,20 @@ public class MainController : MonoBehaviour {
 	void createDb(){
 		db.OpenDB(dbName);
 
-		string[] cols = new string[]{"id", "email", "nombre", "fbid", "fecha_nacimiento", "sexo", "foto", "ciudad", "lat", "lng", "busco_ciudad", "busco_sexo", "busco_edad_min", "busco_edad_max", "busco_en_face", "fb_friends", "busco_cerca", "busco_distancia", "latitude", "longitude"};
-		string[] colTypes = new string[]{"INT", "TEXT", "TEXT", "TEXT", "TEXT", "TEXT", "TEXT", "TEXT", "TEXT", "TEXT", "TEXT", "TEXT", "TEXT", "TEXT", "TEXT", "TEXT", "TEXT", "TEXT", "TEXT", "TEXT"};
+		string[] cols = new string[]{"id", "email", "nombre", "fbid", "fecha_nacimiento", "sexo", "foto", "ciudad", "lat", "lng", "busco_ciudad", "busco_sexo", "busco_edad_min", "busco_edad_max", "busco_en_face", "fb_friends", "busco_cerca", "busco_distancia", "latitude", "longitude", "busco_lat", "busco_long"};
+		string[] colTypes = new string[]{"INT", "TEXT", "TEXT", "TEXT", "TEXT", "TEXT", "TEXT", "TEXT", "TEXT", "TEXT", "TEXT", "TEXT", "TEXT", "TEXT", "TEXT", "TEXT", "TEXT", "TEXT", "TEXT", "TEXT", "TEXT", "TEXT"};
 		db.CreateTable ("usuarios", cols, colTypes);
 
-		cols = new string[]{"id", "nombre", "edad", "sexo", "ciudad", "foto", "visto", "fbid", "latitude", "longitude"};
+		cols = new string[]{"id", "nombre", "edad", "sexo", "ciudad", "foto", "visto", "fbid", "latitude", "longitude", "busco_lat", "busco_long"};
 		colTypes = new string[]{"INT", "TEXT", "TEXT", "TEXT", "TEXT", "TEXT", "TEXT", "TEXT", "TEXT", "TEXT"};
 		db.CreateTable ("personas", cols, colTypes);
 
-		cols = new string[]{"id", "usuarios_id", "personas_id", "aceptado", "nombre", "email", "edad", "sexo", "ciudad", "foto", "latitude", "longitude"};
-		colTypes = new string[]{"INT", "TEXT", "TEXT", "TEXT", "TEXT", "TEXT", "TEXT", "TEXT", "TEXT", "TEXT", "TEXT", "TEXT"};
+		cols = new string[]{"id", "usuarios_id", "personas_id", "aceptado", "nombre", "email", "edad", "sexo", "ciudad", "foto", "latitude", "longitude", "busco_lat", "busco_long"};
+		colTypes = new string[]{"INT", "TEXT", "TEXT", "TEXT", "TEXT", "TEXT", "TEXT", "TEXT", "TEXT", "TEXT", "TEXT", "TEXT", "TEXT", "TEXT"};
 		db.CreateTable ("amigos_usuarios", cols, colTypes);
 
-		cols = new string[]{"id", "usuarios_id", "amigos_id", "aceptado", "nombre", "email", "edad", "sexo", "ciudad", "foto", "chat_group", "latitude", "longitude"};
-		colTypes = new string[]{"INT", "TEXT", "TEXT", "TEXT", "TEXT", "TEXT", "TEXT", "TEXT", "TEXT", "TEXT", "TEXT", "TEXT", "TEXT"};
+		cols = new string[]{"id", "usuarios_id", "amigos_id", "aceptado", "nombre", "email", "edad", "sexo", "ciudad", "foto", "chat_group", "latitude", "longitude", "busco_lat", "busco_long"};
+		colTypes = new string[]{"INT", "TEXT", "TEXT", "TEXT", "TEXT", "TEXT", "TEXT", "TEXT", "TEXT", "TEXT", "TEXT", "TEXT", "TEXT", "TEXT", "TEXT"};
 		db.CreateTable ("amigos", cols, colTypes);
 
 		cols = new string[]{"id", "func", "sfields", "svalues"};
@@ -352,8 +352,8 @@ public class MainController : MonoBehaviour {
 					db.UpdateSingle("usuarios", "foto", userData.foto, "id" , userData.id.ToString());
 
 
-					colsUsuarios = new string[]{ "ciudad", "sexo", "fecha_nacimiento", "nombre", "email", "foto", "latitude", "longitude" };
-					colsUsuariosValues = new string[]{ userData.ciudad, userData.sexo, userData.fecha_nacimiento, userData.nombre, userData.email, userData.foto, userData.latitude, userData.longitude };
+					colsUsuarios = new string[]{ "ciudad", "sexo", "fecha_nacimiento", "nombre", "email", "foto", "latitude", "longitude", "busco_distancia", "busco_lat", "busco_long" };
+					colsUsuariosValues = new string[]{ userData.ciudad, userData.sexo, userData.fecha_nacimiento, userData.nombre, userData.email, userData.foto, userData.latitude, userData.longitude, userData.busco_distancia, userData.busco_lat, userData.busco_long };
 					db.InsertIgnoreInto("usuarios", colsUsuarios, colsUsuariosValues, userData.id.ToString());
 
 					db.CloseDB();
@@ -433,7 +433,7 @@ public class MainController : MonoBehaviour {
 
 		db.OpenDB(dbName);
 		
-		string[] colsUsuarios = new string[]{ "id", "email", "nombre", "fbid", "fecha_nacimiento", "sexo", "foto", "ciudad", "busco_sexo", "busco_ciudad", "busco_edad_min", "busco_edad_max", "busco_en_face", "fb_friends", "busco_cerca", "busco_distancia", "latitude", "longitude"};
+		string[] colsUsuarios = new string[]{ "id", "email", "nombre", "fbid", "fecha_nacimiento", "sexo", "foto", "ciudad", "busco_sexo", "busco_ciudad", "busco_edad_min", "busco_edad_max", "busco_en_face", "fb_friends", "busco_cerca", "busco_distancia", "latitude", "longitude", "busco_lat", "busco_long"};
 
 		ArrayList result = new ArrayList();
 		if (isfb) {
@@ -446,7 +446,7 @@ public class MainController : MonoBehaviour {
 			result = db.BasicQueryArray ("select email from usuarios where email = '"+userData.email+"' ");
 		}
 
-		string[] colsUsuariosValues = new string[]{ userData.id.ToString(), userData.email, userData.nombre, userData.fbid, userData.fecha_nacimiento, userData.sexo, userData.foto, userData.ciudad, userData.busco_sexo, userData.busco_ciudad, userData.busco_edad_min, userData.busco_edad_max, userData.busco_en_face, userData.serializeFbFriends(), userData.busco_cerca, userData.busco_distancia, userData.latitude, userData.longitude };
+		string[] colsUsuariosValues = new string[]{ userData.id.ToString(), userData.email, userData.nombre, userData.fbid, userData.fecha_nacimiento, userData.sexo, userData.foto, userData.ciudad, userData.busco_sexo, userData.busco_ciudad, userData.busco_edad_min, userData.busco_edad_max, userData.busco_en_face, userData.serializeFbFriends(), userData.busco_cerca, userData.busco_distancia, userData.latitude, userData.longitude, userData.busco_lat, userData.busco_long };
 		
 		if (result.Count == 0) {
 			sendDataDebug = "count = 0 inserto usuario";
@@ -609,7 +609,10 @@ public class MainController : MonoBehaviour {
 				"nombre",
 				"email",
 				"latitude",
-				"longitude"
+				"longitude",
+				"busco_distancia",
+				"busco_lat",
+				"busco_long"
 			};
 			string[] data2 = new string[] {
 				userData.id.ToString (),
@@ -622,7 +625,10 @@ public class MainController : MonoBehaviour {
 				userData.nombre,
 				userData.email,
 				userData.latitude,
-				userData.longitude
+				userData.longitude,
+				userData.busco_distancia,
+				userData.busco_lat,
+				userData.busco_long
 			};
 
 			try {
@@ -642,7 +648,10 @@ public class MainController : MonoBehaviour {
 				"nombre",
 				"email",
 				"latitude",
-				"longitude"
+				"longitude",
+				"busco_distancia",
+				"busco_lat",
+				"busco_long"
 			};
 			string[] data2 = new string[] {
 				userData.id.ToString (),
@@ -654,7 +663,10 @@ public class MainController : MonoBehaviour {
 				userData.nombre,
 				userData.email,
 				userData.latitude,
-				userData.longitude
+				userData.longitude,
+				userData.busco_distancia,
+				userData.busco_lat,
+				userData.busco_long
 			};
 			
 			try {

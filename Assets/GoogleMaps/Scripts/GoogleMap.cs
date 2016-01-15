@@ -24,6 +24,7 @@ public class GoogleMap : MonoBehaviour
 	public GoogleMapMarker[] markers;
 	public GoogleMapPath[] paths;
 	public Text km;
+	public Text km_;
 	private MainController GMS;
 	public Text buscoDistancia;
 
@@ -128,7 +129,9 @@ public class GoogleMap : MonoBehaviour
 	public void DistanceOnValueChanged(float newValue)
 	{
 		Debug.Log("Slider value: " + newValue);
-		km.text = newValue + " Km";
+		km.text = newValue + " km";
+		//km_.text = newValue + "";
+
 		//buscoDistancia = newValue + " Km";
 		//agrego el valor de distancia a una variable y lo submiteo junto a la direccion.
 	}
@@ -164,95 +167,16 @@ public class GoogleMap : MonoBehaviour
 			GMS.userChangeData.busco_lat = info13[0];
 			GMS.userChangeData.busco_long = info13[1];
 			GMS.userChangeData.busco_distancia = km.text;
-			
+
 			//GMS.showLoading(true);
-			
+		
 			GMS.perfil_busco();
-
 			loadPrevLevel();
-
-
 			//PlayerPrefs.SetString("busco_completo", "1");
 			//StartCoroutine(gotoNext());
 		} 
 
-
-
-
-
-		/*Debug.Log (dict ["results"]);
-		string GeometryData_ = MiniJSON.Json.Serialize(dict ["results"]);
-		Debug.Log ("geometrydata: " + GeometryData_);*/
-
-
-		//IDictionary Wresponse2 = (IDictionary) MiniJSON.Json.Deserialize (GeometryData_);
-
-		//Debug.Log ("Wresponse2: " + Wresponse2["address_components"]);
-
-
-
-
-		/*IDictionary Wresponse3 = (IDictionary) MiniJSON.Json.Deserialize ( WarrayData_ );
-		string GeometryData_ = MiniJSON.Json.Serialize(Wresponse3["geometry"]);
-
-		Debug.Log("latlong1 Deserialize: " + GeometryData_);*/
-
-		/*object friendsH;
-		var friends = new List<object>();
-
-		var dict = Json.Deserialize(latlong.text) as Dictionary<string,object>;
-		if (dict.TryGetValue ("results", out friendsH)) {
-			Debug.Log("results2: " + friendsH);
-			friends = (List<object>)(((Dictionary<string, object>)friendsH) ["geometry"]);
-			if(friends.Count > 0) {
-				Debug.Log("friends.Count > 0");
-				foreach(object ff in friends){
-					Debug.Log("foreach(object ff in friends)");
-				}
-			}
-
-		}*/
-
-		//Dictionary<string,object> scoreData = scores[0] as Dictionary<string,object>;
-		
-	//	object score = scoreData["score"];
-
-
-		//IDictionary search = (IDictionary) Json.Deserialize (latlong.text);
-		//var search = Json.Deserialize(latlong.text) as Dictionary<string,object>;
-		//Debug.Log("search['string']: " + ((List<object>) search["results"])[0]);
-
-		//Debug.Log(List<object>)(((Dictionary<string, object>)latlong) ["data"]);
-		//Debug.Log("Lat: " + (double) search["location"]); // floats come out as doubles
-		//Debug.Log (latlong.ToString ());
-		//GMS.userData.busco_lat = (string)search ["location"];
-		//GMS.userData.busco_long = (string)search ["lng"];
-
-		//Debug.Log ("GMS.userData.busco_lat: " + GMS.userData.busco_lat);
-		//Debug.Log ("GMS.userData.busco_long: " + GMS.userData.busco_long);
-		//Debug.Log("latlong");
-		
-		
-		
-		/*	if(!GMS.haveInet){
-			GMS.errorPopup("Verifica tu conexion a internet");
-		}else{
-			
-			GMS.userChangeData.busco_lat = latlong;
-			GMS.userChangeData.busco_distancia = buscoDistancia;
-			
-			GMS.showLoading(true);
-			
-			GMS.perfil_busco();
-			
-			//PlayerPrefs.SetString("busco_completo", "1");
-			//StartCoroutine(gotoNext());
-		} */
-		
 	}
-
-
-
 
 }
 
