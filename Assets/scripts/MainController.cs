@@ -65,15 +65,15 @@ public class MainController : MonoBehaviour {
 		db.CreateTable ("usuarios", cols, colTypes);
 
 		cols = new string[]{"id", "nombre", "edad", "sexo", "ciudad", "foto", "visto", "fbid", "latitude", "longitude", "busco_lat", "busco_long"};
-		colTypes = new string[]{"INT", "TEXT", "TEXT", "TEXT", "TEXT", "TEXT", "TEXT", "TEXT", "TEXT", "TEXT"};
+		colTypes = new string[]{"INT", "TEXT", "TEXT", "TEXT", "TEXT", "TEXT", "TEXT", "TEXT", "TEXT", "TEXT", "TEXT", "TEXT", "TEXT", "TEXT"};
 		db.CreateTable ("personas", cols, colTypes);
 
-		cols = new string[]{"id", "usuarios_id", "personas_id", "aceptado", "nombre", "email", "edad", "sexo", "ciudad", "foto", "latitude", "longitude", "busco_lat", "busco_long"};
-		colTypes = new string[]{"INT", "TEXT", "TEXT", "TEXT", "TEXT", "TEXT", "TEXT", "TEXT", "TEXT", "TEXT", "TEXT", "TEXT", "TEXT", "TEXT"};
+		cols = new string[]{"id", "usuarios_id", "personas_id", "aceptado", "nombre", "email", "edad", "sexo", "ciudad", "foto", "latitude", "longitude", "busco_distancia", "busco_lat", "busco_long"};
+		colTypes = new string[]{"INT", "TEXT", "TEXT", "TEXT", "TEXT", "TEXT", "TEXT", "TEXT", "TEXT", "TEXT", "TEXT", "TEXT", "TEXT", "TEXT", "TEXT"};
 		db.CreateTable ("amigos_usuarios", cols, colTypes);
 
-		cols = new string[]{"id", "usuarios_id", "amigos_id", "aceptado", "nombre", "email", "edad", "sexo", "ciudad", "foto", "chat_group", "latitude", "longitude", "busco_lat", "busco_long"};
-		colTypes = new string[]{"INT", "TEXT", "TEXT", "TEXT", "TEXT", "TEXT", "TEXT", "TEXT", "TEXT", "TEXT", "TEXT", "TEXT", "TEXT", "TEXT", "TEXT"};
+		cols = new string[]{"id", "usuarios_id", "amigos_id", "aceptado", "nombre", "email", "edad", "sexo", "ciudad", "foto", "chat_group", "latitude", "longitude", "busco_distancia", "busco_lat", "busco_long"};
+		colTypes = new string[]{"INT", "TEXT", "TEXT", "TEXT", "TEXT", "TEXT", "TEXT", "TEXT", "TEXT", "TEXT", "TEXT", "TEXT", "TEXT", "TEXT", "TEXT", "TEXT"};
 		db.CreateTable ("amigos", cols, colTypes);
 
 		cols = new string[]{"id", "func", "sfields", "svalues"};
@@ -223,7 +223,7 @@ public class MainController : MonoBehaviour {
 		// check for errors
 		if (www.error == null){
 			sendDataDebug = "WWW Ok!";
-			Debug.Log("WWW Ok!: " + www.text);
+			//Debug.Log("WWW Ok!: " + www.text);
 
 			IDictionary Wresponse = (IDictionary) MiniJSON.Json.Deserialize (www.text);
 
@@ -354,7 +354,12 @@ public class MainController : MonoBehaviour {
 
 					colsUsuarios = new string[]{ "ciudad", "sexo", "fecha_nacimiento", "nombre", "email", "foto", "latitude", "longitude", "busco_distancia", "busco_lat", "busco_long" };
 					colsUsuariosValues = new string[]{ userData.ciudad, userData.sexo, userData.fecha_nacimiento, userData.nombre, userData.email, userData.foto, userData.latitude, userData.longitude, userData.busco_distancia, userData.busco_lat, userData.busco_long };
+
+					Debug.Log("Inserto valores: " + colsUsuariosValues);
+
 					db.InsertIgnoreInto("usuarios", colsUsuarios, colsUsuariosValues, userData.id.ToString());
+
+
 
 					db.CloseDB();
 					showLoading(false);
@@ -797,7 +802,7 @@ public class MainController : MonoBehaviour {
 	}
 
 	public Sprite spriteFromFile(string image_){
-		Debug.Log ("spriteFromFile: " + image_);
+		//Debug.Log ("spriteFromFile: " + image_);
 		Sprite sprite = new Sprite ();
 		if (image_ != "") {
 			string filepath = Application.persistentDataPath + "/" + image_;
@@ -807,7 +812,7 @@ public class MainController : MonoBehaviour {
 				Texture2D tex = new Texture2D (2, 2);
 				tex.LoadImage (fileData); //..this will auto-resize the texture dimensions.
 
-				Debug.Log (tex.width + "x" + tex.height);
+				//Debug.Log (tex.width + "x" + tex.height);
 				sprite = Sprite.Create (tex, new Rect (0, 0, tex.width, tex.height), new Vector2 (0f, 0f));
 			}else{
 				Texture2D tex = Resources.Load("default") as Texture2D;

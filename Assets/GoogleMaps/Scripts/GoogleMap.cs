@@ -24,9 +24,10 @@ public class GoogleMap : MonoBehaviour
 	public GoogleMapMarker[] markers;
 	public GoogleMapPath[] paths;
 	public Text km;
-	public Text km_;
 	private MainController GMS;
 	public Text buscoDistancia;
+	public Slider slider;
+
 
 
 	void Start() {
@@ -34,6 +35,15 @@ public class GoogleMap : MonoBehaviour
 		GameObject GM = GameObject.Find ("MainController");
 		GMS = GM.GetComponent<MainController>();
 		if(loadOnStart) Refresh();	
+
+
+		Debug.Log ("Distancia guardada del usuario: " + GMS.userData.busco_distancia);
+		if (GMS.userData.busco_distancia != "0" || GMS.userData.busco_distancia != "" ) {
+			km.text = GMS.userData.busco_distancia;
+			slider.value = float.Parse(GMS.userData.busco_distancia);
+		} 
+
+
 }
 	public void newAddress(InputField direccion) {
 		Debug.Log ("nueva direccion" + direccion.text);
@@ -62,10 +72,32 @@ public class GoogleMap : MonoBehaviour
 		var url = "http://maps.googleapis.com/maps/api/staticmap";
 		var qs = "";
 		if (!autoLocateCenter) {
-			if (centerLocation.address != "")
-				//qs += "center=" + WWW.UnEscapeURL (centerLocation.address);
-				qs += "center=" +  WWW.EscapeURL (centerLocation.address);
-			else {
+			if (centerLocation.address != ""){
+
+
+				Debug.Log("Busco latlong: " + GMS.userData.busco_lat + ", " + GMS.userData.busco_long);
+
+
+				//en caso que el usuario no tenga definida lat y long de busqueda cargo SU ubicacion
+				if (GMS.userData.busco_lat != "" & GMS.userData.busco_long != "") {
+					qs += "center=" + GMS.userData.busco_lat +","+ GMS.userData.busco_long;
+				} else {
+				//en caso que el usuario no tenga definida lat y long de busqueda cargo SU ubicacion
+					Debug.Log(GMS.userData.latitude + ", " + GMS.userData.longitude);
+					//si no tiene definida SU ubicacion traigo una ubicacion por default. REVISAR
+					if (GMS.userData.latitude == "0" & GMS.userData.longitude == "0") {
+						Debug.Log ("Entro en latlong == 0");
+						qs += "center=" +  WWW.EscapeURL (centerLocation.address);
+					} else { //si tiene definida su ubicacion cargo esa.
+						Debug.Log ("Entro en el else de en latlong = 0");
+						qs += "center=" + GMS.userData.latitude +","+ GMS.userData.longitude;
+					}
+
+				}
+
+
+
+			} else {
 				//qs += "center=" + WWW.UnEscapeURL (string.Format ("{0},{1}", centerLocation.latitude, centerLocation.longitude));
 			}
 		
@@ -129,7 +161,7 @@ public class GoogleMap : MonoBehaviour
 	public void DistanceOnValueChanged(float newValue)
 	{
 		Debug.Log("Slider value: " + newValue);
-		km.text = newValue + " km";
+		km.text = newValue+"";
 		//km_.text = newValue + "";
 
 		//buscoDistancia = newValue + " Km";
