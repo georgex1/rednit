@@ -12,7 +12,7 @@ public class login : MonoBehaviour {
 		//auto login usuario
 		GMS.db.OpenDB(GMS.dbName);
 
-		ArrayList result = GMS.db.BasicQueryArray ("select id, email, nombre, fbid, fecha_nacimiento, sexo, foto, ciudad, busco_ciudad, busco_sexo, busco_edad_min, busco_edad_max, busco_en_face, fb_friends, busco_cerca, busco_distancia, latitude, logitude from usuarios limit 1");
+		ArrayList result = GMS.db.BasicQueryArray ("select id, email, nombre, fbid, fecha_nacimiento, sexo, foto, ciudad, busco_ciudad, busco_sexo, busco_edad_min, busco_edad_max, busco_en_face, fb_friends, busco_cerca, busco_distancia, latitude, longitude, busco_lat, busco_long from usuarios limit 1");
 		if (result.Count > 0) {
 
 			Debug.Log("user DB: " + ((string[])result [0])[1]);

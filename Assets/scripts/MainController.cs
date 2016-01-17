@@ -614,10 +614,7 @@ public class MainController : MonoBehaviour {
 				"nombre",
 				"email",
 				"latitude",
-				"longitude",
-				"busco_distancia",
-				"busco_lat",
-				"busco_long"
+				"longitude"
 			};
 			string[] data2 = new string[] {
 				userData.id.ToString (),
@@ -630,10 +627,7 @@ public class MainController : MonoBehaviour {
 				userData.nombre,
 				userData.email,
 				userData.latitude,
-				userData.longitude,
-				userData.busco_distancia,
-				userData.busco_lat,
-				userData.busco_long
+				userData.longitude
 			};
 
 			try {
@@ -653,10 +647,7 @@ public class MainController : MonoBehaviour {
 				"nombre",
 				"email",
 				"latitude",
-				"longitude",
-				"busco_distancia",
-				"busco_lat",
-				"busco_long"
+				"longitude"
 			};
 			string[] data2 = new string[] {
 				userData.id.ToString (),
@@ -668,10 +659,7 @@ public class MainController : MonoBehaviour {
 				userData.nombre,
 				userData.email,
 				userData.latitude,
-				userData.longitude,
-				userData.busco_distancia,
-				userData.busco_lat,
-				userData.busco_long
+				userData.longitude
 			};
 			
 			try {

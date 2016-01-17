@@ -27,11 +27,12 @@ public class GoogleMap : MonoBehaviour
 	private MainController GMS;
 	public Text buscoDistancia;
 	public Slider slider;
+	public bool newAdressFlag;
 
 
 
 	void Start() {
-
+		newAdressFlag = false;
 		GameObject GM = GameObject.Find ("MainController");
 		GMS = GM.GetComponent<MainController>();
 		if(loadOnStart) Refresh();	
@@ -49,6 +50,7 @@ public class GoogleMap : MonoBehaviour
 		Debug.Log ("nueva direccion" + direccion.text);
 		//centerLocation.address = "ruiz de montoya 119 apostoles misiones";
 		centerLocation.address = direccion.text;
+		newAdressFlag = true;
 		Refresh();
 		//Debug.Log("nueva info");
 	}
@@ -74,6 +76,11 @@ public class GoogleMap : MonoBehaviour
 		if (!autoLocateCenter) {
 			if (centerLocation.address != ""){
 
+				if(newAdressFlag == true) {
+					qs += "center=" +  WWW.EscapeURL (centerLocation.address);
+					newAdressFlag = false;
+				} else {
+
 
 				Debug.Log("Busco latlong: " + GMS.userData.busco_lat + ", " + GMS.userData.busco_long);
 
@@ -95,7 +102,7 @@ public class GoogleMap : MonoBehaviour
 
 				}
 
-
+				}//newadressflag
 
 			} else {
 				//qs += "center=" + WWW.UnEscapeURL (string.Format ("{0},{1}", centerLocation.latitude, centerLocation.longitude));
@@ -136,24 +143,9 @@ public class GoogleMap : MonoBehaviour
 					qs += "|" + WWW.UnEscapeURL (string.Format ("{0},{1}", loc.latitude, loc.longitude));
 			}
 		}
-		
-		
-	/*	var req = new HTTP.Request ("GET", url + "?" + qs, true);
-		req.Send ();
-		while (!req.isDone)
-			yield return null;
-		if (req.exception == null) {
-			var tex = new Texture2D (size, size);
-			tex.LoadImage (req.response.Bytes);
-			renderer.material.mainTexture = tex;
-		}*/
 		Debug.Log (url + "?" + qs);
 		var req = new WWW (url + "?" + qs);
-		//Debug.Log (req.texture);
 		yield return req;
-		//renderer.material.mainTexture = req.texture;
-		//renderer.material.SetTexture = req.texture;
-		//gameobject.GetComponent<RawImage> ().texture = texture;
 		gameObject.GetComponent<RawImage> ().texture = req.texture;
 	}
 
