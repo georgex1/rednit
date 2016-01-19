@@ -40,7 +40,7 @@ public class busco : MonoBehaviour {
 		btnDesde.GetComponentInChildren<Text> ().text = GMS.userData.busco_edad_min;
 		btnHasta.GetComponentInChildren<Text> ().text = GMS.userData.busco_edad_max;
 
-		busco_ciudad.GetComponent<Text>().text = GMS.userData.ciudad;
+		//busco_ciudad.GetComponent<Text>().text = GMS.userData.ciudad;
 
 		generarDesdeHasta ();
 

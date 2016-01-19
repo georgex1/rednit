@@ -25,9 +25,6 @@ public class AmigoData {
 		sexo = "";
 		foto = "";
 		chat_group = "";
-		latitude = "";
-		longitude = "";
-
 	}
 	
 	public void save(){
@@ -43,8 +40,6 @@ public class AmigoData {
 		sexo = row_ [6];
 		ciudad = row_ [7];
 		foto = row_ [8];
-		latitude = row_ [9];
-		longitude = row_ [10];
 	}
 	
 }
