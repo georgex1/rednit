@@ -223,7 +223,10 @@ public class MainController : MonoBehaviour {
 		// check for errors
 		if (www.error == null){
 			sendDataDebug = "WWW Ok!";
-			//Debug.Log("WWW Ok!: " + www.text);
+
+			Debug.Log("response!: " + response);
+
+			Debug.Log("WWW Ok!: " + www.text);
 
 			IDictionary Wresponse = (IDictionary) MiniJSON.Json.Deserialize (www.text);
 
@@ -245,17 +248,47 @@ public class MainController : MonoBehaviour {
 				}
 
 				if(response == "login_facebook"){
+					showLoading(true);
+
 					sendDataDebug = "entro a login_facebook";
 					Debug.Log("login facebook OK! ID: "+ (string)Wresponse3["id"]);
 
 					userData.id = int.Parse( (string)Wresponse3["id"] );
 
-					saveUserData(true);
+					if( (string)Wresponse2["hasArray"] != "0" ){
+						string WarrayContent_ = MiniJSON.Json.Serialize(Wresponse["arrayContent"]);
+						IDictionary WresponseContent = (IDictionary) MiniJSON.Json.Deserialize ( WarrayContent_ );
 
-					//upload_user_foto();
-					Application.LoadLevel ("perfil");
 
-					download_personas();
+						for(int i = 1; i <= int.Parse( (string)Wresponse2["hasArray"] ); i++ ){
+							IDictionary reponseContent = (IDictionary) MiniJSON.Json.Deserialize ( (string)WresponseContent[i.ToString()]  );
+
+							userData.email = (string)reponseContent["email"];
+							userData.nombre = (string)reponseContent["nombre"];
+							userData.fecha_nacimiento = userData.app_format_date( (string)reponseContent["fecha_nacimiento"] );
+							userData.sexo = (string)reponseContent["sexo"];
+
+							userData.busco_lat = (string)reponseContent["busco_lat"];
+							userData.busco_long = (string)reponseContent["busco_long"];
+							userData.busco_distancia = (string)reponseContent["busco_distancia"];
+							userData.busco_en_face = (string)reponseContent["busco_en_face"];
+							userData.busco_edad_min = (string)reponseContent["busco_edad_min"];
+							userData.busco_edad_max = (string)reponseContent["busco_edad_max"];
+							userData.busco_sexo = (string)reponseContent["busco_sexo"];
+							userData.foto = (string)reponseContent["foto"];
+
+							try_download_persona_imagen((string)reponseContent["foto"]);
+
+							saveUserData(true);
+							
+							//upload_user_foto();
+							StartCoroutine( redirect("perfil", 3f) );
+							
+							download_personas();
+
+						}
+					}
+
 				}
 
 				if(response == "get_personas"){
@@ -547,7 +580,7 @@ public class MainController : MonoBehaviour {
 		}
 	}
 
-	private void try_download_persona_imagen(string foto_){
+	public void try_download_persona_imagen(string foto_){
 		string filepath = Application.persistentDataPath + "/" + foto_;
 		if (!File.Exists (filepath)) {
 			StartCoroutine( downloadImg(foto_) );
@@ -614,7 +647,8 @@ public class MainController : MonoBehaviour {
 				"nombre",
 				"email",
 				"latitude",
-				"longitude"
+				"longitude",
+				"isnewfoto"
 			};
 			string[] data2 = new string[] {
 				userData.id.ToString (),
@@ -627,7 +661,8 @@ public class MainController : MonoBehaviour {
 				userData.nombre,
 				userData.email,
 				userData.latitude,
-				userData.longitude
+				userData.longitude,
+				"1"
 			};
 
 			try {
@@ -719,6 +754,14 @@ public class MainController : MonoBehaviour {
 	private IEnumerator call_sync(){
 		yield return new WaitForSeconds (10);
 		sync ();
+	}
+
+	private IEnumerator redirect(string escene_, float seconds){
+		yield return new WaitForSeconds (seconds);
+
+		Debug.Log ("redirect escene: " + escene_ + " en " + seconds);
+		showLoading(false);
+		Application.LoadLevel (escene_);
 	}
 
 	public void sync(){

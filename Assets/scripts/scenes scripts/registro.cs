@@ -49,6 +49,8 @@ public class registro : MonoBehaviour {
 			string filepath = Application.persistentDataPath + "/" + GMS.userData.foto;
 			if (File.Exists (filepath)) {
 				GameObject.Find ("backImage").GetComponent<Image>().sprite = GMS.spriteFromFile(GMS.userData.foto);
+			}else{//intentar cargar de nuevo en 2 segs....
+				StartCoroutine( tryGetPicture() );
 			}
 		}else if(GMS.userData.temp_img != ""){
 			string filepath = Application.persistentDataPath + "/" + GMS.userData.temp_img;
@@ -72,6 +74,16 @@ public class registro : MonoBehaviour {
 		GMS.userData.temp_img = GMS.userData.foto;
 
 		Debug.Log ("datos user: " + nombre.GetComponent<Text>().text + email.GetComponent<Text>().text + ciudad.GetComponent<Text>().text);
+	}
+
+	private IEnumerator tryGetPicture(){
+		yield return new WaitForSeconds (2);
+
+		string filepath = Application.persistentDataPath + "/" + GMS.userData.foto;
+		if (File.Exists (filepath)) {
+			GameObject.Find ("backImage").GetComponent<Image>().sprite = GMS.spriteFromFile(GMS.userData.foto);
+		}
+		
 	}
 	
 	void Update(){

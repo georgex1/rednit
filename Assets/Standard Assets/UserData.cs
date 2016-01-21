@@ -77,6 +77,18 @@ public class UserData : ICloneable{
 		return fbFriendsString;
 	}
 
+	public string app_format_date(string fdate){
+		string fdater = fdate;
+
+		string[] splitFechaNac = fdate.Split('-');
+		if(splitFechaNac.Length > 0){ //YYYY-mm-dd
+			//dd/mm/YYYY
+			fdater = splitFechaNac[2] + '/' + splitFechaNac[1] + '/' + splitFechaNac[0];
+		}
+
+		return fdater;
+	}
+
 	public void populateUser(string[] row_){
 		id = int.Parse( row_ [0] );
 		email = row_ [1];
