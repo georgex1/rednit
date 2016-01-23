@@ -147,7 +147,7 @@ public class loginFacebook : MonoBehaviour {
 
 	private IEnumerator loginFacebook_(){
 		yield return new WaitForSeconds (3);
-		GMS.showLoading(false);
+		//GMS.showLoading(false);
 		GMS.loginFacebook ();
 	}
 }

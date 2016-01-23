@@ -19,7 +19,8 @@ public class UserData : ICloneable{
 	sexo,
 	foto,
 	latitude,
-	longitude;
+	longitude,
+	descripcion;
 
 	public string busco_ciudad,
 		busco_sexo,
@@ -38,6 +39,8 @@ public class UserData : ICloneable{
 	public byte[] ImgBytes;
 	public string temp_img;
 
+	public string temp_gallery;
+
 	public List<string> fbFriends;
 	
 	//public Dictionary<string, int> ExercisesMetricas;
@@ -51,7 +54,7 @@ public class UserData : ICloneable{
 		ciudad = "";
 		fbid = "";
 		sexo = "";
-		foto = temp_img = "";
+		foto = temp_img = temp_gallery = "";
 		busco_edad_min = "18";
 		busco_edad_max = "50";
 		busco_en_face = "SI";
@@ -62,6 +65,7 @@ public class UserData : ICloneable{
 		longitude = "";
 		busco_lat = "";
 		busco_long = "";
+		descripcion = "";
 		//ExercisesMetricas = new Dictionary<string, int> ();
 	}
 
@@ -111,6 +115,7 @@ public class UserData : ICloneable{
 		longitude = row_ [17];
 		busco_lat = row_ [18];
 		busco_long = row_ [19];
+		descripcion = row_ [20];
 
 
 		if (row_ [13] != "") {

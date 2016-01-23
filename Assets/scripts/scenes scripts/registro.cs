@@ -6,6 +6,7 @@ using System.IO;
 public class registro : MonoBehaviour {
 
 	public GameObject nombre;
+	public GameObject descripcion;
 	public GameObject email;
 	public GameObject ciudad;
 	public string sexo;
@@ -64,6 +65,8 @@ public class registro : MonoBehaviour {
 		}
 
 		nombre.transform.parent.GetComponent<InputField>().text = GMS.userData.nombre;
+
+		descripcion.transform.parent.GetComponent<InputField>().text = GMS.userData.descripcion;
 		//ciudad.GetComponent<Text>().text = GMS.userData.ciudad;
 		sexo = GMS.userData.sexo;
 
@@ -79,9 +82,13 @@ public class registro : MonoBehaviour {
 	private IEnumerator tryGetPicture(){
 		yield return new WaitForSeconds (2);
 
+		Debug.Log ("tryGetPicture ...");
+
 		string filepath = Application.persistentDataPath + "/" + GMS.userData.foto;
 		if (File.Exists (filepath)) {
-			GameObject.Find ("backImage").GetComponent<Image>().sprite = GMS.spriteFromFile(GMS.userData.foto);
+			GameObject.Find ("backImage").GetComponent<Image> ().sprite = GMS.spriteFromFile (GMS.userData.foto);
+		} else {
+			StartCoroutine( tryGetPicture() );
 		}
 		
 	}
@@ -112,6 +119,7 @@ public class registro : MonoBehaviour {
 		}else{
 			
 			GMS.userData.email = email.GetComponent<Text>().text;
+			GMS.userData.descripcion = descripcion.GetComponent<Text>().text;
 			GMS.userData.nombre = nombre.GetComponent<Text>().text;
 			//aca deberia mandar la ubicacion actual del usuario en lugar de la ciudad.
 			GMS.userData.ciudad = ciudad.GetComponent<Text>().text;
@@ -139,5 +147,9 @@ public class registro : MonoBehaviour {
 	
 	public bool validEmail(string emailaddress){
 		return System.Text.RegularExpressions.Regex.IsMatch(emailaddress, @"\w+([-+.']\w+)*@\w+([-.]\w+)*\.\w+([-.]\w+)*");
+	}
+
+	public void gotoGallery(){
+		Application.LoadLevel ("user_images");
 	}
 }

@@ -10,7 +10,7 @@ public class AmigoData {
 	edad,
 	sexo,
 	ciudad,
-	foto, chat_group, latitude, longitude;
+	foto, chat_group, latitude, longitude, descripcion;
 	
 	//public Dictionary<string, int> ExercisesMetricas;
 	
@@ -24,6 +24,7 @@ public class AmigoData {
 		ciudad = "";
 		sexo = "";
 		foto = "";
+		descripcion = "";
 		chat_group = "";
 	}
 	
@@ -40,6 +41,7 @@ public class AmigoData {
 		sexo = row_ [6];
 		ciudad = row_ [7];
 		foto = row_ [8];
+		descripcion = row_ [9];
 	}
 	
 }
