@@ -10,10 +10,10 @@ public class user_images : MonoBehaviour {
 
 	private MainController GMS;
 	GameObject OptionDefault;
-	public GameObject imageTexture;
+	public Image imageTexture;
 
 	private int countImages = 0;
-	private GameObject OptionAdd;
+	public GameObject OptionAdd;
 
 	Texture2D actuualText;
 	string newImageName;
@@ -21,6 +21,7 @@ public class user_images : MonoBehaviour {
 
 	// Use this for initialization
 	void Start () {
+
 		GameObject GM = GameObject.Find ("MainController");
 		GMS = GM.GetComponent<MainController>();
 		
@@ -54,6 +55,11 @@ public class user_images : MonoBehaviour {
 			clone.name = "opcion-" + i;
 		}*/
 
+
+
+
+
+
 	}
 
 	public void OptDefault(GameObject aceptadoBtn){
@@ -82,6 +88,8 @@ public class user_images : MonoBehaviour {
 
 	public void addPhoto(){
 
+		Debug.Log ("add");
+
 		#if UNITY_EDITOR
 		test_guardar();
 		#else
@@ -90,6 +98,8 @@ public class user_images : MonoBehaviour {
 	}
 
 	private void test_guardar(){
+
+		/*Debug.Log ("test guardar");
 		
 		byte[] fileData = File.ReadAllBytes("Assets/Resources/fluence GT2.jpg");
 		actuualText = new Texture2D(2, 2);
@@ -97,7 +107,32 @@ public class user_images : MonoBehaviour {
 		imageTexture.renderer.material.mainTexture = actuualText;
 		
 		newImageName = GMS.generateId ().ToString () + ".png";
+
+		//imageTexture.sprite = GMS.spriteFromFile(row_[5]);*/
 		
+		//==============================
+		Debug.Log ("tcargo foto");
+		
+		byte[] fileData = File.ReadAllBytes("Assets/Resources/fluence GT2.jpg");
+		actuualText = new Texture2D(2, 2);
+		actuualText.LoadImage(fileData); //..this will auto-resize the texture dimensions.
+		//imageTexture.renderer.material.mainTexture = actuualText;
+		
+		//newImageName = GMS.generateId ().ToString () + ".png";
+		
+		//Debug.Log (tex.width + "x" + tex.height);
+		Sprite sprite = new Sprite ();
+		
+		sprite = Sprite.Create (actuualText, new Rect (0, 0, actuualText.width, actuualText.height), new Vector2 (0f, 0f));
+		
+		imageTexture.sprite = sprite;
+		
+		
+		
+		
+		//==============================
+	
+	
 	}
 	 
 	private void setPincture(){
@@ -128,6 +163,9 @@ public class user_images : MonoBehaviour {
 	private void setObjPicture(string newImageName_, string newImageNameId_){
 
 		//sumo la cantidad de imagenes cargadas
+
+		Debug.Log ("entro a asignar las fotos: " + newImageName_ + " ---- " + newImageNameId_);
+
 		countImages += 1;
 
 		//creo le item de foto en la galeria
@@ -184,3 +222,5 @@ public class user_images : MonoBehaviour {
 		Application.LoadLevel ("perfil");
 	}
 }
+
+

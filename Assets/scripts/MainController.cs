@@ -68,7 +68,7 @@ public class MainController : MonoBehaviour {
 		colTypes = new string[]{"INT", "TEXT", "TEXT", "TEXT", "TEXT", "TEXT", "TEXT", "TEXT", "TEXT", "TEXT", "TEXT", "TEXT", "TEXT", "TEXT", "TEXT"};
 		db.CreateTable ("personas", cols, colTypes);
 
-		cols = new string[]{"id", "usuarios_id", "personas_iGed", "aceptado", "nombre", "email", "edad", "sexo", "ciudad", "foto", "latitude", "longitude", "busco_distancia", "busco_lat", "busco_long", "descripcion"};
+		cols = new string[]{"id", "usuarios_id", "personas_id", "aceptado", "nombre", "email", "edad", "sexo", "ciudad", "foto", "latitude", "longitude", "busco_distancia", "busco_lat", "busco_long", "descripcion"};
 		colTypes = new string[]{"INT", "TEXT", "TEXT", "TEXT", "TEXT", "TEXT", "TEXT", "TEXT", "TEXT", "TEXT", "TEXT", "TEXT", "TEXT", "TEXT", "TEXT", "TEXT"};
 		db.CreateTable ("amigos_usuarios", cols, colTypes);
 
