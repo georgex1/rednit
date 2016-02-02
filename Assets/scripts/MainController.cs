@@ -287,7 +287,10 @@ public class MainController : MonoBehaviour {
 							try_download_persona_imagen((string)reponseContent["foto"]);
 
 							saveUserData(true);
-							
+
+							//bajar galeria del usuario
+							downloadUserGallery();
+
 							//upload_user_foto();
 							StartCoroutine( redirect("perfil", 3f) );
 							
@@ -437,6 +440,33 @@ public class MainController : MonoBehaviour {
 					db.CloseDB();
 				}
 
+				if(response == "get_gallery"){
+					string WarrayContent_ = MiniJSON.Json.Serialize(Wresponse["arrayContent"]);
+					IDictionary WresponseContent = (IDictionary) MiniJSON.Json.Deserialize ( WarrayContent_ );
+					
+					//Debug.Log((string)Wresponse2["hasArray"]);
+					if( (string)Wresponse2["hasArray"] != "0" ){
+						for(int i = 1; i <= int.Parse( (string)Wresponse2["hasArray"] ); i++ ){
+
+							
+							IDictionary reponseContent = (IDictionary) MiniJSON.Json.Deserialize ( (string)WresponseContent[i.ToString()]  );
+							
+							db.OpenDB(dbName);
+
+							//cargar galeria
+							string[] cols = new string[]{ "id", "usuarios_id", "foto", "isdefault"};
+							string isDefault = ((string)reponseContent["isdefault"] == "1") ? "Y" : "N";
+							string[] colsVals = new string[]{ (string)reponseContent["id"], (string)reponseContent["usuarios_id"], (string)reponseContent["foto"], isDefault};
+							db.InsertIgnoreInto("fotos_usuarios", cols, colsVals, (string)reponseContent["id"]);
+							
+							//intentar bajar imagen de la galeria
+							try_download_persona_imagen((string)reponseContent["foto"]);
+							
+							db.CloseDB();
+						}
+					}
+				}
+
 				if(response == "get_updates"){
 
 					//if((string)Wresponse2["mgs"] == "puntos_especiales_updated"){
@@ -495,6 +525,13 @@ public class MainController : MonoBehaviour {
 		userData.sexo = (string)values["sexo"];
 
 		saveUserData (false);
+	}
+
+	private void downloadUserGallery(){
+		string[] colsUsuarios = new string[]{ "usuarios_id" };
+		string[] colsUsuariosValues = new string[]{ userData.id.ToString () };
+		
+		sendData (colsUsuarios, colsUsuariosValues, "get_gallery");
 	}
 
 	/*public void changeProfile(){
@@ -689,7 +726,12 @@ public class MainController : MonoBehaviour {
 			newPhotoId,
 			isDefault
 		};
-		
+
+		Debug.Log ("data upload gallery: " + userData.id.ToString () + " - " +
+		           "imagen_usuario" + " - " +
+		           newPhoto + " - " +
+		           newPhotoId + " - " + isDefault );
+
 		try {
 			sendData (cols2, data2, "upload_gallery", fileData);
 		} catch (IOException e) {
@@ -698,13 +740,34 @@ public class MainController : MonoBehaviour {
 	}
 
 	public void delete_foto_gallery(string gallery_foto){
+
+		//verificar si la borrada es default
+		db.OpenDB (dbName);
+		ArrayList result = db.BasicQueryArray ("select id from fotos_usuarios where id = '" +gallery_foto+ "' and isdefault = 'Y' ");
+		db.CloseDB();
+
+		string newDefault = "0";
+
+		if (result.Count > 0) {
+			//agregar nueva default
+			db.OpenDB (dbName);
+			result = db.BasicQueryArray ("select id from fotos_usuarios where usuarios_id = '" +userData.id+ "' and isdefault = 'N' ");
+			if (result.Count > 0) {
+				newDefault = ((string[])result [0]) [0];
+				change_gallery_default(newDefault);
+			}
+			db.CloseDB();
+		}
+
 		string[] cols2 = new string[] {
 			"usuarios_id",
-			"id"
+			"id",
+			"newDefault"
 		};
 		string[] data2 = new string[] {
 			userData.id.ToString (),
-			gallery_foto
+			gallery_foto,
+			newDefault
 		};
 		
 		try {
@@ -718,7 +781,28 @@ public class MainController : MonoBehaviour {
 		db.OpenDB (dbName);
 		db.UpdateSingle("fotos_usuarios", "isdefault", "N", "usuarios_id" , userData.id.ToString());
 		db.UpdateSingle("fotos_usuarios", "isdefault", "Y", "id" , imageId);
+
+
+		//set default image in user table
+		userData.temp_galleryID = imageId;
+		db.UpdateSingle("usuarios", "foto", userData.getGalleryPhoto(), "id" , userData.id.ToString());
+
 		db.CloseDB ();
+
+		string[] cols2 = new string[] {
+			"foto_id",
+			"usuario_id"
+		};
+		string[] data2 = new string[] {
+			imageId,
+			userData.id.ToString()
+		};
+		
+		try {
+			sendData (cols2, data2, "default_gallery");
+		} catch (IOException e) {
+			Debug.Log (e);
+		}
 	}
 	
 	public void upload_user_foto(){
@@ -816,6 +900,9 @@ public class MainController : MonoBehaviour {
 		string[] colsUsuariosValues = new string[]{ userData.email, userData.nombre, userData.fbid, userData.fecha_nacimiento, userData.sexo, userData.plataforma, userData.reg_id, userData.foto, "imagen_usuario" };
 		
 		sendData (colsUsuarios, colsUsuariosValues, "login_facebook", fileData);
+
+		//set image gallery
+		upload_foto_gallery (userData.foto, userData.temp_galleryID, "Y");
 	}
 
 	private IEnumerator get_updates(){
@@ -954,6 +1041,8 @@ public class MainController : MonoBehaviour {
 	public IEnumerator saveTextureToFile(Texture2D /*savedTexture */loadTexture, string fileName, char tosave){
 		yield return new WaitForSeconds(0.5f);
 
+		Debug.Log ("texture inicial: " + fileName + " " + loadTexture.width + "x" + loadTexture.height);
+
 		int newWidth = 300;
 		int newHeigth =  (newWidth * loadTexture.height / loadTexture.width) ;
 
@@ -974,7 +1063,7 @@ public class MainController : MonoBehaviour {
 		}
 
 		if (tosave == 'g') {
-			File.WriteAllBytes (Application.persistentDataPath + "/" + fileName, userData.ImgBytes);
+			File.WriteAllBytes (Application.persistentDataPath + "/" + fileName, newTexture.EncodeToPNG ());
 			Debug.Log (Application.persistentDataPath + "/" + fileName);
 		}
 	}

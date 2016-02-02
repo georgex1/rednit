@@ -40,6 +40,7 @@ public class UserData : ICloneable{
 	public string temp_img;
 
 	public string temp_gallery;
+	public string temp_galleryID;
 
 	public List<string> fbFriends;
 	
@@ -54,7 +55,7 @@ public class UserData : ICloneable{
 		ciudad = "";
 		fbid = "";
 		sexo = "";
-		foto = temp_img = temp_gallery = "";
+		foto = temp_img = temp_gallery = temp_galleryID= "";
 		busco_edad_min = "18";
 		busco_edad_max = "50";
 		busco_en_face = "SI";
@@ -91,6 +92,10 @@ public class UserData : ICloneable{
 		}
 
 		return fdater;
+	}
+
+	public string getGalleryPhoto(){
+		return temp_galleryID + ".png";
 	}
 
 	public void populateUser(string[] row_){

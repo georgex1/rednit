@@ -15,10 +15,7 @@ public class login : MonoBehaviour {
 		ArrayList result = GMS.db.BasicQueryArray ("select id, email, nombre, fbid, fecha_nacimiento, sexo, foto, ciudad, busco_ciudad, busco_sexo, busco_edad_min, busco_edad_max, busco_en_face, fb_friends, busco_cerca, busco_distancia, latitude, longitude, busco_lat, busco_long, descripcion from usuarios limit 1");
 		if (result.Count > 0) {
 
-			Debug.Log("user DB: " + ((string[])result [0])[1]);
-
 			GMS.userData.populateUser(  ((string[])result [0]) );
-
 
 			if(GMS.userData.foto == ""){
 				Debug.Log("no photo");
