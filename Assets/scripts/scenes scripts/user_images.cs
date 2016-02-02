@@ -183,6 +183,7 @@ public class user_images : MonoBehaviour {
 	private void PickImageFinished (ePickImageFinishReason _reason, Texture2D _image)
 	{
 		string reasonString = _reason + "";
+
 		if (reasonString == "SELECTED") {
 			GMS.showLoading (true);
 
