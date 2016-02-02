@@ -131,7 +131,9 @@ public class loginFacebook : MonoBehaviour {
 	{
 		if (result.Error == null) {
 
-			GMS.userData.temp_img = GMS.generateId ().ToString () + ".png";
+			GMS.userData.temp_galleryID = GMS.generateId ().ToString ();
+
+			GMS.userData.temp_img = GMS.userData.temp_galleryID  + ".png";
 			StartCoroutine (GMS.saveTextureToFile (result.Texture, GMS.userData.temp_img, 'u'));
 
 			StartCoroutine (loginFacebook_ ());
