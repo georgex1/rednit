@@ -87,6 +87,7 @@ public class user_images : MonoBehaviour {
 	}
 
 	public void addPhoto(){
+		GMS.showLoading (true);
 
 		Debug.Log ("add");
 
