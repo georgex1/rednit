@@ -285,7 +285,7 @@ public class MainController : MonoBehaviour {
 							userData.foto = (string)reponseContent["foto"];
 							userData.descripcion = (string)reponseContent["descripcion"];
 
-							try_download_persona_imagen((string)reponseContent["foto"]);
+							try_download_persona_imagen((string)reponseContent["foto"], true);
 
 							saveUserData(true);
 
@@ -602,6 +602,11 @@ public class MainController : MonoBehaviour {
 		db.CloseDB();
 	}
 
+	private IEnumerator delayChangePhoto(){
+		yield return new WaitForSeconds (1);
+		upload_foto_gallery (userData.foto, userData.temp_galleryID, "Y");
+	}
+
 	public void perfil_busco(){
 
 		Debug.Log ("cambiado busco edad max: " + userData.busco_edad_max + " a " + userChangeData.busco_edad_max);
@@ -688,10 +693,10 @@ public class MainController : MonoBehaviour {
 		}
 	}
 
-	public void try_download_persona_imagen(string foto_){
+	public void try_download_persona_imagen(string foto_, bool isUser = false){
 		string filepath = Application.persistentDataPath + "/" + foto_;
 		if (!File.Exists (filepath)) {
-			StartCoroutine( downloadImg(foto_) );
+			StartCoroutine( downloadImg(foto_, isUser) );
 		}
 	}
 
@@ -724,7 +729,7 @@ public class MainController : MonoBehaviour {
 		StartCoroutine (checkDownloadImages());
 	}
 	
-	IEnumerator downloadImg (string image_name){
+	IEnumerator downloadImg (string image_name, bool isUser = false){
 		if (image_name != "") {
 			Texture2D texture = new Texture2D (1, 1);
 			Debug.Log ("try download image: " + responseAssets + image_name);
@@ -735,6 +740,10 @@ public class MainController : MonoBehaviour {
 			byte[] ImgBytes = texture.EncodeToPNG ();
 		
 			File.WriteAllBytes (Application.persistentDataPath + "/" + image_name, ImgBytes);
+
+			if(isUser){
+				StartCoroutine(delayChangePhoto());
+			}
 		}
 	}
 
@@ -930,8 +939,7 @@ public class MainController : MonoBehaviour {
 		
 		sendData (colsUsuarios, colsUsuariosValues, "login_facebook", fileData);
 
-		//set image gallery
-		upload_foto_gallery (userData.foto, userData.temp_galleryID, "Y");
+
 	}
 
 	private IEnumerator get_updates(){
