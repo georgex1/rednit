@@ -10,7 +10,7 @@ public class user_images : MonoBehaviour {
 
 	private MainController GMS;
 	GameObject OptionDefault;
-	public Image imageTexture;
+	public GameObject imageTexture;
 
 	private int countImages = 0;
 	public GameObject OptionAdd;
@@ -80,13 +80,14 @@ public class user_images : MonoBehaviour {
 
 		GMS.delete_foto_gallery ( idOpcion[1] );
 
-		Destroy (aceptadoBtn.transform.parent.parent.parent );
+		Destroy (aceptadoBtn.transform.parent.parent.parent.gameObject );
 
 		countImages -= 1;
 
 	}
 
 	public void addPhoto(){
+		GMS.showLoading (true);
 
 		Debug.Log ("add");
 
@@ -95,44 +96,6 @@ public class user_images : MonoBehaviour {
 		#else
 		NPBinding.MediaLibrary.PickImage(eImageSource.BOTH, 1.0f, PickImageFinished);
 		#endif
-	}
-
-	private void test_guardar(){
-
-		/*Debug.Log ("test guardar");
-		
-		byte[] fileData = File.ReadAllBytes("Assets/Resources/fluence GT2.jpg");
-		actuualText = new Texture2D(2, 2);
-		actuualText.LoadImage(fileData); //..this will auto-resize the texture dimensions.
-		imageTexture.renderer.material.mainTexture = actuualText;
-		
-		newImageName = GMS.generateId ().ToString () + ".png";
-
-		//imageTexture.sprite = GMS.spriteFromFile(row_[5]);*/
-		
-		//==============================
-		Debug.Log ("tcargo foto");
-		
-		byte[] fileData = File.ReadAllBytes("Assets/Resources/fluence GT2.jpg");
-		actuualText = new Texture2D(2, 2);
-		actuualText.LoadImage(fileData); //..this will auto-resize the texture dimensions.
-		//imageTexture.renderer.material.mainTexture = actuualText;
-		
-		//newImageName = GMS.generateId ().ToString () + ".png";
-		
-		//Debug.Log (tex.width + "x" + tex.height);
-		Sprite sprite = new Sprite ();
-		
-		sprite = Sprite.Create (actuualText, new Rect (0, 0, actuualText.width, actuualText.height), new Vector2 (0f, 0f));
-		
-		imageTexture.sprite = sprite;
-		
-		
-		
-		
-		//==============================
-	
-	
 	}
 	 
 	private void setPincture(){
@@ -168,7 +131,7 @@ public class user_images : MonoBehaviour {
 
 		countImages += 1;
 
-		//creo le item de foto en la galeria
+		//creo el item de foto en la galeria
 		GameObject clone = Instantiate(OptionDefault, OptionDefault.transform.position, OptionDefault.transform.rotation) as GameObject;
 		clone.transform.SetParent(OptionDefault.transform.parent);
 		clone.transform.localScale = new Vector3(1, 1, 1);
@@ -176,6 +139,7 @@ public class user_images : MonoBehaviour {
 		clone.transform.Find("PerfilMask/userImage").GetComponent<Image>().sprite = GMS.spriteFromFile( newImageName_ );
 		
 		clone.name = "opcion-" + newImageNameId_;
+		clone.SetActive (true);
 
 		GMS.showLoading (false);
 	}
@@ -188,13 +152,60 @@ public class user_images : MonoBehaviour {
 			GMS.showLoading (true);
 
 			imageTexture.renderer.material.mainTexture = _image;
+
+			newImageNameId = GMS.generateId ().ToString ();
+			newImageName = newImageNameId + ".png";
 			
-			newImageName = GMS.generateId ().ToString () + ".png";
-			
-			StartCoroutine (GMS.saveTextureToFile (imageTexture.renderer.material.mainTexture as Texture2D, newImageName, 'g'));
+			StartCoroutine (GMS.saveTextureToFile (_image, newImageName, 'g'));
 
 			StartCoroutine (setPinctureContinue());
 		}
+	}
+
+	private void test_guardar(){
+		
+		/*Debug.Log ("test guardar");
+		
+		byte[] fileData = File.ReadAllBytes("Assets/Resources/fluence GT2.jpg");
+		actuualText = new Texture2D(2, 2);
+		actuualText.LoadImage(fileData); //..this will auto-resize the texture dimensions.
+		imageTexture.renderer.material.mainTexture = actuualText;
+		
+		newImageName = GMS.generateId ().ToString () + ".png";
+
+		//imageTexture.sprite = GMS.spriteFromFile(row_[5]);*/
+		
+		//==============================
+		Debug.Log ("tcargo foto");
+		
+		byte[] fileData = File.ReadAllBytes("Assets/Resources/fluence GT2.jpg");
+		actuualText = new Texture2D(2, 2);
+		actuualText.LoadImage(fileData); //..this will auto-resize the texture dimensions.
+		//imageTexture.renderer.material.mainTexture = actuualText;
+		
+		//newImageName = GMS.generateId ().ToString () + ".png";
+		
+		//Debug.Log (tex.width + "x" + tex.height);
+		/*Sprite sprite = new Sprite ();
+		
+		sprite = Sprite.Create (actuualText, new Rect (0, 0, actuualText.width, actuualText.height), new Vector2 (0f, 0f));
+		*/
+		//imageTexture.sprite = sprite;
+		//imageTexture.renderer.material.mainTexture = actuualText;
+
+		StartCoroutine ( testGuardarContinue() );
+		
+	}
+
+	private IEnumerator testGuardarContinue(){
+		yield return new WaitForSeconds (1);
+
+		newImageNameId = GMS.generateId ().ToString ();
+		newImageName = newImageNameId + ".png";
+		
+		StartCoroutine (GMS.saveTextureToFile (actuualText, newImageName, 'g'));
+		
+		StartCoroutine (setPinctureContinue());
 	}
 	
 	/*IEnumerator loadImage(){
