@@ -32,6 +32,8 @@ public class MainController : MonoBehaviour {
 	public bool haveInet;
 	public bool checkingCon = false;
 
+	public string prevScene = "home";
+
 	//para debug
 	public bool isDebug;
 	public string sendDataDebug;
@@ -47,8 +49,11 @@ public class MainController : MonoBehaviour {
 
 	//loading
 	public GameObject loading;
-
 	public bool actualizando;
+
+	//personas gallery
+	public int CountPersonasGal = 0;
+	public bool donwloadinGallery = false;
 
 	void OnGUI(){
 		if (isDebug) {
@@ -229,9 +234,9 @@ public class MainController : MonoBehaviour {
 		if (www.error == null){
 			sendDataDebug = "WWW Ok!";
 
-			Debug.Log("response!: " + response);
+			//Debug.Log("response!: " + response);
 
-			Debug.Log("WWW Ok!: " + www.text);
+			//Debug.Log("WWW Ok!: " + www.text);
 
 			IDictionary Wresponse = (IDictionary) MiniJSON.Json.Deserialize (www.text);
 
@@ -290,7 +295,7 @@ public class MainController : MonoBehaviour {
 							saveUserData(true);
 
 							//bajar galeria del usuario
-							downloadUserGallery();
+							downloadUserGallery( userData.id.ToString(), true );
 
 							//upload_user_foto();
 							StartCoroutine( redirect("perfil", 3f) );
@@ -468,7 +473,15 @@ public class MainController : MonoBehaviour {
 				if(response == "get_gallery"){
 					string WarrayContent_ = MiniJSON.Json.Serialize(Wresponse["arrayContent"]);
 					IDictionary WresponseContent = (IDictionary) MiniJSON.Json.Deserialize ( WarrayContent_ );
-					
+
+					Debug.Log("is user in get_gallery: " + (string)Wresponse3["forGallery"]);
+
+					if((string)Wresponse3["isUser"] == "N" && (string)Wresponse3["forGallery"] == "Y"){
+						CountPersonasGal = int.Parse((string)Wresponse2["hasArray"]);
+						Debug.Log("CountPersonasGal en get_gallery: " + CountPersonasGal);
+						donwloadinGallery = true;
+					}
+
 					//Debug.Log((string)Wresponse2["hasArray"]);
 					if( (string)Wresponse2["hasArray"] != "0" ){
 						for(int i = 1; i <= int.Parse( (string)Wresponse2["hasArray"] ); i++ ){
@@ -484,12 +497,12 @@ public class MainController : MonoBehaviour {
 							string[] colsVals = new string[]{ (string)reponseContent["id"], (string)reponseContent["usuarios_id"], (string)reponseContent["foto"], isDefault};
 							db.InsertIgnoreInto("fotos_usuarios", cols, colsVals, (string)reponseContent["id"]);
 
-							if(isDefault == "Y"){
+							if(isDefault == "Y" && (string)Wresponse3["isUser"] == "Y"){
 								userData.temp_galleryID = (string)reponseContent["id"];
 							}
 
 							//intentar bajar imagen de la galeria
-							try_download_persona_imagen((string)reponseContent["foto"]);
+							try_download_persona_imagen((string)reponseContent["foto"], false, true);
 							
 							db.CloseDB();
 						}
@@ -556,9 +569,11 @@ public class MainController : MonoBehaviour {
 		saveUserData (false);
 	}
 
-	private void downloadUserGallery(){
-		string[] colsUsuarios = new string[]{ "usuarios_id" };
-		string[] colsUsuariosValues = new string[]{ userData.id.ToString () };
+	public void downloadUserGallery(string userId, bool isUser = false, bool forGallery = false){
+		string[] colsUsuarios = new string[]{ "usuarios_id", "isUser", "forGallery" };
+		string isUser_ = (isUser) ? "Y" : "N";
+		string forGallery_ = (forGallery) ? "Y" : "N";
+		string[] colsUsuariosValues = new string[]{ userId, isUser_, forGallery_ };
 		
 		sendData (colsUsuarios, colsUsuariosValues, "get_gallery");
 	}
@@ -693,10 +708,15 @@ public class MainController : MonoBehaviour {
 		}
 	}
 
-	public void try_download_persona_imagen(string foto_, bool isUser = false){
+	public void try_download_persona_imagen(string foto_, bool isUser = false, bool forGallery = false){
 		string filepath = Application.persistentDataPath + "/" + foto_;
 		if (!File.Exists (filepath)) {
-			StartCoroutine( downloadImg(foto_, isUser) );
+			StartCoroutine (downloadImg (foto_, isUser, forGallery));
+		} else {
+			if(!isUser && forGallery){
+				CountPersonasGal--;
+				Debug.Log("CountPersonasGal en try_download_persona_imagen: " + CountPersonasGal);
+			}
 		}
 	}
 
@@ -729,7 +749,7 @@ public class MainController : MonoBehaviour {
 		StartCoroutine (checkDownloadImages());
 	}
 	
-	IEnumerator downloadImg (string image_name, bool isUser = false){
+	IEnumerator downloadImg (string image_name, bool isUser = false, bool forGallery = false){
 		if (image_name != "") {
 			Texture2D texture = new Texture2D (1, 1);
 			Debug.Log ("try download image: " + responseAssets + image_name);
@@ -743,6 +763,9 @@ public class MainController : MonoBehaviour {
 
 			if(isUser){
 				StartCoroutine(delayChangePhoto());
+			}else if(forGallery){
+				CountPersonasGal--;
+				Debug.Log("CountPersonasGal en downloadImg: " + CountPersonasGal);
 			}
 		}
 	}

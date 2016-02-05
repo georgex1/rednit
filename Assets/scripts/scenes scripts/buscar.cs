@@ -20,12 +20,16 @@ public class buscar : MonoBehaviour {
 	private string actualPersona;
 	private bool hasOne;
 
+
 	// Use this for initialization
 	void Start () {
+
 		hasOne = false;
 	
 		GameObject GM = GameObject.Find ("MainController");
 		GMS = GM.GetComponent<MainController>();
+
+		GMS.donwloadinGallery = false;
 
 		string fbFriendsString = "'0'";
 		if (GMS.userData.fbFriends != null && GMS.userData.busco_en_face == "SI") {
@@ -72,6 +76,8 @@ public class buscar : MonoBehaviour {
 		} else {
 			NoPersonas();
 		}
+
+
 	}
 
 	private void NoPersonas(){
@@ -106,6 +112,11 @@ public class buscar : MonoBehaviour {
 		Application.LoadLevel (Application.loadedLevelName);
 	}
 
+	public void gotGallery(){
+		PlayerPrefs.SetString ("usuarios_id", actualPersona);
+		cargarEscena ("gallery");
+	}
+
 	// Update is called once per frame
 	void Update () {
 		if(!GMS.actualizando && PanelAviso.activeSelf){
@@ -121,6 +132,11 @@ public class buscar : MonoBehaviour {
 
 	public void cargarEscena(string escena){
 		Application.LoadLevel (escena);
+	}
+
+
+	void OnDestroy() {
+		GMS.prevScene = Application.loadedLevelName;
 	}
 
 }
