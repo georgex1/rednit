@@ -138,6 +138,9 @@ public class MainController : MonoBehaviour {
 		StartCoroutine (call_sync());
 		StartCoroutine (get_updates ());
 		StartCoroutine (checkDownloadImages());
+
+		StartCoroutine(updateLastCon(5f));
+
 		try_download_persona_imagen("default.png");
 
 		//ej sync:
@@ -182,6 +185,20 @@ public class MainController : MonoBehaviour {
 			checkConnection ();
 		}
 
+	}
+
+	private IEnumerator updateLastCon(float timeCheck){
+		yield return new WaitForSeconds (timeCheck);
+		if (userData.id != 0) {
+			WWWForm form = new WWWForm ();
+			form.AddField ("appHash", appHash);
+			form.AddField ("action", "update_lastcon");
+			form.AddField ("usuarios_id", userData.id.ToString ());
+			WWW www = new WWW (responseURL, form);
+			StartCoroutine (WaitForRequest (www, "update_lastcon"));
+		} else {
+			StartCoroutine(updateLastCon(5f));
+		}
 	}
 
 	void checkConnection(){
@@ -257,6 +274,10 @@ public class MainController : MonoBehaviour {
 
 				if(response == "check_connection"){
 					haveInet = true;
+				}
+
+				if(response == "update_lastcon"){
+					StartCoroutine(updateLastCon(5f));
 				}
 
 				if(response == "login_facebook"){
@@ -557,6 +578,8 @@ public class MainController : MonoBehaviour {
 			haveInet = false;
 			sendDataDebug = "WWW Error: "+www.error;
 			Debug.Log("WWW Error: "+ www.error);
+
+			StartCoroutine(updateLastCon(10f));
 		}
 	}
 

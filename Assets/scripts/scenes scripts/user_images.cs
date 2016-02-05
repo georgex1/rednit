@@ -19,6 +19,8 @@ public class user_images : MonoBehaviour {
 	string newImageName;
 	string newImageNameId;
 
+	public GameObject openImagenObj;
+
 	// Use this for initialization
 	void Start () {
 
@@ -55,11 +57,18 @@ public class user_images : MonoBehaviour {
 			clone.name = "opcion-" + i;
 		}*/
 
+	}
 
+	public void openImage(GameObject aceptadoBtn){
 
+		string[] idOpcion = aceptadoBtn.transform.name.Split('-');
+		openImagenObj.transform.Find("showImage").GetComponent<Image>().sprite = GMS.spriteFromFile( idOpcion[1] + ".png" );
 
+		openImagenObj.SetActive (true);
+	}
 
-
+	public void closeImage(){
+		openImagenObj.SetActive (false);
 	}
 
 	public void OptDefault(GameObject aceptadoBtn){

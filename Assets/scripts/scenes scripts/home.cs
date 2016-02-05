@@ -41,6 +41,17 @@ public class home : MonoBehaviour {
 		Destroy (OptionDefault);
 	}
 
+	void OnDestroy() {
+		GMS.prevScene = Application.loadedLevelName;
+	}
+	
+	public void gotGallery(GameObject aceptadoBtn){
+		string[] idOpcion = aceptadoBtn.transform.parent.parent.parent.name.Split('-');
+
+		PlayerPrefs.SetString ("usuarios_id", idOpcion[1]);
+		Application.LoadLevel ("gallery");
+	}
+
 	// Update is called once per frame
 	void Update () {
 		

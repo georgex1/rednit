@@ -103,6 +103,15 @@ public class chatTest : MonoBehaviour {
 	void Update () {
 
 	}
+
+	void OnDestroy() {
+		GMS.prevScene = Application.loadedLevelName;
+	}
+
+	public void gotGallery(){
+		PlayerPrefs.SetString ("usuarios_id", GMS.amigoData.id);
+		Application.LoadLevel ("gallery");
+	}
 	
 	void OnGUI(){
 		/*GUI.skin.textField.fontSize = GUI.skin.button.fontSize = GUI.skin.label.fontSize = 10;
