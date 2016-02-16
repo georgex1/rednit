@@ -97,9 +97,7 @@ public class user_images : MonoBehaviour {
 
 	public void addPhoto(){
 		GMS.showLoading (true);
-
 		Debug.Log ("add");
-
 		#if UNITY_EDITOR
 		test_guardar();
 		#else
@@ -157,51 +155,31 @@ public class user_images : MonoBehaviour {
 	{
 		string reasonString = _reason + "";
 
+		Debug.Log ("Reason: " + reasonString);
+		Debug.Log ("Textura: " + _image);
+
+
 		if (reasonString == "SELECTED") {
+
+			Debug.Log ("Entro al loop de foto seleccionada");
 			GMS.showLoading (true);
-
 			imageTexture.renderer.material.mainTexture = _image;
-
 			newImageNameId = GMS.generateId ().ToString ();
 			newImageName = newImageNameId + ".png";
-			
 			StartCoroutine (GMS.saveTextureToFile (_image, newImageName, 'g'));
-
-			StartCoroutine (setPinctureContinue());
+			StartCoroutine (setPinctureContinue ());
+		} else {
+			GMS.showLoading (false);
 		}
 	}
 
 	private void test_guardar(){
 		
-		/*Debug.Log ("test guardar");
-		
-		byte[] fileData = File.ReadAllBytes("Assets/Resources/fluence GT2.jpg");
-		actuualText = new Texture2D(2, 2);
-		actuualText.LoadImage(fileData); //..this will auto-resize the texture dimensions.
-		imageTexture.renderer.material.mainTexture = actuualText;
-		
-		newImageName = GMS.generateId ().ToString () + ".png";
-
-		//imageTexture.sprite = GMS.spriteFromFile(row_[5]);*/
-		
-		//==============================
 		Debug.Log ("tcargo foto");
 		
 		byte[] fileData = File.ReadAllBytes("Assets/Resources/fluence GT2.jpg");
 		actuualText = new Texture2D(2, 2);
 		actuualText.LoadImage(fileData); //..this will auto-resize the texture dimensions.
-		//imageTexture.renderer.material.mainTexture = actuualText;
-		
-		//newImageName = GMS.generateId ().ToString () + ".png";
-		
-		//Debug.Log (tex.width + "x" + tex.height);
-		/*Sprite sprite = new Sprite ();
-		
-		sprite = Sprite.Create (actuualText, new Rect (0, 0, actuualText.width, actuualText.height), new Vector2 (0f, 0f));
-		*/
-		//imageTexture.sprite = sprite;
-		//imageTexture.renderer.material.mainTexture = actuualText;
-
 		StartCoroutine ( testGuardarContinue() );
 		
 	}
@@ -216,17 +194,6 @@ public class user_images : MonoBehaviour {
 		
 		StartCoroutine (setPinctureContinue());
 	}
-	
-	/*IEnumerator loadImage(){
-		yield return new WaitForSeconds(1);
-		Sprite sprite = GMS.spriteFromFile (GMS.userData.temp_img);
-		GameObject.Find ("backImage").GetComponent<Image>().sprite = sprite;
-		GMS.showLoading (false);
-
-
-		GMS.generateId ();
-
-	}*/
 	
 	// Update is called once per frame
 	void Update () {

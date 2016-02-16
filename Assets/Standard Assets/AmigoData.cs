@@ -4,13 +4,18 @@ using System;
 [Serializable]
 public class AmigoData {
 	
-	public string id, nombre,
+	public string id, 
+	nombre,
 	aceptado,
 	email,
 	edad,
 	sexo,
 	ciudad,
-	foto, chat_group, latitude, longitude, descripcion;
+	foto, 
+	chat_group, 
+	latitude, 
+	longitude, 
+	descripcion;
 	
 	//public Dictionary<string, int> ExercisesMetricas;
 	
