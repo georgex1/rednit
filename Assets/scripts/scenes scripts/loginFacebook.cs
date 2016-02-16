@@ -33,7 +33,8 @@ public class loginFacebook : MonoBehaviour {
 		} else {
 
 			GMS.errorPopup("Ocurrio un error con el login de facebook, por favor intentalo nuevamente.");
-			Debug.Log("User cancelled login");
+			Debug.Log("User cancelled login: " + result.Error);
+			Debug.Log ("Result: " + result);
 		}
 	}
 	
