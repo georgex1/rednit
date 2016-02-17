@@ -31,7 +31,7 @@ public class amigos : MonoBehaviour {
 				clone.transform.Find("PerfilMask/AmigoImagen").GetComponent<Image>().sprite = GMS.spriteFromFile( amigoData.foto );
 				clone.transform.Find("Panel/Panel/AmigoNombre").GetComponent<Text>().text = amigoData.nombre;
 				//clone.transform.Find("Panel/Panel/AmigoEdad").GetComponent<Text>().text = amigoData.edad;
-				clone.transform.Find("Panel/Panel/AmigoCiudad").GetComponent<Text>().text = amigoData.ciudad;
+				//clone.transform.Find("Panel/Panel/AmigoCiudad").GetComponent<Text>().text = amigoData.ciudad;
 				
 				clone.name = "opcion-" + amigoData.id;
 			}

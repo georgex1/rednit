@@ -13,7 +13,7 @@ public class home : MonoBehaviour {
 
 		GMS.db.OpenDB(GMS.dbName);
 
-		ArrayList result = GMS.db.BasicQueryArray ("select usuarios_id, personas_id, aceptado, nombre, email, edad, sexo, ciudad, foto from amigos_usuarios where aceptado = '0' ");
+		ArrayList result = GMS.db.BasicQueryArray ("select usuarios_id, personas_id, aceptado, nombre, email, edad, sexo, ciudad, foto, descripcion from amigos_usuarios where aceptado = '0' ");
 		GMS.db.CloseDB();
 
 		GameObject OptionDefault = GameObject.Find("DDItems/PanelMask/PanelScroll/Option");
@@ -32,7 +32,7 @@ public class home : MonoBehaviour {
 				clone.transform.Find("PerfilMask/AmigoImagen").GetComponent<Image>().sprite = GMS.spriteFromFile( amigoData.foto );
 				clone.transform.Find("Panel/Panel/AmigoNombre").GetComponent<Text>().text = amigoData.nombre;
 				clone.transform.Find("Panel/Panel/AmigoEdad").GetComponent<Text>().text = amigoData.edad;
-				clone.transform.Find("Panel/Panel/AmigoCiudad").GetComponent<Text>().text = amigoData.ciudad;
+				//clone.transform.Find("Panel/Panel/AmigoCiudad").GetComponent<Text>().text = amigoData.ciudad;
 
 				clone.name = "opcion-" + amigoData.id;
 			}

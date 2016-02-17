@@ -9,7 +9,7 @@ public class buscar : MonoBehaviour {
 
 	public Text PersonaNombre;
 	public Text PersonaEdad;
-	public Text PersonaCiudad;
+	//public Text PersonaCiudad;
 	public Image PersonaFoto;
 
 	public Text PersonaDescripcion;
@@ -37,7 +37,7 @@ public class buscar : MonoBehaviour {
 		}
 
 		GMS.db.OpenDB(GMS.dbName);
-		string buscarQuery = "select id, nombre, edad, sexo, ciudad, foto, descripcion from personas where visto = '0' AND id NOT IN " +
+		string buscarQuery = "select id, nombre, edad, sexo, foto, descripcion from personas where visto = '0' AND id NOT IN " +
 			"( select personas_id from amigos_usuarios where usuarios_id = '" + GMS.userData.id + "' ) AND fbid NOT IN ( " + fbFriendsString + " ) ";
 
 		ArrayList result = GMS.db.BasicQueryArray (buscarQuery);
@@ -57,7 +57,7 @@ public class buscar : MonoBehaviour {
 					actualPersona = row_[0].ToString();
 					PersonaNombre.text = row_[1];
 					PersonaEdad.text = row_[2];
-					PersonaCiudad.text = row_[4];
+					//PersonaCiudad.text = row_[4];
 					PersonaFoto.sprite = GMS.spriteFromFile(row_[5]);
 
 					PersonaDescripcion.text = row_[6];
