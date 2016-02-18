@@ -5,6 +5,7 @@ using UnityEngine.UI;
 public class home : MonoBehaviour {
 
 	private MainController GMS;
+	public GameObject MSG_sinsolicitudes;
 
 	// Use this for initialization
 	void Start () {
@@ -19,6 +20,8 @@ public class home : MonoBehaviour {
 		GameObject OptionDefault = GameObject.Find("DDItems/PanelMask/PanelScroll/Option");
 
 		if (result.Count > 0) {
+
+			MSG_sinsolicitudes.SetActive(false);
 			
 			foreach (string[] row_ in result) {
 
@@ -37,7 +40,7 @@ public class home : MonoBehaviour {
 				clone.name = "opcion-" + amigoData.id;
 			}
 
-		}
+		} 
 		Destroy (OptionDefault);
 	}
 

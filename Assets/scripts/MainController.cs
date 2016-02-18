@@ -492,6 +492,7 @@ public class MainController : MonoBehaviour {
 				}
 
 				if(response == "get_gallery"){
+					Debug.Log("ingrese a get gallery");
 					string WarrayContent_ = MiniJSON.Json.Serialize(Wresponse["arrayContent"]);
 					IDictionary WresponseContent = (IDictionary) MiniJSON.Json.Deserialize ( WarrayContent_ );
 
@@ -505,6 +506,7 @@ public class MainController : MonoBehaviour {
 
 					//Debug.Log((string)Wresponse2["hasArray"]);
 					if( (string)Wresponse2["hasArray"] != "0" ){
+						Debug.Log("entro 2");
 						for(int i = 1; i <= int.Parse( (string)Wresponse2["hasArray"] ); i++ ){
 
 							
@@ -733,7 +735,12 @@ public class MainController : MonoBehaviour {
 
 	public void try_download_persona_imagen(string foto_, bool isUser = false, bool forGallery = false){
 		string filepath = Application.persistentDataPath + "/" + foto_;
+		Debug.Log ("data path: " + Application.persistentDataPath + "/" + foto_);
 		if (!File.Exists (filepath)) {
+			Debug.Log ("!fileexist");
+			Debug.Log ("foto_: " + foto_);
+			Debug.Log ("isUser: " + isUser);
+			Debug.Log ("forGallery: " + forGallery);
 			StartCoroutine (downloadImg (foto_, isUser, forGallery));
 		} else {
 			if(!isUser && forGallery){
@@ -783,7 +790,8 @@ public class MainController : MonoBehaviour {
 			byte[] ImgBytes = texture.EncodeToPNG ();
 		
 			File.WriteAllBytes (Application.persistentDataPath + "/" + image_name, ImgBytes);
-
+			Debug.Log ("Ruta local de la foto: " + Application.persistentDataPath + "/" + image_name);
+			Debug.Log ("isuser: " + isUser);
 			if(isUser){
 				StartCoroutine(delayChangePhoto());
 			}else if(forGallery){

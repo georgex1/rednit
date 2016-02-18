@@ -5,6 +5,7 @@ using UnityEngine.UI;
 public class amigos : MonoBehaviour {
 
 	private MainController GMS;
+	public GameObject MSG_sinamigos;
 
 	// Use this for initialization
 	void Start () {
@@ -18,6 +19,8 @@ public class amigos : MonoBehaviour {
 		GameObject OptionDefault = GameObject.Find("DDItems/PanelMask/PanelScroll/Option");
 		
 		if (result.Count > 0) {
+			Debug.Log("entro");
+			MSG_sinamigos.SetActive(false);
 			
 			foreach (string[] row_ in result) {
 				

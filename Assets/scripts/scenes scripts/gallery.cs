@@ -9,7 +9,7 @@ public class gallery : MonoBehaviour {
 	
 	public Text PersonaNombre;
 	public Text PersonaEdad;
-	public Text PersonaCiudad;
+	//public Text PersonaCiudad;
 	
 	public Text PersonaDescripcion;
 	
@@ -59,7 +59,7 @@ public class gallery : MonoBehaviour {
 
 			PersonaNombre.text = ((string[])result [0]) [1];
 			PersonaEdad.text = ((string[])result [0]) [2];
-			PersonaCiudad.text = ((string[])result [0]) [4];
+			//PersonaCiudad.text = ((string[])result [0]) [4];
 			PersonaDescripcion.text = ((string[])result [0]) [6];
 
 		} else {
