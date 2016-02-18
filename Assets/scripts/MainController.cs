@@ -34,6 +34,9 @@ public class MainController : MonoBehaviour {
 
 	public string prevScene = "home";
 
+	public string defLat = "-34.5872407";
+	public string defLng = "-58.4216301";
+
 	//para debug
 	public bool isDebug;
 	public string sendDataDebug;
@@ -301,19 +304,24 @@ public class MainController : MonoBehaviour {
 							userData.fecha_nacimiento = userData.app_format_date( (string)reponseContent["fecha_nacimiento"] );
 							userData.sexo = (string)reponseContent["sexo"];
 
-							userData.busco_lat = (string)reponseContent["busco_lat"];
-							userData.busco_long = (string)reponseContent["busco_long"];
-							userData.busco_distancia = (string)reponseContent["busco_distancia"];
-							userData.busco_en_face = (string)reponseContent["busco_en_face"];
-							userData.busco_edad_min = (string)reponseContent["busco_edad_min"];
-							userData.busco_edad_max = (string)reponseContent["busco_edad_max"];
-							userData.busco_sexo = (string)reponseContent["busco_sexo"];
+							userData.busco_lat = ( (string)reponseContent["busco_lat"] != "" ) ? (string)reponseContent["busco_lat"] : defLat;
+							userData.busco_long = ( (string)reponseContent["busco_long"] != "" ) ? (string)reponseContent["busco_long"] : defLng;
+							userData.busco_distancia = ( (string)reponseContent["busco_distancia"] != "" ) ? (string)reponseContent["busco_distancia"] : userData.busco_distancia;
+							userData.busco_en_face = ( (string)reponseContent["busco_en_face"] != "" ) ? (string)reponseContent["busco_en_face"] : userData.busco_en_face;
+							userData.busco_edad_min = ( (string)reponseContent["busco_edad_min"] != "" ) ? (string)reponseContent["busco_edad_min"] : userData.busco_edad_min;
+							userData.busco_edad_max = ( (string)reponseContent["busco_edad_max"] != "" ) ? (string)reponseContent["busco_edad_max"] : userData.busco_edad_max;
+							userData.busco_sexo = ( (string)reponseContent["busco_sexo"] != "" ) ? (string)reponseContent["busco_sexo"] : userData.busco_sexo;
+
 							userData.foto = (string)reponseContent["foto"];
 							userData.descripcion = (string)reponseContent["descripcion"];
+
+
+
 
 							try_download_persona_imagen((string)reponseContent["foto"], true);
 
 							saveUserData(true);
+							StartCoroutine(delayChangePhoto());
 
 							//bajar galeria del usuario
 							downloadUserGallery( userData.id.ToString(), true );
@@ -348,11 +356,12 @@ public class MainController : MonoBehaviour {
 								(string)reponseContent["latitude"], (string)reponseContent["longitude"], (string)reponseContent["descripcion"] };
 							
 							db.InsertIgnoreInto("personas", cols, colsVals, (string)reponseContent["id"]);
+							db.CloseDB();
 
 							//intentar bajar imagen de la persona
 							try_download_persona_imagen((string)reponseContent["foto"]);
 
-							db.CloseDB();
+
 						}
 					}
 
@@ -379,11 +388,12 @@ public class MainController : MonoBehaviour {
 								(string)reponseContent["foto"], (string)reponseContent["latitude"], (string)reponseContent["longitude"], (string)reponseContent["descripcion"] };
 							
 							db.InsertIgnoreInto("amigos_usuarios", cols, colsVals, (string)reponseContent["id"]);
-							
+							db.CloseDB();
+
 							//intentar bajar imagen de la persona
 							try_download_persona_imagen((string)reponseContent["foto"]);
 							
-							db.CloseDB();
+
 						}
 					}
 				}
@@ -408,11 +418,12 @@ public class MainController : MonoBehaviour {
 								(string)reponseContent["foto"], (string)reponseContent["chat_group"], (string)reponseContent["latitude"], (string)reponseContent["longitude"], (string)reponseContent["descripcion"] };
 							
 							db.InsertIgnoreInto("amigos", cols, colsVals, (string)reponseContent["id"]);
-							
+							db.CloseDB();
+
 							//intentar bajar imagen de la persona
 							try_download_persona_imagen((string)reponseContent["foto"]);
 							
-							db.CloseDB();
+
 						}
 					}
 				}
@@ -452,6 +463,7 @@ public class MainController : MonoBehaviour {
 					string[] colsUsuariosValues = new string[]{ (string)Wresponse3["id"], userData.id.ToString(), (string)Wresponse3["foto"], (string)Wresponse3["isdefault"]};
 
 					db.InsertIntoSpecific ("fotos_usuarios", colsUsuarios, colsUsuariosValues);
+					db.CloseDB();
 
 					if( (string)Wresponse3["isdefault"] == "Y" ){
 						userData.temp_galleryID = (string)Wresponse3["id"];
@@ -459,7 +471,12 @@ public class MainController : MonoBehaviour {
 					}
 
 					//verificar si no tiene foto de portada agregar la cargada
+					//Debug.Log("query foto: " + "select foto from fotos_usuarios where usuarios_id = '" +userData.id+ "' and isdefault = 'Y' ");
+
+					db.OpenDB(dbName);
 					ArrayList result = db.BasicQueryArray ("select foto from fotos_usuarios where usuarios_id = '" +userData.id+ "' and isdefault = 'Y' ");
+					db.CloseDB();
+
 					if (result.Count > 0) {
 						if( ((string[])result [0]) [0] == "default.png" ){
 							userData.temp_galleryID = (string)Wresponse3["id"];
@@ -471,7 +488,7 @@ public class MainController : MonoBehaviour {
 					}
 
 					showLoading(false);
-					db.CloseDB();
+
 
 				}
 
@@ -523,11 +540,12 @@ public class MainController : MonoBehaviour {
 							if(isDefault == "Y" && (string)Wresponse3["isUser"] == "Y"){
 								userData.temp_galleryID = (string)reponseContent["id"];
 							}
+							db.CloseDB();
 
 							//intentar bajar imagen de la galeria
 							try_download_persona_imagen((string)reponseContent["foto"], false, true);
 							
-							db.CloseDB();
+
 						}
 					}
 				}
@@ -548,7 +566,7 @@ public class MainController : MonoBehaviour {
 							IDictionary reponseContent = (IDictionary) MiniJSON.Json.Deserialize ( (string)WresponseContent[i.ToString()]  );
 
 							//actualizar db de puntos especiales
-							db.OpenDB(dbName);
+							//db.OpenDB(dbName);
 
 							//ejemplo de update:
 							/*
@@ -559,7 +577,7 @@ public class MainController : MonoBehaviour {
 								db.InsertIgnoreInto("notificaciones", colsUsuarios, colsUsuariosValues, (string)reponseContent["id"]);
 							}*/
 
-							db.CloseDB();
+							//db.CloseDB();
 							//Debug.Log(reponseContent["puntos"]);
 						}
 
@@ -705,8 +723,23 @@ public class MainController : MonoBehaviour {
 
 	public void download_amigos(){
 		if (userData.id != 0) {
-			string[] colsUsuarios = new string[]{ "usuarios_id" };
-			string[] colsUsuariosValues = new string[]{ userData.id.ToString () };
+
+
+			string amigos_list = "0";
+			
+			db.OpenDB(dbName);
+			ArrayList result = db.BasicQueryArray ("select personas_id from amigos_usuarios where usuarios_id = '"+userData.id.ToString()+"' ");
+			db.CloseDB();
+			
+			if (result.Count > 0) {
+				foreach (string[] row_ in result) {
+					amigos_list += "," + row_[0];
+				}
+			}
+
+
+			string[] colsUsuarios = new string[]{ "usuarios_id", "lista_descargada" };
+			string[] colsUsuariosValues = new string[]{ userData.id.ToString (), amigos_list };
 			
 			sendData (colsUsuarios, colsUsuariosValues, "get_amigos");
 		}
@@ -735,17 +768,17 @@ public class MainController : MonoBehaviour {
 
 	public void try_download_persona_imagen(string foto_, bool isUser = false, bool forGallery = false){
 		string filepath = Application.persistentDataPath + "/" + foto_;
-		Debug.Log ("data path: " + Application.persistentDataPath + "/" + foto_);
+		//Debug.Log ("data path: " + Application.persistentDataPath + "/" + foto_);
 		if (!File.Exists (filepath)) {
-			Debug.Log ("!fileexist");
+			/*Debug.Log ("!fileexist");
 			Debug.Log ("foto_: " + foto_);
 			Debug.Log ("isUser: " + isUser);
-			Debug.Log ("forGallery: " + forGallery);
+			Debug.Log ("forGallery: " + forGallery);*/
 			StartCoroutine (downloadImg (foto_, isUser, forGallery));
 		} else {
 			if(!isUser && forGallery){
 				CountPersonasGal--;
-				Debug.Log("CountPersonasGal en try_download_persona_imagen: " + CountPersonasGal);
+				//Debug.Log("CountPersonasGal en try_download_persona_imagen: " + CountPersonasGal);
 			}
 		}
 	}
@@ -755,26 +788,34 @@ public class MainController : MonoBehaviour {
 		db.OpenDB (dbName);
 		
 		ArrayList result = db.BasicQueryArray ("select foto from personas ");
-		if (result.Count > 0) {
-			foreach (string[] row_ in result) {
-				try_download_persona_imagen(row_[0]);
-			}
-		}
-
-		result = db.BasicQueryArray ("select foto from amigos_usuarios ");
-		if (result.Count > 0) {
-			foreach (string[] row_ in result) {
-				try_download_persona_imagen(row_[0]);
-			}
-		}
-
-		result = db.BasicQueryArray ("select foto from amigos ");
-		if (result.Count > 0) {
-			foreach (string[] row_ in result) {
-				try_download_persona_imagen(row_[0]);
-			}
-		}
 		db.CloseDB ();
+
+		if (result.Count > 0) {
+			foreach (string[] row_ in result) {
+				try_download_persona_imagen(row_[0]);
+			}
+		}
+
+		db.OpenDB (dbName);
+		result = db.BasicQueryArray ("select foto from amigos_usuarios ");
+		db.CloseDB ();
+
+		if (result.Count > 0) {
+			foreach (string[] row_ in result) {
+				try_download_persona_imagen(row_[0]);
+			}
+		}
+
+		db.OpenDB (dbName);
+		result = db.BasicQueryArray ("select foto from amigos ");
+		db.CloseDB ();
+
+		if (result.Count > 0) {
+			foreach (string[] row_ in result) {
+				try_download_persona_imagen(row_[0]);
+			}
+		}
+
 
 		StartCoroutine (checkDownloadImages());
 	}
@@ -988,8 +1029,8 @@ public class MainController : MonoBehaviour {
 		userData.foto = userData.temp_img;
 		byte[] fileData = File.ReadAllBytes (Application.persistentDataPath + "/" + userData.foto);
 		
-		string[] colsUsuarios = new string[]{ "email", "nombre", "fbid", "fecha_nacimiento", "sexo", "plataforma", "regid", "usuario_foto", "fileUpload"};
-		string[] colsUsuariosValues = new string[]{ userData.email, userData.nombre, userData.fbid, userData.fecha_nacimiento, userData.sexo, userData.plataforma, userData.reg_id, userData.foto, "imagen_usuario" };
+		string[] colsUsuarios = new string[]{ "email", "nombre", "fbid", "fecha_nacimiento", "sexo", "plataforma", "regid", "usuario_foto", "fileUpload", "latitude", "longitude"};
+		string[] colsUsuariosValues = new string[]{ userData.email, userData.nombre, userData.fbid, userData.fecha_nacimiento, userData.sexo, userData.plataforma, userData.reg_id, userData.foto, "imagen_usuario", userData.latitude, userData.longitude };
 		
 		sendData (colsUsuarios, colsUsuariosValues, "login_facebook", fileData);
 
@@ -1043,6 +1084,8 @@ public class MainController : MonoBehaviour {
 		db.OpenDB(dbName);
 
 		ArrayList result = db.BasicQueryArray ("select id, func, sfields, svalues from sync order by id ASC limit 1");
+		db.CloseDB();
+
 		if (result.Count > 0) {
 			if(haveInet){
 				string[] cols = new string[]{ "id", "func", "fields", "values"};
@@ -1052,7 +1095,7 @@ public class MainController : MonoBehaviour {
 			//((string[])result [0])[0];
 		}
 
-		db.CloseDB();
+
 		StartCoroutine (call_sync ());
 	}
 
@@ -1185,7 +1228,7 @@ public class MainController : MonoBehaviour {
 	//agrego esto, no se si es el lugar correcto. 
 	// Busco la lat y long del usuario para asignarle
 
-	IEnumerator Location()
+	public IEnumerator Location()
 	{
 		Debug.Log ("inicio el proceso de deteccion de ubicacion");
 		// First, check if user has location service enabled
@@ -1224,11 +1267,26 @@ public class MainController : MonoBehaviour {
 			userData.latitude = Input.location.lastData.latitude.ToString();
 			userData.longitude = Input.location.lastData.longitude.ToString();
 
+			if(Input.location.lastData.latitude == 0f){
+				userData.latitude = defLat;
+				userData.longitude = defLng;
+			}
 		}
 		
 		// Stop service if there is no need to query location updates continuously
 		Input.location.Stop();
 	}
 
+	public void logout(){
+		db.OpenDB(dbName);
+
+		db.BasicQueryInsert("DROP TABLE usuarios");
+		db.BasicQueryInsert("DROP TABLE personas");
+		db.BasicQueryInsert("DROP TABLE amigos_usuarios");
+		db.BasicQueryInsert("DROP TABLE amigos");
+		db.BasicQueryInsert("DROP TABLE fotos_usuarios");
+
+		db.CloseDB ();
+	}
 
 }

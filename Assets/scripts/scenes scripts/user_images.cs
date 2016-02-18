@@ -21,6 +21,9 @@ public class user_images : MonoBehaviour {
 
 	public GameObject openImagenObj;
 
+	private string optDef = "Establecer como foto de portada";
+	private string optDefSel = "Foto de portada";
+
 	// Use this for initialization
 	void Start () {
 
@@ -39,8 +42,8 @@ public class user_images : MonoBehaviour {
 		if (result.Count > 0) {
 			
 			foreach (string[] row_ in result) {
-
-				setObjPicture(row_ [2], row_ [0]);
+				Debug.Log("isdefault: " + row_ [3]);
+				setObjPicture(row_ [2], row_ [0], row_ [3]);
 
 			}
 			
@@ -76,6 +79,14 @@ public class user_images : MonoBehaviour {
 		
 		string[] idOpcion = aceptadoBtn.transform.parent.parent.parent.name.Split('-');
 		Debug.Log ("id opcion: " + idOpcion[1]);
+
+		//set default opt
+		GameObject[] optDefs = GameObject.FindGameObjectsWithTag ("galleryDefOpt");
+
+		foreach (GameObject optDefObj in optDefs) {
+			optDefObj.GetComponent<Text>().text = optDef;
+		}
+		aceptadoBtn.GetComponent<Text>().text = optDefSel;
 
 		GMS.change_gallery_default (idOpcion[1]);
 	}
@@ -130,7 +141,7 @@ public class user_images : MonoBehaviour {
 		setObjPicture(newImageName, newImageNameId);
 	}
 
-	private void setObjPicture(string newImageName_, string newImageNameId_){
+	private void setObjPicture(string newImageName_, string newImageNameId_, string isdefault = "N"){
 
 		//sumo la cantidad de imagenes cargadas
 
@@ -144,7 +155,12 @@ public class user_images : MonoBehaviour {
 		clone.transform.localScale = new Vector3(1, 1, 1);
 		
 		clone.transform.Find("PerfilMask/userImage").GetComponent<Image>().sprite = GMS.spriteFromFile( newImageName_ );
-		
+
+		//set default opt
+		if(isdefault == "Y"){
+			clone.transform.Find("Panel/Panel/OptDefault").GetComponent<Text>().text = optDefSel;
+		}
+
 		clone.name = "opcion-" + newImageNameId_;
 		clone.SetActive (true);
 

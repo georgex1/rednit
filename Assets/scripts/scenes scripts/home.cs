@@ -51,6 +51,8 @@ public class home : MonoBehaviour {
 	public void gotGallery(GameObject aceptadoBtn){
 		string[] idOpcion = aceptadoBtn.transform.parent.parent.parent.name.Split('-');
 
+		Debug.Log ("usuario to gal: " + idOpcion[1]);
+
 		PlayerPrefs.SetString ("usuarios_id", idOpcion[1]);
 		Application.LoadLevel ("gallery");
 	}

@@ -13,6 +13,8 @@ public class login : MonoBehaviour {
 		GMS.db.OpenDB(GMS.dbName);
 
 		ArrayList result = GMS.db.BasicQueryArray ("select id, email, nombre, fbid, fecha_nacimiento, sexo, foto, ciudad, busco_ciudad, busco_sexo, busco_edad_min, busco_edad_max, busco_en_face, fb_friends, busco_cerca, busco_distancia, latitude, longitude, busco_lat, busco_long, descripcion from usuarios limit 1");
+		GMS.db.CloseDB();
+
 		if (result.Count > 0) {
 
 			GMS.userData.populateUser(  ((string[])result [0]) );
@@ -38,7 +40,7 @@ public class login : MonoBehaviour {
 				}
 			}
 		}
-		GMS.db.CloseDB();
+
 
 	}
 

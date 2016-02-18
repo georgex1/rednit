@@ -52,15 +52,15 @@ public class buscar : MonoBehaviour {
 
 			foreach (string[] row_ in result) {
 
-				if (GMS.checkImageExists(row_[5])) {
+				if (GMS.checkImageExists(row_[4])) {
 					hasOne = true;
 					actualPersona = row_[0].ToString();
 					PersonaNombre.text = row_[1];
 					PersonaEdad.text = row_[2];
 					//PersonaCiudad.text = row_[4];
-					PersonaFoto.sprite = GMS.spriteFromFile(row_[5]);
+					PersonaFoto.sprite = GMS.spriteFromFile(row_[4]);
 
-					PersonaDescripcion.text = row_[6];
+					PersonaDescripcion.text = row_[5];
 				}
 			}
 
@@ -81,6 +81,7 @@ public class buscar : MonoBehaviour {
 	}
 
 	private void NoPersonas(){
+		Debug.Log ("NoPersonas");
 		PanelAvisoBtn.SetActive (true);
 		PanelAviso.SetActive(true);
 		GMS.actualizando = true;

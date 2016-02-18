@@ -53,10 +53,10 @@ public class busco : MonoBehaviour {
 			GameObject.Find ("BuscarFB").GetComponent<Toggle> ().isOn = isOnFB;
 		}
 
-		if (GMS.userData.busco_cerca != "") {
+		/*if (GMS.userData.busco_cerca != "") {
 			bool isOnFB = (GMS.userData.busco_cerca == "SI") ? true : false;
 			GameObject.Find ("BuscarCerca").GetComponent<Toggle> ().isOn = isOnFB;
-		}
+		}*/
 
 		GMS.userChangeData = (UserData)GMS.userData.Clone();
 	}

@@ -55,18 +55,36 @@ public class gallery : MonoBehaviour {
 
 		GMS.db.CloseDB();
 		
-		if (result.Count > 0) {
+		if (result.Count > 0) {//verificar si esta en personas
 
 			PersonaNombre.text = ((string[])result [0]) [1];
 			PersonaEdad.text = ((string[])result [0]) [2];
 			//PersonaCiudad.text = ((string[])result [0]) [4];
 			PersonaDescripcion.text = ((string[])result [0]) [6];
 
-		} else {
-			Application.LoadLevel("home");
-		}
+			getGallery ();
 
-		getGallery ();
+		} else {
+			//verificar si esta en amigos_usuarios
+			buscarQuery = "select personas_id, nombre, edad, sexo, ciudad, foto, descripcion from amigos_usuarios where personas_id = '"+actualPersona+"'";
+			Debug.Log(buscarQuery);
+			GMS.db.OpenDB(GMS.dbName);
+			result = GMS.db.BasicQueryArray (buscarQuery);
+			GMS.db.CloseDB();
+
+			if (result.Count > 0) {//verificar si esta en personas
+				
+				PersonaNombre.text = ((string[])result [0]) [1];
+				PersonaEdad.text = ((string[])result [0]) [2];
+				//PersonaCiudad.text = ((string[])result [0]) [4];
+				PersonaDescripcion.text = ((string[])result [0]) [6];
+				
+				getGallery ();
+				
+			} else {
+				Application.LoadLevel("home");
+			}
+		}
 		
 	}
 	
@@ -137,7 +155,7 @@ public class gallery : MonoBehaviour {
 		if (!isGalleryCharged) {
 			
 			GMS.CountPersonasGal = 0;
-			//GMS.showLoading (true);
+			GMS.showLoading (true);
 			//intentar bajar la galeria de la persona
 			GMS.downloadUserGallery (actualPersona, false, true);
 			

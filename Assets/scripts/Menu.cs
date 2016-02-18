@@ -26,6 +26,11 @@ public class Menu : MonoBehaviour {
 	}
 
 	public void Salir(){
+		GMS.logout ();
+		StartCoroutine (logout ());
+	}
+	private IEnumerator logout(){
+		yield return new WaitForSeconds (1f);
 		Application.Quit();
 	}
 

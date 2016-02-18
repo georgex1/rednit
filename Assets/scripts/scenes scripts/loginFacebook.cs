@@ -78,8 +78,10 @@ public class loginFacebook : MonoBehaviour {
 		}
 		if ((string)search ["gender"] == "female") {
 			GMS.userData.sexo = "MUJER";
+			GMS.userData.busco_sexo = "HOMBRE";
 		} else {
 			GMS.userData.sexo = "HOMBRE";
+			GMS.userData.busco_sexo = "MUJER";
 		}
 		GMS.userData.foto = "";
 		GMS.userData.ciudad = "";
@@ -94,9 +96,6 @@ public class loginFacebook : MonoBehaviour {
 					GMS.userData.date_year = splitFechaNac[2];
 					GMS.userData.date_month = splitFechaNac[0];
 					GMS.userData.date_day = splitFechaNac[1];
-					GMS.userData.busco_en_face = "SI";
-					GMS.userData.busco_cerca = "NO";
-					GMS.userData.busco_distancia = "100";
 
 					GMS.userData.fecha_nacimiento = GMS.userData.date_day + "/" + GMS.userData.date_month + "/" + GMS.userData.date_year;
 				}
@@ -105,6 +104,14 @@ public class loginFacebook : MonoBehaviour {
 			Debug.Log("error! " + e);
 		}
 
+		GMS.userData.busco_en_face = "SI";
+		GMS.userData.busco_cerca = "NO";
+		GMS.userData.busco_distancia = "100";
+		GMS.userData.busco_edad_min = "18";
+		GMS.userData.busco_edad_max = "50";
+
+		StartCoroutine (GMS.Location());
+		
 		var dict = Json.Deserialize(txt_) as Dictionary<string,object>;
 		
 		object friendsH;
