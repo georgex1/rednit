@@ -137,7 +137,7 @@ public class gallery : MonoBehaviour {
 		if (!isGalleryCharged) {
 			
 			GMS.CountPersonasGal = 0;
-			GMS.showLoading (true);
+			//GMS.showLoading (true);
 			//intentar bajar la galeria de la persona
 			GMS.downloadUserGallery (actualPersona, false, true);
 			
