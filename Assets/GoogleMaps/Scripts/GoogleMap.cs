@@ -202,6 +202,7 @@ public class GoogleMap : MonoBehaviour
 
 	}
 
+
 }
 
 public class GoogleGeoCodeResponse

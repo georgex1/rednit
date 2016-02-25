@@ -206,4 +206,9 @@ public class chatTest : MonoBehaviour {
 	
 	#endregion
 
+
+	public void goBack() {
+		Application.LoadLevel("amigos");
+	}
+
 }
