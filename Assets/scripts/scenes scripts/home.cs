@@ -88,5 +88,8 @@ public class home : MonoBehaviour {
 	public void reload(){
 		Application.LoadLevel (Application.loadedLevelName);
 	}
+	public void goBack() {
+		Application.LoadLevel("buscar");
+	}
 
 }
