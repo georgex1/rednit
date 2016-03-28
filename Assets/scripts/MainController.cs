@@ -12,8 +12,9 @@ public class MainController : MonoBehaviour {
 	public string dbName = "rednit.db";
 	private string appHash = "R3dN1t!";
 
-	private string responseURL = "http://thepastoapps.com/proyectos/rednit/response/response.php";
-	private string responseAssets = "http://thepastoapps.com/proyectos/rednit/response/assets/images/";
+	private string responseURL = "https://thepastoapps.com/proyectos/rednit/response/response.php";
+	private string responseAssets = "https://thepastoapps.com/proyectos/rednit/response/assets/images/";
+	private string updateAppLink = "https://thepastoapps.com/proyectos/rednit/response/redirect.php";
 
 	//private string responseURL = "http://localhost/betterpixel/rednit/response/response.php";
 	//private string responseAssets = "http://localhost/betterpixel/rednit/response/assets/images/";
@@ -37,6 +38,10 @@ public class MainController : MonoBehaviour {
 	public string defLat = "-34.5872407";
 	public string defLng = "-58.4216301";
 
+	//Plataforma (se usa para el control de version.
+	//Se envia al servicio junto con el numero dee version
+	public string platform;
+
 	//para debug
 	public bool isDebug;
 	public string sendDataDebug;
@@ -50,6 +55,10 @@ public class MainController : MonoBehaviour {
 	public GameObject popupText;
 	public GameObject popupButton;
 
+	//updatePopup
+	public GameObject updatePopupObject;
+	public GameObject updatePopupObjectText;
+
 	//loading
 	public GameObject loading;
 	public bool actualizando;
@@ -57,6 +66,7 @@ public class MainController : MonoBehaviour {
 	//personas gallery
 	public int CountPersonasGal = 0;
 	public bool donwloadinGallery = false;
+	public int appVersion;
 
 	void OnGUI(){
 		if (isDebug) {
@@ -116,6 +126,7 @@ public class MainController : MonoBehaviour {
 
 		haveInet = false;
 		checkConnection ();
+		checkVersion ();
 
 		Screen.sleepTimeout = SleepTimeout.NeverSleep;
 		DontDestroyOnLoad (transform.gameObject);
@@ -215,6 +226,18 @@ public class MainController : MonoBehaviour {
 		}
 	}
 
+	void checkVersion(){
+		
+			WWWForm form = new WWWForm ();
+			form.AddField ("appHash", appHash);
+			form.AddField ("appVersion", appVersion);
+			form.AddField ("platform", platform);	
+			form.AddField ("action", "check_version");
+			WWW www = new WWW (responseURL, form);
+			StartCoroutine (WaitForRequest (www, "check_version"));
+		}
+
+
 	//send data inet
 	public void sendData(string[] vars, string[] values, string action_, byte[] uploadImage = null){
 		
@@ -254,7 +277,7 @@ public class MainController : MonoBehaviour {
 		if (www.error == null){
 			sendDataDebug = "WWW Ok!";
 
-			//Debug.Log("response!: " + response);
+			Debug.Log("response!: " + response);
 
 			//Debug.Log("WWW Ok!: " + www.text);
 
@@ -591,6 +614,19 @@ public class MainController : MonoBehaviour {
 					db.BasicQueryInsert("delete from sync where id = '" +(string)Wresponse3["id"]+ "' ");
 					db.CloseDB();
 				}
+
+				if(response == "check_version"){
+					Debug.Log ("rutina de revision de version");
+					//Debug.Log((string)Wresponse3["version"]);
+					Debug.Log((string)Wresponse3["update"]);
+					if((string)Wresponse3["update"] == "update") {
+						Debug.Log ("actualizar");
+						Debug.Log ((string)Wresponse3["updateMessage"]);
+						updatePopup((string)Wresponse3["updateMessage"], "cerrar");
+
+					}
+				}
+
 			}
 
 
@@ -1131,12 +1167,26 @@ public class MainController : MonoBehaviour {
 		}
 	}
 
+	public void updatePopup(string error = "Error", string toclose = ""){
+		
+		updatePopupObject.SetActive (true);
+		updatePopupObjectText.GetComponent<Text> ().text = error;
+		if (toclose == "1") {
+			updatePopupObject.SetActive (false);
+		} else {
+			updatePopupObject.SetActive (true);
+		}
+	}
 	public void showLoading(bool show = true){
 		loading.SetActive (show);
 	}
 
 	public void closePopup(){
 		popup.SetActive (false);
+		updatePopupObject.SetActive (false);
+	}
+	public void updateApp(){
+		Application.OpenURL(updateAppLink);
 	}
 
 	public bool checkImageExists(string image_){
