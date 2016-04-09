@@ -116,6 +116,7 @@ public class GoogleMap : MonoBehaviour
 		qs += "&format=png";
 		qs += "&visual_refresh=true";
 		qs += "&markers=icon:http://thepastoapps.com/marker.png%7Cshadow:true%7C" + WWW.EscapeURL (centerLocation.address);
+		qs += "&style=feature:landscape|element:labels|visibility:off&style=feature:transit|element:labels|visibility:off&style=feature:poi|element:labels|visibility:off&style=feature:water|element:labels|visibility:off&style=feature:road|element:labels.icon|visibility:off&style=saturation:-100|gamma:2.15|lightness:12|hue:0x00aaff&style=feature:road|element:labels.text.fill|visibility:on|lightness:23&style=feature:road|element:geometry|lightness:57";
 		qs += "&key=AIzaSyD6EbMZzzeTQAvVc0c36WUulLFLAxG0Npo";
 		var usingSensor = false;
 #if UNITY_IPHONE
