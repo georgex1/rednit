@@ -9,15 +9,17 @@ using UnityEngine.UI;
 
 public class MainController : MonoBehaviour {
 
-	public string dbName = "rednit.db";
+	public string dbName = "haak.db";
 	private string appHash = "R3dN1t!";
 
-	private string responseURL = "https://thepastoapps.com/proyectos/rednit/response/response.php";
-	private string responseAssets = "https://thepastoapps.com/proyectos/rednit/response/assets/images/";
-	private string updateAppLink = "https://thepastoapps.com/proyectos/rednit/response/redirect.php";
+	//private string responseURL = "https://thepastoapps.com/proyectos/rednit/response/response.php";
+	//private string responseAssets = "https://thepastoapps.com/proyectos/rednit/response/assets/images/";
+	//private string updateAppLink = "https://thepastoapps.com/proyectos/rednit/response/redirect.php";
 
-	//private string responseURL = "http://localhost/betterpixel/rednit/response/response.php";
-	//private string responseAssets = "http://localhost/betterpixel/rednit/response/assets/images/";
+	private string responseURL = "http://haakapp.com/response/response.php";
+	private string responseAssets = "http://haakapp.com/response/assets/images/";
+	private string updateAppLink = "http://haakapp.com/response/redirect.php";
+
 	private string Uid;
 
 	private float loadTime;
@@ -118,7 +120,7 @@ public class MainController : MonoBehaviour {
 		loadTime = 0;
 		db = GetComponent<dbAccess>();
 		createDb ();
-		appName = "Rednit";
+		appName = "H";
 
 		if (!PlayerPrefs.HasKey ("busco_completo")) {
 			PlayerPrefs.SetString("busco_completo", "0");
@@ -210,6 +212,7 @@ public class MainController : MonoBehaviour {
 			form.AddField ("usuarios_id", userData.id.ToString ());
 			WWW www = new WWW (responseURL, form);
 			StartCoroutine (WaitForRequest (www, "update_lastcon"));
+			Debug.Log ("update last con user ID: " +  userData.id.ToString ());
 		} else {
 			StartCoroutine(updateLastCon(5f));
 		}

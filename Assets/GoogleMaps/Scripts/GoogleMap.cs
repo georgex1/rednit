@@ -173,7 +173,7 @@ public class GoogleMap : MonoBehaviour
 	IEnumerator getLatLong(){
 		
 		//var distanceUrl = "https://maps.googleapis.com/maps/api/geocode/json?address=" + WWW.EscapeURL (centerLocation.address) + "&key=AIzaSyBTT0TA2zlOlIabKgs3ZE4njA23yaL7wwA";  
-		var distanceUrl = "http://thepastoapps.com/proyectos/rednit/response/geolocation.php?address=" + WWW.EscapeURL (centerLocation.address);  
+		var distanceUrl = "http://haakapp.com/response/geolocation.php?address=" + WWW.EscapeURL (centerLocation.address);  
 		Debug.Log (distanceUrl);
 		var latlong = new WWW (distanceUrl);
 		yield return latlong;

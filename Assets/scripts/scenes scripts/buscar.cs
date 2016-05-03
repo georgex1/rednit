@@ -16,6 +16,8 @@ public class buscar : MonoBehaviour {
 
 	public GameObject PanelAviso;
 	public GameObject PanelAvisoBtn;
+	public GameObject PanelPerfilMask;
+	public GameObject PanelDatos;
 
 	private string actualPersona;
 	private bool hasOne;
@@ -84,11 +86,15 @@ public class buscar : MonoBehaviour {
 		Debug.Log ("NoPersonas");
 		PanelAvisoBtn.SetActive (true);
 		PanelAviso.SetActive(true);
+		PanelPerfilMask.SetActive (false);
+		PanelDatos.SetActive (false);
 		GMS.actualizando = true;
 	}
 
 	public void actualizar(){
 		PanelAvisoBtn.SetActive (false);
+		PanelPerfilMask.SetActive (true);
+		PanelDatos.SetActive (true);
 		GMS.actualizando = true;
 		GMS.download_personas ();
 	}
