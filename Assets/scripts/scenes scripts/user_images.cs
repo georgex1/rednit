@@ -154,7 +154,7 @@ public class user_images : MonoBehaviour {
 		clone.transform.SetParent(OptionDefault.transform.parent);
 		clone.transform.localScale = new Vector3(1, 1, 1);
 		
-		clone.transform.Find("PerfilMask/userImage").GetComponent<Image>().sprite = GMS.spriteFromFile( newImageName_ );
+		clone.transform.Find("PerfilMask/userImage").GetComponent<Image>().sprite = GMS.spriteSquareFromFile( newImageName_ );
 
 		//set default opt
 		if(isdefault == "Y"){

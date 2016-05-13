@@ -17,7 +17,7 @@ public class Menu : MonoBehaviour {
 		GameObject GM = GameObject.Find ("MainController");
 		GMS = GM.GetComponent<MainController>();
 
-		MenuUImagen.GetComponent<Image>().sprite = GMS.spriteFromFile( GMS.userData.foto );
+		MenuUImagen.GetComponent<Image>().sprite = GMS.spriteSquareFromFile( GMS.userData.foto );
 		MenuUNombre.GetComponent<Text>().text = GMS.userData.nombre;
 	}
 	

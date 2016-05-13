@@ -193,6 +193,23 @@ public class SQLiteQuery {
 		throw new Exception( "SQLite wrong field type (expecting byte[]) : " + field);
 	}
 
+	public string GetOther( string field ){
+		int i = GetFieldIndex( field );
+		string toReturn = "";
+		if( Sqlite3.SQLITE_TEXT == columnTypes[i])
+		{
+			toReturn = Sqlite3.sqlite3_column_text( vm, i );
+		}else if( Sqlite3.SQLITE_INTEGER == columnTypes[i])
+		{
+			toReturn = Sqlite3.sqlite3_column_int( vm, i ).ToString();
+		}else if( Sqlite3.SQLITE_FLOAT == columnTypes[i])
+		{
+			return Sqlite3.sqlite3_column_double( vm, i ).ToString();;
+		}
+		return toReturn;
+		
+		throw new Exception( "SQLite wrong field type (expecting String) : " + field);
+	}
 	
 	
 }

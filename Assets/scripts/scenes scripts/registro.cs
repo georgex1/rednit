@@ -49,14 +49,14 @@ public class registro : MonoBehaviour {
 		if(GMS.userData.foto != ""){
 			string filepath = Application.persistentDataPath + "/" + GMS.userData.foto;
 			if (File.Exists (filepath)) {
-				GameObject.Find ("backImage").GetComponent<Image>().sprite = GMS.spriteFromFile(GMS.userData.foto);
+				GameObject.Find ("backImage").GetComponent<Image>().sprite = GMS.spriteSquareFromFile(GMS.userData.foto);
 			}else{//intentar cargar de nuevo en 2 segs....
 				StartCoroutine( tryGetPicture() );
 			}
 		}else if(GMS.userData.temp_img != ""){
 			string filepath = Application.persistentDataPath + "/" + GMS.userData.temp_img;
 			if (File.Exists (filepath)) {
-				GameObject.Find ("backImage").GetComponent<Image>().sprite = GMS.spriteFromFile(GMS.userData.temp_img);
+				GameObject.Find ("backImage").GetComponent<Image>().sprite = GMS.spriteSquareFromFile(GMS.userData.temp_img);
 			}
 		}
 
@@ -86,7 +86,7 @@ public class registro : MonoBehaviour {
 
 		string filepath = Application.persistentDataPath + "/" + GMS.userData.foto;
 		if (File.Exists (filepath)) {
-			GameObject.Find ("backImage").GetComponent<Image> ().sprite = GMS.spriteFromFile (GMS.userData.foto);
+			GameObject.Find ("backImage").GetComponent<Image> ().sprite = GMS.spriteSquareFromFile (GMS.userData.foto);
 		} else {
 			StartCoroutine( tryGetPicture() );
 		}

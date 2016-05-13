@@ -80,8 +80,9 @@ public class MainController : MonoBehaviour {
 	void createDb(){
 		db.OpenDB(dbName);
 
-		string[] cols = new string[]{"id", "email", "nombre", "fbid", "fecha_nacimiento", "sexo", "foto", "ciudad", "lat", "lng", "busco_ciudad", "busco_sexo", "busco_edad_min", "busco_edad_max", "busco_en_face", "fb_friends", "busco_cerca", "busco_distancia", "latitude", "longitude", "busco_lat", "busco_long", "descripcion"};
-		string[] colTypes = new string[]{"INT", "TEXT", "TEXT", "TEXT", "TEXT", "TEXT", "TEXT", "TEXT", "TEXT", "TEXT", "TEXT", "TEXT", "TEXT", "TEXT", "TEXT", "TEXT", "TEXT", "TEXT", "TEXT", "TEXT", "TEXT", "TEXT", "TEXT"};
+		string[] cols = new string[]{"id", "email", "nombre", "fbid", "fecha_nacimiento", "sexo", "foto", "ciudad", "lat", "lng", "busco_ciudad", "busco_sexo", "busco_edad_min", "busco_edad_max", 
+			"busco_en_face", "fb_friends", "busco_cerca", "busco_distancia", "latitude", "longitude", "busco_lat", "busco_long", "descripcion", "token"};
+		string[] colTypes = new string[]{"INT", "TEXT", "TEXT", "TEXT", "TEXT", "TEXT", "TEXT", "TEXT", "TEXT", "TEXT", "TEXT", "TEXT", "TEXT", "TEXT", "TEXT", "TEXT", "TEXT", "TEXT", "TEXT", "TEXT", "TEXT", "TEXT", "TEXT", "TEXT"};
 		db.CreateTable ("usuarios", cols, colTypes);
 
 		cols = new string[]{"id", "nombre", "edad", "sexo", "ciudad", "foto", "visto", "fbid", "latitude", "longitude", "busco_lat", "busco_long", "descripcion"};
@@ -210,6 +211,7 @@ public class MainController : MonoBehaviour {
 			form.AddField ("appHash", appHash);
 			form.AddField ("action", "update_lastcon");
 			form.AddField ("usuarios_id", userData.id.ToString ());
+			form.AddField ("uToken", userData.token);
 			WWW www = new WWW (responseURL, form);
 			StartCoroutine (WaitForRequest (www, "update_lastcon"));
 			Debug.Log ("update last con user ID: " +  userData.id.ToString ());
@@ -247,6 +249,7 @@ public class MainController : MonoBehaviour {
 		WWWForm form = new WWWForm();
 		form.AddField("appHash", appHash);
 		form.AddField("action", action_);
+		form.AddField ("uToken", userData.token);
 		
 		int index=0;
 		sendDataDebug = "preparando variables";
@@ -271,6 +274,11 @@ public class MainController : MonoBehaviour {
 		StartCoroutine(WaitForRequest(www, action_));
 		//Debug.Log(www.text);
 		
+	}
+
+	private IEnumerator logoutN(){
+		yield return new WaitForSeconds (1f);
+		Application.Quit();
 	}
 
 	IEnumerator WaitForRequest(WWW www, string response){
@@ -298,7 +306,18 @@ public class MainController : MonoBehaviour {
 
 				showLoading(false);
 
-				errorPopup((string)Wresponse2["mgs"], (string)Wresponse2["toclose"]);
+				if( (string)Wresponse2["mgs"] == "error token" ){
+					NPBinding.UI.ShowAlertDialogWithSingleButton ("Alerta!", "Ha ocurrido un error en la autentificacion. Por favor vuelve a ingresar: " + response, "Aceptar", (string _buttonPressed)=>{
+						if (_buttonPressed == "Aceptar") {
+							logout();
+							StartCoroutine (logoutN ());
+						}
+					});
+				}else{
+					errorPopup((string)Wresponse2["mgs"], (string)Wresponse2["toclose"]);
+				}
+
+				//errorPopup((string)Wresponse2["mgs"], (string)Wresponse2["toclose"]);
 			}else{
 
 				if(response == "check_connection"){
@@ -316,6 +335,7 @@ public class MainController : MonoBehaviour {
 					Debug.Log("login facebook OK! ID: "+ (string)Wresponse3["id"]);
 
 					userData.id = int.Parse( (string)Wresponse3["id"] );
+					userData.token = (string)Wresponse3["token"];
 
 					if( (string)Wresponse2["hasArray"] != "0" ){
 						string WarrayContent_ = MiniJSON.Json.Serialize(Wresponse["arrayContent"]);
@@ -340,8 +360,7 @@ public class MainController : MonoBehaviour {
 
 							userData.foto = (string)reponseContent["foto"];
 							userData.descripcion = (string)reponseContent["descripcion"];
-
-
+							//userData.token = (string)reponseContent["token"];
 
 
 							try_download_persona_imagen((string)reponseContent["foto"], true);
@@ -652,10 +671,10 @@ public class MainController : MonoBehaviour {
 	}
 
 	public void downloadUserGallery(string userId, bool isUser = false, bool forGallery = false){
-		string[] colsUsuarios = new string[]{ "usuarios_id", "isUser", "forGallery" };
+		string[] colsUsuarios = new string[]{ "usuarios_id", "isUser", "forGallery", "logUserId" };
 		string isUser_ = (isUser) ? "Y" : "N";
 		string forGallery_ = (forGallery) ? "Y" : "N";
-		string[] colsUsuariosValues = new string[]{ userId, isUser_, forGallery_ };
+		string[] colsUsuariosValues = new string[]{ userId, isUser_, forGallery_, userData.id.ToString() };
 		
 		sendData (colsUsuarios, colsUsuariosValues, "get_gallery");
 	}
@@ -674,7 +693,7 @@ public class MainController : MonoBehaviour {
 		
 		string[] colsUsuarios = new string[]{ "id", "email", "nombre", "fbid", "fecha_nacimiento", "sexo", "foto", 
 			"ciudad", "busco_sexo", "busco_ciudad", "busco_edad_min", "busco_edad_max", "busco_en_face", "fb_friends", 
-			"busco_cerca", "busco_distancia", "latitude", "longitude", "busco_lat", "busco_long", "descripcion"};
+			"busco_cerca", "busco_distancia", "latitude", "longitude", "busco_lat", "busco_long", "descripcion", "token"};
 
 		ArrayList result = new ArrayList();
 		if (isfb) {
@@ -689,7 +708,7 @@ public class MainController : MonoBehaviour {
 
 		string[] colsUsuariosValues = new string[]{ userData.id.ToString(), userData.email, userData.nombre, userData.fbid, userData.fecha_nacimiento, userData.sexo, userData.foto, 
 			userData.ciudad, userData.busco_sexo, userData.busco_ciudad, userData.busco_edad_min, userData.busco_edad_max, userData.busco_en_face, userData.serializeFbFriends(), 
-			userData.busco_cerca, userData.busco_distancia, userData.latitude, userData.longitude, userData.busco_lat, userData.busco_long, userData.descripcion };
+			userData.busco_cerca, userData.busco_distancia, userData.latitude, userData.longitude, userData.busco_lat, userData.busco_long, userData.descripcion, userData.token };
 		
 		if (result.Count == 0) {
 			sendDataDebug = "count = 0 inserto usuario";
@@ -963,7 +982,7 @@ public class MainController : MonoBehaviour {
 
 		string[] cols2 = new string[] {
 			"foto_id",
-			"usuario_id"
+			"usuario_id",
 		};
 		string[] data2 = new string[] {
 			imageId,
@@ -1127,8 +1146,8 @@ public class MainController : MonoBehaviour {
 
 		if (result.Count > 0) {
 			if(haveInet){
-				string[] cols = new string[]{ "id", "func", "fields", "values"};
-				string[] values = new string[]{ ((string[])result [0])[0] , ((string[])result [0])[1], ((string[])result [0])[2], ((string[])result [0])[3]};
+				string[] cols = new string[]{ "id", "func", "fields", "values", "usuarios_id"};
+				string[] values = new string[]{ ((string[])result [0])[0] , ((string[])result [0])[1], ((string[])result [0])[2], ((string[])result [0])[3], userData.id.ToString() };
 				sendData (cols, values, "sync");
 			}
 			//((string[])result [0])[0];
@@ -1146,20 +1165,37 @@ public class MainController : MonoBehaviour {
 		string values_json = MiniJSON.Json.Serialize(values);
 
 		//Debug.Log ("insertar en sync fields: " + fields_json + "values: " + values_json + " func: " + sync_func);
+		string newSyncId = getSyncNewId ();
 
 		string[] colsF = new string[]{ "id", "func", "sfields", "svalues"};
-		string[] colsV = new string[]{ generateId().ToString(), sync_func, fields_json, values_json };
+		string[] colsV = new string[]{ newSyncId, sync_func, fields_json, values_json };
 		
 		db.InsertIntoSpecific("sync", colsF, colsV);
 
 		db.CloseDB ();
 	}
 
+	private string getSyncNewId(){
+		db.OpenDB("millasperrunas.db");
+		ArrayList result = db.BasicQueryArray ("select id from sync order by id DESC limit 1");
+		db.CloseDB();
+		
+		string newId = "1";
+		
+		if (result.Count > 0) {
+			newId = ((string[])result [0]) [0];
+			int newIdInt = int.Parse(newId)+1;
+			newId = newIdInt.ToString();
+		}
+		
+		return newId;
+	}
+
 	public bool validEmail(string emailaddress){
 		return System.Text.RegularExpressions.Regex.IsMatch(emailaddress, @"\w+([-+.']\w+)*@\w+([-.]\w+)*\.\w+([-.]\w+)*");
 	}
 
-	public void errorPopup(string error = "Error", string toclose = ""){
+	/*public void errorPopup(string error = "Error", string toclose = ""){
 
 		popup.SetActive (true);
 		popupText.GetComponent<Text> ().text = error;
@@ -1168,6 +1204,24 @@ public class MainController : MonoBehaviour {
 		} else {
 			popupButton.SetActive (true);
 		}
+	}*/
+	private string errorChrs = "";
+	public void errorPopup(string error = "Error", string toclose = ""){
+		
+		string btnText = "Aceptar";
+		/*if (toclose != "" && toclose != null) {
+			btnText = "Entiendo";
+			errorChrs = error;
+		}*/
+		errorChrs = error;
+		NPBinding.UI.ShowAlertDialogWithSingleButton ("Alerta!", error, btnText, (string _buttonPressed)=>{
+			if (_buttonPressed == "Aceptar") {
+				Debug.Log("aceptado");
+			}
+			if (_buttonPressed == "Entiendo") {
+				errorPopup(errorChrs, "1");
+			}
+		}); 
 	}
 
 	public void updatePopup(string error = "Error", string toclose = ""){
@@ -1180,6 +1234,7 @@ public class MainController : MonoBehaviour {
 			updatePopupObject.SetActive (true);
 		}
 	}
+
 	public void showLoading(bool show = true){
 		loading.SetActive (show);
 	}
@@ -1220,6 +1275,62 @@ public class MainController : MonoBehaviour {
 			}
 		} else {
 			Texture2D tex = Resources.Load("default") as Texture2D;
+			sprite = Sprite.Create (tex, new Rect (0, 0, tex.width, tex.height), new Vector2 (0f, 0f));
+		}
+		return sprite;
+	}
+
+	public Sprite spriteSquareFromFile(string image_){
+		Debug.Log ("spriteFromFile: " + image_);
+		Sprite sprite = new Sprite ();
+		if (image_ != "") {
+			
+			byte[] fileData = File.ReadAllBytes (Application.persistentDataPath + "/" + image_);
+			Texture2D tex = new Texture2D (2, 2);
+			tex.LoadImage (fileData); //..this will auto-resize the texture dimensions.
+			
+			//convertirla en cuadrado
+			Texture2D texSq = new Texture2D(2, 2, TextureFormat.ARGB32, false);;
+			
+			if(tex.width > tex.height){
+				
+				int restText = tex.width - tex.height;
+				int restText2 =  restText/2 ;
+				texSq = new Texture2D(tex.height, tex.height, TextureFormat.ARGB32, false);
+				
+				int xi = 1;
+				for (var y = 1; y <= texSq.height; y++) {
+					xi = 1;
+					for (var x = restText2; x < ( tex.width - restText2 ); x++) {
+						texSq.SetPixel (xi, y, tex.GetPixel (x, y));
+						xi ++;
+					}
+				}
+			}
+			
+			if(tex.height > tex.width){
+				
+				int restText = tex.height - tex.width;
+				int restText2 = restText/2 ;
+				
+				texSq = new Texture2D(tex.width, tex.width, TextureFormat.ARGB32, false);
+				
+				int yi = 1;
+				for (var x = 1; x <= texSq.width; x++) {
+					yi = 1;
+					for (var y = restText2; y < ( tex.height - restText2 ); y++) {
+						texSq.SetPixel (x, yi, tex.GetPixel (x, y));
+						yi ++;
+					}
+				}
+			}
+			
+			texSq.Apply();
+			
+			sprite = Sprite.Create (texSq, new Rect (0, 0, texSq.width, texSq.height), new Vector2 (0f, 0f));
+			
+		} else {
+			Texture2D tex = Resources.Load("default (2)") as Texture2D;
 			sprite = Sprite.Create (tex, new Rect (0, 0, tex.width, tex.height), new Vector2 (0f, 0f));
 		}
 		return sprite;

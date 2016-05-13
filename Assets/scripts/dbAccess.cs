@@ -45,8 +45,12 @@ public class dbAccess : MonoBehaviour {
 
 					if(qr.columnTypes[j] == 1){
 						row [j] = qr.GetInteger(colName).ToString();
+					}else if(qr.columnTypes[j] == 3 || qr.columnTypes[j] == 2){
+						row [j] = qr.GetOther(colName);
+					}else if(qr.columnTypes[j] == 5){
+						row [j] = qr.GetOther(colName);
 					}else{
-						row [j] = qr.GetString(colName);
+						Debug.Log("no type 1 or 3, type: " + qr.columnTypes[j]);
 					}
 
 					/*if(colName == "id"){

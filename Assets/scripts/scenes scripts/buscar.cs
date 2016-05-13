@@ -60,7 +60,7 @@ public class buscar : MonoBehaviour {
 					PersonaNombre.text = row_[1];
 					PersonaEdad.text = row_[2];
 					//PersonaCiudad.text = row_[4];
-					PersonaFoto.sprite = GMS.spriteFromFile(row_[4]);
+					PersonaFoto.sprite = GMS.spriteSquareFromFile(row_[4]);
 
 					PersonaDescripcion.text = row_[5];
 				}

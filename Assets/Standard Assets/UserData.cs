@@ -20,7 +20,8 @@ public class UserData : ICloneable{
 	foto,
 	latitude,
 	longitude,
-	descripcion;
+	descripcion,
+	token;
 
 	public string busco_ciudad,
 		busco_sexo,
@@ -67,6 +68,7 @@ public class UserData : ICloneable{
 		busco_lat = "";
 		busco_long = "";
 		descripcion = "";
+		token = "";
 		//ExercisesMetricas = new Dictionary<string, int> ();
 	}
 
