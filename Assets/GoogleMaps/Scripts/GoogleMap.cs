@@ -115,7 +115,7 @@ public class GoogleMap : MonoBehaviour
 		qs += "&maptype=" + mapType.ToString ().ToLower ();
 		qs += "&format=png";
 		qs += "&visual_refresh=true";
-		qs += "&markers=icon:http://thepastoapps.com/marker.png%7Cshadow:true%7C" + WWW.EscapeURL (centerLocation.address);
+		qs += "&markers=icon:https://haakapp.com/response/marker.png%7Cshadow:true%7C" + WWW.EscapeURL (centerLocation.address);
 		qs += "&style=feature:landscape|element:labels|visibility:off&style=feature:transit|element:labels|visibility:off&style=feature:poi|element:labels|visibility:off&style=feature:water|element:labels|visibility:off&style=feature:road|element:labels.icon|visibility:off&style=saturation:-100|gamma:2.15|lightness:12|hue:0x00aaff&style=feature:road|element:labels.text.fill|visibility:on|lightness:23&style=feature:road|element:geometry|lightness:57";
 		qs += "&key=AIzaSyD6EbMZzzeTQAvVc0c36WUulLFLAxG0Npo";
 		var usingSensor = false;
@@ -173,7 +173,7 @@ public class GoogleMap : MonoBehaviour
 	IEnumerator getLatLong(){
 		
 		//var distanceUrl = "https://maps.googleapis.com/maps/api/geocode/json?address=" + WWW.EscapeURL (centerLocation.address) + "&key=AIzaSyBTT0TA2zlOlIabKgs3ZE4njA23yaL7wwA";  
-		var distanceUrl = "http://haakapp.com/response/geolocation.php?address=" + WWW.EscapeURL (centerLocation.address);  
+		var distanceUrl = "https://haakapp.com/response/geolocation.php?address=" + WWW.EscapeURL (centerLocation.address);  
 		Debug.Log (distanceUrl);
 		var latlong = new WWW (distanceUrl);
 		yield return latlong;

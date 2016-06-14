@@ -16,9 +16,9 @@ public class MainController : MonoBehaviour {
 	//private string responseAssets = "https://thepastoapps.com/proyectos/rednit/response/assets/images/";
 	//private string updateAppLink = "https://thepastoapps.com/proyectos/rednit/response/redirect.php";
 
-	private string responseURL = "http://haakapp.com/response/response.php";
-	private string responseAssets = "http://haakapp.com/response/assets/images/";
-	private string updateAppLink = "http://haakapp.com/response/redirect.php";
+	private string responseURL = "https://haakapp.com/response/response.php";
+	private string responseAssets = "https://haakapp.com/response/assets/images/";
+	private string updateAppLink = "https://haakapp.com/response/redirect.php";
 
 	private string Uid;
 
