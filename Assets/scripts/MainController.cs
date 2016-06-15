@@ -86,7 +86,7 @@ public class MainController : MonoBehaviour {
 		db.CreateTable ("usuarios", cols, colTypes);
 
 		cols = new string[]{"id", "nombre", "edad", "sexo", "ciudad", "foto", "visto", "fbid", "latitude", "longitude", "busco_lat", "busco_long", "descripcion"};
-		colTypes = new string[]{"INT", "TEXT", "TEXT", "TEXT", "TEXT", "TEXT", "TEXT", "TEXT", "TEXT", "TEXT", "TEXT", "TEXT", "TEXT", "TEXT", "TEXT"};
+		colTypes = new string[]{"INT", "TEXT", "TEXT", "TEXT", "TEXT", "TEXT", "TEXT", "TEXT", "TEXT", "TEXT", "TEXT", "TEXT", "TEXT" };
 		db.CreateTable ("personas", cols, colTypes);
 
 		cols = new string[]{"id", "usuarios_id", "personas_id", "aceptado", "nombre", "email", "edad", "sexo", "ciudad", "foto", "latitude", "longitude", "busco_distancia", "busco_lat", "busco_long", "descripcion"};
@@ -478,14 +478,14 @@ public class MainController : MonoBehaviour {
 
 					db.OpenDB(dbName);
 
-					string[] colsUsuarios = new string[]{ "foto" };
+					/*string[] colsUsuarios = new string[]{ "foto" };
 					string[] colsUsuariosValues = new string[]{ userData.foto};
 
 					db.UpdateSingle("usuarios", "foto", userData.foto, "id" , userData.id.ToString());
+*/
 
-
-					colsUsuarios = new string[]{ "ciudad", "sexo", "fecha_nacimiento", "nombre", "email", "foto", "latitude", "longitude", "busco_distancia", "busco_lat", "busco_long", "descripcion" };
-					colsUsuariosValues = new string[]{ userData.ciudad, userData.sexo, userData.fecha_nacimiento, userData.nombre, userData.email, userData.foto, userData.latitude, 
+					string[] colsUsuarios = new string[]{ "ciudad", "sexo", "fecha_nacimiento", "nombre", "email", "foto", "latitude", "longitude", "busco_distancia", "busco_lat", "busco_long", "descripcion" };
+					string[] colsUsuariosValues = new string[]{ userData.ciudad, userData.sexo, userData.fecha_nacimiento, userData.nombre, userData.email, userData.foto, userData.latitude, 
 						userData.longitude, userData.busco_distancia, userData.busco_lat, userData.busco_long, userData.descripcion };
 
 					Debug.Log("Inserto valores: " + colsUsuariosValues);
@@ -539,18 +539,22 @@ public class MainController : MonoBehaviour {
 
 				if(response == "delete_gallery"){
 					db.OpenDB(dbName);
-
 					db.BasicQueryInsert("delete from fotos_usuarios where id = '"+ (string)Wresponse3["id"] +"' ");
+					db.CloseDB();
 
 					//verificar si era la ultima poner default
 					ArrayList result = db.BasicQueryArray ("select id from fotos_usuarios where usuarios_id = '" +userData.id+ "' ");
 					if (result.Count == 0) {
+
+						db.OpenDB(dbName);
 						db.UpdateSingle("usuarios", "foto", "default.png", "id" , userData.id.ToString());
+						db.CloseDB();
+
 						userData.foto = "default.png";
 					}
 
 					showLoading(false);
-					db.CloseDB();
+
 				}
 
 				if(response == "get_gallery"){
@@ -689,7 +693,7 @@ public class MainController : MonoBehaviour {
 
 	private void saveUserData(bool isfb){
 
-		db.OpenDB(dbName);
+
 		
 		string[] colsUsuarios = new string[]{ "id", "email", "nombre", "fbid", "fecha_nacimiento", "sexo", "foto", 
 			"ciudad", "busco_sexo", "busco_ciudad", "busco_edad_min", "busco_edad_max", "busco_en_face", "fb_friends", 
@@ -698,12 +702,16 @@ public class MainController : MonoBehaviour {
 		ArrayList result = new ArrayList();
 		if (isfb) {
 			try{
+				db.OpenDB(dbName);
 				result = db.BasicQueryArray ("select fbid from usuarios where fbid = '" + userData.fbid + "' ");
+				db.CloseDB();
 			}catch(Exception e){
 				sendDataDebug = "error con db";
 			}
 		} else {
+			db.OpenDB(dbName);
 			result = db.BasicQueryArray ("select email from usuarios where email = '"+userData.email+"' ");
+			db.CloseDB();
 		}
 
 		string[] colsUsuariosValues = new string[]{ userData.id.ToString(), userData.email, userData.nombre, userData.fbid, userData.fecha_nacimiento, userData.sexo, userData.foto, 
@@ -712,10 +720,12 @@ public class MainController : MonoBehaviour {
 		
 		if (result.Count == 0) {
 			sendDataDebug = "count = 0 inserto usuario";
+			db.OpenDB(dbName);
 			db.InsertIntoSpecific ("usuarios", colsUsuarios, colsUsuariosValues);
+			db.CloseDB();
 		}
 
-		db.CloseDB();
+
 	}
 
 	private IEnumerator delayChangePhoto(){
@@ -749,10 +759,11 @@ public class MainController : MonoBehaviour {
 
 			//borrar personas locales
 			db.BasicQueryInsert("delete from personas where visto = '0' ");
-
+			db.CloseDB();
 			
 			string[] colsUsuarios = new string[]{ "busco_ciudad", "busco_sexo", "busco_edad_min", "busco_edad_max", "busco_en_face", "fb_friends", "busco_distancia", "busco_lat", "busco_long" };
 			string[] colsUsuariosValues = new string[]{ userData.busco_ciudad, userData.busco_sexo, userData.busco_edad_min, userData.busco_edad_max, userData.busco_en_face, userData.serializeFbFriends(), userData.busco_distancia, userData.busco_lat, userData.busco_long };
+			db.OpenDB(dbName);
 			db.InsertIgnoreInto("usuarios", colsUsuarios, colsUsuariosValues, userData.id.ToString());
 			
 			db.CloseDB();
@@ -943,11 +954,12 @@ public class MainController : MonoBehaviour {
 			//agregar nueva default
 			db.OpenDB (dbName);
 			result = db.BasicQueryArray ("select id from fotos_usuarios where usuarios_id = '" +userData.id+ "' and isdefault = 'N' ");
+			db.CloseDB();
 			if (result.Count > 0) {
 				newDefault = ((string[])result [0]) [0];
 				change_gallery_default(newDefault);
 			}
-			db.CloseDB();
+
 		}
 
 		string[] cols2 = new string[] {
@@ -971,14 +983,19 @@ public class MainController : MonoBehaviour {
 	public void change_gallery_default(string imageId){
 		db.OpenDB (dbName);
 		db.UpdateSingle("fotos_usuarios", "isdefault", "N", "usuarios_id" , userData.id.ToString());
-		db.UpdateSingle("fotos_usuarios", "isdefault", "Y", "id" , imageId);
+		db.CloseDB ();
 
+		db.OpenDB (dbName);
+		db.UpdateSingle("fotos_usuarios", "isdefault", "Y", "id" , imageId);
+		db.CloseDB ();
 
 		//set default image in user table
 		userData.temp_galleryID = imageId;
+		db.OpenDB (dbName);
 		db.UpdateSingle("usuarios", "foto", userData.getGalleryPhoto(), "id" , userData.id.ToString());
-		userData.foto = userData.getGalleryPhoto ();
 		db.CloseDB ();
+		userData.foto = userData.getGalleryPhoto ();
+
 
 		string[] cols2 = new string[] {
 			"foto_id",
@@ -1176,7 +1193,7 @@ public class MainController : MonoBehaviour {
 	}
 
 	private string getSyncNewId(){
-		db.OpenDB("millasperrunas.db");
+		db.OpenDB(dbName);
 		ArrayList result = db.BasicQueryArray ("select id from sync order by id DESC limit 1");
 		db.CloseDB();
 		

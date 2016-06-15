@@ -2,12 +2,17 @@
 using System.Collections;
 using Facebook.MiniJSON;
 using System.Collections.Generic;
+using UnityEngine.UI;
 
 public class loginFacebook : MonoBehaviour {
 	private bool enabled = false;
 	private MainController GMS;
 
+	public Toggle CheckTyc;
+	public bool isPopup;
+
 	void Start () {
+		isPopup = false;
 		GameObject GM = GameObject.Find ("MainController");
 		GMS = GM.GetComponent<MainController>();
 
@@ -15,8 +20,23 @@ public class loginFacebook : MonoBehaviour {
 	}
 
 	public void btnLogin(){
-		FB.Login("email,user_birthday,user_friends", AuthCallback);
+		if (!isPopup) {
+			Debug.Log("click");
+			isPopup = true;
+			if (CheckTyc.isOn) {
+				FB.Login ("email,user_birthday,user_friends", AuthCallback);
+			} else {
+				NPBinding.UI.ShowAlertDialogWithSingleButton (GMS.appName, "Debes aceptar los términos y condiciones.", "Aceptar", (string _buttonPressed) => {
+					StartCoroutine(changeClick());
+					//CheckTyc.isOn = true;
+				}); 
+			}
+		}
 		//Application.LoadLevel("loader");
+	}
+	private IEnumerator changeClick(){
+		yield return new WaitForSeconds (0.5f);
+		isPopup = false;
 	}
 
 	void AuthCallback(FBResult result) {

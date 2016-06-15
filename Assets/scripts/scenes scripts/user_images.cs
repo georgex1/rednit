@@ -9,7 +9,7 @@ using System.IO;
 public class user_images : MonoBehaviour {
 
 	private MainController GMS;
-	GameObject OptionDefault;
+	//GameObject OptionDefault;
 	public GameObject imageTexture;
 
 	private int countImages = 0;
@@ -20,6 +20,7 @@ public class user_images : MonoBehaviour {
 	string newImageNameId;
 
 	public GameObject openImagenObj;
+	public GameObject OptionDefault;
 
 	private string optDef = "Establecer como foto de portada";
 	private string optDefSel = "Foto de portada";
@@ -30,7 +31,7 @@ public class user_images : MonoBehaviour {
 		GameObject GM = GameObject.Find ("MainController");
 		GMS = GM.GetComponent<MainController>();
 		
-		OptionDefault = GameObject.Find("DDItems/PanelMask/PanelScroll/Option");
+		//OptionDefault = GameObject.Find("DDItems/PanelMask/PanelScroll/Option");
 		OptionDefault.SetActive (false);
 
 

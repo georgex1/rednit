@@ -24,7 +24,7 @@ public class busco : MonoBehaviour {
 		GameObject GM = GameObject.Find ("MainController");
 		GMS = GM.GetComponent<MainController>();
 
-		headerUImagen.GetComponent<Image>().sprite = GMS.spriteFromFile( GMS.userData.foto );
+		headerUImagen.GetComponent<Image>().sprite = GMS.spriteSquareFromFile( GMS.userData.foto );
 
 		if (GMS.userData.busco_sexo != "") {
 			GameObject.Find (GMS.userData.busco_sexo).GetComponent<Toggle> ().isOn = true;

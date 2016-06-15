@@ -6,6 +6,7 @@ public class amigos : MonoBehaviour {
 
 	private MainController GMS;
 	public GameObject MSG_sinamigos;
+	public GameObject OptionDefault;
 
 	// Use this for initialization
 	void Start () {
@@ -16,7 +17,7 @@ public class amigos : MonoBehaviour {
 		ArrayList result = GMS.db.BasicQueryArray ("select usuarios_id, amigos_id, aceptado, nombre, email, edad, sexo, ciudad, foto, descripcion from amigos where aceptado = '1' ");
 		GMS.db.CloseDB();
 		
-		GameObject OptionDefault = GameObject.Find("DDItems/PanelMask/PanelScroll/Option");
+		//GameObject OptionDefault = GameObject.Find("DDItems/PanelMask/PanelScroll/Option");
 		
 		if (result.Count > 0) {
 			Debug.Log("entro");
@@ -40,7 +41,8 @@ public class amigos : MonoBehaviour {
 			}
 			
 		}
-		Destroy (OptionDefault);
+		//Destroy (OptionDefault);
+		OptionDefault.SetActive (false);
 	}
 
 	public void chatear(GameObject optionBtn){
