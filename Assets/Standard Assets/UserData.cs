@@ -124,6 +124,7 @@ public class UserData : ICloneable{
 		busco_long = row_ [19];
 		descripcion = row_ [20];
 
+		token = row_ [21];
 
 		if (row_ [13] != "") {
 			fbFriends = new List<string>(row_ [13].Split(','));

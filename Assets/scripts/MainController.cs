@@ -278,7 +278,17 @@ public class MainController : MonoBehaviour {
 
 	private IEnumerator logoutN(){
 		yield return new WaitForSeconds (1f);
+#if UNITY_EDITOR
+		Application.LoadLevel("login");
+#else
+#if UNITY_ANDROID
 		Application.Quit();
+#else
+		Application.LoadLevel("login");
+#endif
+
+#endif
+
 	}
 
 	IEnumerator WaitForRequest(WWW www, string response){
