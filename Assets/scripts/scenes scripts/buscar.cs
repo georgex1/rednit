@@ -93,6 +93,7 @@ public class buscar : MonoBehaviour {
 
 	public void actualizar(){
 		PanelAvisoBtn.SetActive (false);
+		PanelAviso.SetActive(false);
 		PanelPerfilMask.SetActive (true);
 		PanelDatos.SetActive (true);
 		GMS.actualizando = true;
