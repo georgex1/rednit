@@ -31,7 +31,17 @@ public class Menu : MonoBehaviour {
 	}
 	private IEnumerator logout(){
 		yield return new WaitForSeconds (1f);
+
+		#if !UNITY_EDITOR
+		#if UNITY_ANDROID
 		Application.Quit();
+		#else
+		Application.LoadLevel ("login");
+		#endif
+		#else
+		Application.LoadLevel ("login");
+		#endif
+
 	}
 
 	public void showMenu(){

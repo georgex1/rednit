@@ -101,8 +101,8 @@ public class MainController : MonoBehaviour {
 		colTypes = new string[]{"INT", "TEXT", "TEXT", "TEXT"};
 		db.CreateTable ("sync", cols, colTypes);
 
-		cols = new string[]{"id", "usuarios_id", "foto", "isdefault"};
-		colTypes = new string[]{"INT", "TEXT", "TEXT", "TEXT"};
+		cols = new string[]{"id", "foto_id", "usuarios_id", "foto", "isdefault"};
+		colTypes = new string[]{"INT", "TEXT", "TEXT", "TEXT", "TEXT"};
 		db.CreateTable ("fotos_usuarios", cols, colTypes);
 
 		db.CloseDB();
@@ -376,7 +376,6 @@ public class MainController : MonoBehaviour {
 							try_download_persona_imagen((string)reponseContent["foto"], true);
 
 							saveUserData(true);
-							StartCoroutine(delayChangePhoto());
 
 							//bajar galeria del usuario
 							downloadUserGallery( userData.id.ToString(), true );
@@ -511,35 +510,45 @@ public class MainController : MonoBehaviour {
 
 				if(response == "upload_gallery"){
 					sendDataDebug = "imagen galeria subida";
+
+					db.OpenDB(dbName);
+					ArrayList result22 = db.BasicQueryArray ("select id from fotos_usuarios where usuarios_id = '"+userData.id+"' and foto_id = '"+(string)Wresponse3["id"]+"' ");
+					db.CloseDB();
 					
-					db.OpenDB(dbName);
+					if (result22.Count == 0) {
 
-					string[] colsUsuarios = new string[]{ "id", "usuarios_id", "foto", "isdefault" };
-					string[] colsUsuariosValues = new string[]{ (string)Wresponse3["id"], userData.id.ToString(), (string)Wresponse3["foto"], (string)Wresponse3["isdefault"]};
+						string newId = getTableNewId("fotos_usuarios");
 
-					db.InsertIntoSpecific ("fotos_usuarios", colsUsuarios, colsUsuariosValues);
-					db.CloseDB();
+						string[] colsUsuarios = new string[]{ "id", "foto_id", "usuarios_id", "foto", "isdefault" };
+						string[] colsUsuariosValues = new string[]{ newId, (string)Wresponse3["id"], userData.id.ToString(), (string)Wresponse3["foto"], (string)Wresponse3["isdefault"]};
 
-					if( (string)Wresponse3["isdefault"] == "Y" ){
-						userData.temp_galleryID = (string)Wresponse3["id"];
-						change_gallery_default( (string)Wresponse3["id"] );
-					}
+						Debug.Log("id: " +(string)Wresponse3["id"] + " usuarios_id: " + userData.id.ToString() + " foto: " + (string)Wresponse3["foto"] + " isdefault: " + (string)Wresponse3["isdefault"]);
 
-					//verificar si no tiene foto de portada agregar la cargada
-					//Debug.Log("query foto: " + "select foto from fotos_usuarios where usuarios_id = '" +userData.id+ "' and isdefault = 'Y' ");
+						db.OpenDB(dbName);
+						db.InsertIgnoreInto ("fotos_usuarios", colsUsuarios, colsUsuariosValues, newId);
+						db.CloseDB();
 
-					db.OpenDB(dbName);
-					ArrayList result = db.BasicQueryArray ("select foto from fotos_usuarios where usuarios_id = '" +userData.id+ "' and isdefault = 'Y' ");
-					db.CloseDB();
-
-					if (result.Count > 0) {
-						if( ((string[])result [0]) [0] == "default.png" ){
+						if( (string)Wresponse3["isdefault"] == "Y" ){
 							userData.temp_galleryID = (string)Wresponse3["id"];
 							change_gallery_default( (string)Wresponse3["id"] );
 						}
-					}else{
-						userData.temp_galleryID = (string)Wresponse3["id"];
-						change_gallery_default( (string)Wresponse3["id"] );
+
+						//verificar si no tiene foto de portada agregar la cargada
+						//Debug.Log("query foto: " + "select foto from fotos_usuarios where usuarios_id = '" +userData.id+ "' and isdefault = 'Y' ");
+
+						db.OpenDB(dbName);
+						ArrayList result = db.BasicQueryArray ("select foto from fotos_usuarios where usuarios_id = '" +userData.id+ "' and isdefault = 'Y' ");
+						db.CloseDB();
+
+						if (result.Count > 0) {
+							if( ((string[])result [0]) [0] == "default.png" ){
+								userData.temp_galleryID = (string)Wresponse3["id"];
+								change_gallery_default( (string)Wresponse3["id"] );
+							}
+						}else{
+							userData.temp_galleryID = (string)Wresponse3["id"];
+							change_gallery_default( (string)Wresponse3["id"] );
+						}
 					}
 
 					showLoading(false);
@@ -549,7 +558,7 @@ public class MainController : MonoBehaviour {
 
 				if(response == "delete_gallery"){
 					db.OpenDB(dbName);
-					db.BasicQueryInsert("delete from fotos_usuarios where id = '"+ (string)Wresponse3["id"] +"' ");
+					db.BasicQueryInsert("delete from fotos_usuarios where foto_id = '"+ (string)Wresponse3["id"] +"' and usuarios_id = '"+userData.id+"' ");
 					db.CloseDB();
 
 					//verificar si era la ultima poner default
@@ -589,24 +598,36 @@ public class MainController : MonoBehaviour {
 							IDictionary reponseContent = (IDictionary) MiniJSON.Json.Deserialize ( (string)WresponseContent[i.ToString()]  );
 							
 							db.OpenDB(dbName);
-
-							//cargar galeria
-							string[] cols = new string[]{ "id", "usuarios_id", "foto", "isdefault"};
-							string isDefault = ((string)reponseContent["isdefault"] == "1") ? "Y" : "N";
-							string[] colsVals = new string[]{ (string)reponseContent["id"], (string)reponseContent["usuarios_id"], (string)reponseContent["foto"], isDefault};
-							db.InsertIgnoreInto("fotos_usuarios", cols, colsVals, (string)reponseContent["id"]);
-
-							if(isDefault == "Y" && (string)Wresponse3["isUser"] == "Y"){
-								userData.temp_galleryID = (string)reponseContent["id"];
-							}
+							ArrayList result = db.BasicQueryArray ("select id from fotos_usuarios where usuarios_id = '"+(string)reponseContent["usuarios_id"]+"' and foto_id = '"+(string)reponseContent["id"]+"' ");
 							db.CloseDB();
+							
+							if (result.Count == 0) {
 
-							//intentar bajar imagen de la galeria
-							try_download_persona_imagen((string)reponseContent["foto"], false, true);
+								//cargar galeria
+								string newId = getTableNewId("fotos_usuarios");
+
+								string[] cols = new string[]{ "id", "foto_id", "usuarios_id", "foto", "isdefault"};
+								string isDefault = ((string)reponseContent["isdefault"] == "1") ? "Y" : "N";
+								string[] colsVals = new string[]{ newId, (string)reponseContent["id"], (string)reponseContent["usuarios_id"], (string)reponseContent["foto"], isDefault};
+
+								db.OpenDB(dbName);
+								db.InsertIgnoreInto("fotos_usuarios", cols, colsVals, newId);
+								db.CloseDB();
+
+								if(isDefault == "Y" && (string)Wresponse3["isUser"] == "Y"){
+									userData.temp_galleryID = (string)reponseContent["id"];
+								}
+
+
+								//intentar bajar imagen de la galeria
+								try_download_persona_imagen((string)reponseContent["foto"], false, true);
+
+							}
 							
 
 						}
 					}
+					StartCoroutine(delayChangePhoto());
 				}
 
 				if(response == "get_updates"){
@@ -736,11 +757,6 @@ public class MainController : MonoBehaviour {
 		}
 
 
-	}
-
-	private IEnumerator delayChangePhoto(){
-		yield return new WaitForSeconds (1);
-		upload_foto_gallery (userData.foto, userData.temp_galleryID, "Y");
 	}
 
 	public void perfil_busco(){
@@ -921,6 +937,11 @@ public class MainController : MonoBehaviour {
 		}
 	}
 
+	private IEnumerator delayChangePhoto(){
+		yield return new WaitForSeconds (1);
+		upload_foto_gallery (userData.foto, userData.temp_galleryID, "Y");
+	}
+
 	public void upload_foto_gallery(string newPhoto, string newPhotoId, string isDefault = "N"){
 		byte[] fileData = File.ReadAllBytes (Application.persistentDataPath + "/" + newPhoto);
 
@@ -955,7 +976,7 @@ public class MainController : MonoBehaviour {
 
 		//verificar si la borrada es default
 		db.OpenDB (dbName);
-		ArrayList result = db.BasicQueryArray ("select id from fotos_usuarios where id = '" +gallery_foto+ "' and isdefault = 'Y' ");
+		ArrayList result = db.BasicQueryArray ("select id from fotos_usuarios where foto_id = '" +gallery_foto+ "' and isdefault = 'Y' ");
 		db.CloseDB();
 
 		string newDefault = "0";
@@ -963,7 +984,7 @@ public class MainController : MonoBehaviour {
 		if (result.Count > 0) {
 			//agregar nueva default
 			db.OpenDB (dbName);
-			result = db.BasicQueryArray ("select id from fotos_usuarios where usuarios_id = '" +userData.id+ "' and isdefault = 'N' ");
+			result = db.BasicQueryArray ("select foto_id from fotos_usuarios where usuarios_id = '" +userData.id+ "' and isdefault = 'N' ");
 			db.CloseDB();
 			if (result.Count > 0) {
 				newDefault = ((string[])result [0]) [0];
@@ -996,7 +1017,7 @@ public class MainController : MonoBehaviour {
 		db.CloseDB ();
 
 		db.OpenDB (dbName);
-		db.UpdateSingle("fotos_usuarios", "isdefault", "Y", "id" , imageId);
+		db.UpdateSingle("fotos_usuarios", "isdefault", "Y", "foto_id" , imageId);
 		db.CloseDB ();
 
 		//set default image in user table
@@ -1205,6 +1226,22 @@ public class MainController : MonoBehaviour {
 	private string getSyncNewId(){
 		db.OpenDB(dbName);
 		ArrayList result = db.BasicQueryArray ("select id from sync order by id DESC limit 1");
+		db.CloseDB();
+		
+		string newId = "1";
+		
+		if (result.Count > 0) {
+			newId = ((string[])result [0]) [0];
+			int newIdInt = int.Parse(newId)+1;
+			newId = newIdInt.ToString();
+		}
+		
+		return newId;
+	}
+
+	public string getTableNewId(string table){
+		db.OpenDB(dbName);
+		ArrayList result = db.BasicQueryArray ("select id from "+table+" order by id DESC limit 1");
 		db.CloseDB();
 		
 		string newId = "1";

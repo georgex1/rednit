@@ -37,14 +37,14 @@ public class user_images : MonoBehaviour {
 
 		//precargar las imagenes guardadas
 		GMS.db.OpenDB(GMS.dbName);
-		ArrayList result = GMS.db.BasicQueryArray ("select id, usuarios_id, foto, isdefault from fotos_usuarios where usuarios_id = '" +GMS.userData.id+ "' ");
+		ArrayList result = GMS.db.BasicQueryArray ("select id, usuarios_id, foto, isdefault, foto_id from fotos_usuarios where usuarios_id = '" +GMS.userData.id+ "' ");
 		GMS.db.CloseDB();
 
 		if (result.Count > 0) {
 			
 			foreach (string[] row_ in result) {
 				Debug.Log("isdefault: " + row_ [3]);
-				setObjPicture(row_ [2], row_ [0], row_ [3]);
+				setObjPicture(row_ [2], row_ [4], row_ [3]);
 
 			}
 			
